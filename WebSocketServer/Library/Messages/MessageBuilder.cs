@@ -30,9 +30,22 @@ namespace WebSocketServer.Library.Messages
             _stringBuilder.Append($"[CQ:at,qq={user_id},name={name}]");
             return this;
         }
-        public MessageBuilder WithImage(string url)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="fileType">0:网页链接，1:本地链接</param>
+        /// <returns></returns>
+        public MessageBuilder WithImage(string file ,int fileType)
         {
-            _stringBuilder.Append($"[CQ:image,url={url}]");
+            if (fileType == 0)
+            {
+                _stringBuilder.Append($"[CQ:image,file={file}]");
+            }
+            if(fileType == 1)
+            {
+                _stringBuilder.Append($"[CQ:image,file=file:///{file}]");
+            }
             return this;
         }
         public MessageBuilder WithText(string text)
