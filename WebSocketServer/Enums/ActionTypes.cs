@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Enums
+namespace MinoriBot.Enums
 {
     public enum ActionTypes
     {
@@ -13,5 +13,5 @@ namespace WebSocketServer.Enums
         send_private_msg,
         send_group_msg,
         send_msg,
-    } 
+    }
 }

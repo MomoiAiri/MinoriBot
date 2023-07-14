@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinoriBot.Library.CQCode
+namespace MinoriBot.Enums.Sekai
 {
-    internal class CqAtSomeBody
+    internal class Members
     {
     }
 }

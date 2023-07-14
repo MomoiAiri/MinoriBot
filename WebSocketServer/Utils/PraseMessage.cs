@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using MinoriBot.Enums;
+using MinoriBot.Library.Messages;
+using MinoriBot.Library.Reports;
+using MinoriBot.Utils.MessageProcessing;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using WebSocketServer.Enums;
-using WebSocketServer.Library.Messages;
-using WebSocketServer.Library.Reports;
-using WebSocketServer.Utils.MessageProcessing;
 
-namespace WebSocketServer.Utils
+namespace MinoriBot.Utils
 {
     internal class PraseMessage
     {
@@ -24,17 +24,17 @@ namespace WebSocketServer.Utils
             string result = "";
             try
             {
-                Object back = PraseJson(message);
+                object back = PraseJson(message);
                 if (back != null)
                 {
                     result = JsonConvert.SerializeObject(back);
                 }
             }
             catch { }
-            
+
             return result;
         }
-        public Object PraseJson(string json)
+        public object PraseJson(string json)
         {
             BaseReport baseReport = new BaseReport();
             if (json != null)
@@ -51,15 +51,15 @@ namespace WebSocketServer.Utils
                             GroupMessageReport groupMessageReport = JsonConvert.DeserializeObject<GroupMessageReport>(json);
                             Console.WriteLine($"群{groupMessageReport.group_id} {groupMessageReport.sender.nickname} : {groupMessageReport.raw_message}");
                             string msg = groupMessageProcessing.GroupMessageProcess(groupMessageReport);
-                            if (msg != "") 
+                            if (msg != "")
                             {
-                                GroupMessage groupMessage = new GroupMessage(){ group_id = groupMessageReport.group_id,message=msg};
-                                ReportBack<GroupMessage> reportBack = new ReportBack<GroupMessage>(groupMessage) {action =ActionTypes.send_group_msg.ToString() };
+                                GroupMessage groupMessage = new GroupMessage() { group_id = groupMessageReport.group_id, message = msg };
+                                ReportBack<GroupMessage> reportBack = new ReportBack<GroupMessage>(groupMessage) { action = ActionTypes.send_group_msg.ToString() };
                                 return reportBack;
                             }
                             break;
                         case "private":
-                            PrivateMessageReport privateMessageReport =JsonConvert.DeserializeObject<PrivateMessageReport>(json);
+                            PrivateMessageReport privateMessageReport = JsonConvert.DeserializeObject<PrivateMessageReport>(json);
                             return "";
                             break;
                     }

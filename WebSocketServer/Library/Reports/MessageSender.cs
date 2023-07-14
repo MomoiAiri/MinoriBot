@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.Reports
+namespace MinoriBot.Library.Reports
 {
     public class MessageSender
     {
