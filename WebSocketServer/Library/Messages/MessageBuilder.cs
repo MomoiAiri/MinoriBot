@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.Messages
+namespace MinoriBot.Library.Messages
 {
     public class MessageBuilder
     {
@@ -14,7 +14,7 @@ namespace WebSocketServer.Library.Messages
             _stringBuilder = new StringBuilder();
         }
 
-        public MessageBuilder WithAt(Int64 user_id)
+        public MessageBuilder WithAt(long user_id)
         {
             _stringBuilder.Append($"[CQ:at,qq={user_id}]");
             return this;
@@ -25,7 +25,7 @@ namespace WebSocketServer.Library.Messages
             _stringBuilder.Append($"[CQ:at,qq=all]");
             return this;
         }
-        public MessageBuilder WithAt(Int64 user_id,string name)
+        public MessageBuilder WithAt(long user_id, string name)
         {
             _stringBuilder.Append($"[CQ:at,qq={user_id},name={name}]");
             return this;
@@ -36,13 +36,13 @@ namespace WebSocketServer.Library.Messages
         /// <param name="file"></param>
         /// <param name="fileType">0:网页链接，1:本地链接</param>
         /// <returns></returns>
-        public MessageBuilder WithImage(string file ,int fileType)
+        public MessageBuilder WithImage(string file, int fileType)
         {
             if (fileType == 0)
             {
                 _stringBuilder.Append($"[CQ:image,file={file}]");
             }
-            if(fileType == 1)
+            if (fileType == 1)
             {
                 _stringBuilder.Append($"[CQ:image,file=file:///{file}]");
             }

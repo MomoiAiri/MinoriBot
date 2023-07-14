@@ -5,7 +5,7 @@ using System.Net.WebSockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WebSocketServer.Utils;
+using MinoriBot.Utils;
 
 public class WebSocket
 {

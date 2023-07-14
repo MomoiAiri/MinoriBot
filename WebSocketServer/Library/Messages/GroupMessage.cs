@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.Messages
+namespace MinoriBot.Library.Messages
 {
     public class GroupMessage
     {
-        public Int64 group_id { get; set; }
+        public long group_id { get; set; }
         public string message { get; set; }
-        public Boolean auto_escape { get; set; }
+        public bool auto_escape { get; set; }
     }
 }

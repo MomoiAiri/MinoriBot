@@ -1,13 +1,13 @@
-﻿using System;
+﻿using MinoriBot.Library.Messages;
+using MinoriBot.Library.Reports;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WebSocketServer.Library.Messages;
-using WebSocketServer.Library.Reports;
 
-namespace WebSocketServer.Utils.MessageProcessing
+namespace MinoriBot.Utils.MessageProcessing
 {
     internal class GroupMessageProcessing
     {
@@ -37,7 +37,7 @@ namespace WebSocketServer.Utils.MessageProcessing
                     return messageBuilder.ToString();
                 }
             }
-            
+
             return "";
         }
         private string HTMLCodeEscape(string str)

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.Reports
+namespace MinoriBot.Library.Reports
 {
-    internal class GroupMessageReport:MessageReport
+    internal class GroupMessageReport : MessageReport
     {
-        public Int64 group_id { get; set; }
+        public long group_id { get; set; }
         public object anonymous { get; set; }
     }
 }

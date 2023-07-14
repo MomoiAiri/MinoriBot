@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.CQCode
+namespace MinoriBot.Library.CQCode
 {
     internal class CqImage
     {

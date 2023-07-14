@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinoriBot.Library.CQCode
+namespace MinoriBot.Utils.PicFunction
 {
-    internal class CqAtSomeBody
+    internal class PicProcessing
     {
     }
 }

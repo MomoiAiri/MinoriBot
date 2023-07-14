@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebSocketServer.Library.Reports
+namespace MinoriBot.Library.Reports
 {
     public class BaseReport
     {
-        public Int64 time { get; set; }
-        public Int64 self_id { get; set; }
+        public long time { get; set; }
+        public long self_id { get; set; }
         public string post_type { get; set; }
     }
 }
