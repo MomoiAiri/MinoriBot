@@ -7,17 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using MinoriBot.Utils;
 
-public class WebSocket
+public static class WebSocket
 {
-    private HttpListener _listener;
+    private static HttpListener _listener;
 
-    private CancellationTokenSource _cancellationTokenSource;
+    private static CancellationTokenSource _cancellationTokenSource;
 
-    private PraseMessage _praseMessage;
+    private static PraseMessage _praseMessage;
 
-    private List<System.Net.WebSockets.WebSocket> webSockets= new List<System.Net.WebSockets.WebSocket>();
+    private static List<System.Net.WebSockets.WebSocket> webSockets= new List<System.Net.WebSockets.WebSocket>();
 
-    public WebSocket()
+    static WebSocket()
     {
         _listener = new HttpListener();
         _listener.Prefixes.Add("http://localhost:1200/");
@@ -25,7 +25,7 @@ public class WebSocket
         _praseMessage = new PraseMessage();
     }
 
-    public async Task Start()
+    public static async Task Start()
     {
         _listener.Start();
         Console.WriteLine("WebSocket server started.");
@@ -45,14 +45,14 @@ public class WebSocket
         }
     }
 
-    public void Stop()
+    public static void Stop()
     {
         _listener.Stop();
         _cancellationTokenSource.Cancel();
         Console.WriteLine("WebSocket server stopped.");
     }
 
-    private async void ProcessWebSocketRequest(HttpListenerContext context)
+    private static async void ProcessWebSocketRequest(HttpListenerContext context)
     {
         HttpListenerWebSocketContext webSocketContext = null;
 
@@ -79,7 +79,7 @@ public class WebSocket
         }
     }
 
-    private async Task HandleWebSocketRequest(System.Net.WebSockets.WebSocket webSocket)
+    private static async Task HandleWebSocketRequest(System.Net.WebSockets.WebSocket webSocket)
     {
         byte[] buffer = new byte[1024];
 
@@ -90,7 +90,7 @@ public class WebSocket
             if (result.MessageType == WebSocketMessageType.Text)
             {
                 string message = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Console.WriteLine("Receive Message: "+message);
+                //Console.WriteLine("Receive Message: "+message);
 
                 // 在这里处理从客户端接收到的消息
 
@@ -110,5 +110,10 @@ public class WebSocket
                 webSockets.Remove(webSocket);
             }
         }
+    }
+    public static async Task SendMessage(string message)
+    {
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+        await webSockets[0].SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 }

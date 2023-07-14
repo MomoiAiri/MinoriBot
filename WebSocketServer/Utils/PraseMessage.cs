@@ -50,7 +50,7 @@ namespace MinoriBot.Utils
                         case "group":
                             GroupMessageReport groupMessageReport = JsonConvert.DeserializeObject<GroupMessageReport>(json);
                             Console.WriteLine($"群{groupMessageReport.group_id} {groupMessageReport.sender.nickname} : {groupMessageReport.raw_message}");
-                            string msg = groupMessageProcessing.GroupMessageProcess(groupMessageReport);
+                            string msg = groupMessageProcessing.GroupMessageProcessAsync(groupMessageReport);
                             if (msg != "")
                             {
                                 GroupMessage groupMessage = new GroupMessage() { group_id = groupMessageReport.group_id, message = msg };

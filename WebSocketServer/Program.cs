@@ -9,8 +9,8 @@ class Program
     static void Main(string[] args)
     {
 
-        WebSocket server = new WebSocket();
-        server.Start().Wait();
+       
+        WebSocket.Start().Wait();
 
         Console.ReadKey();
     }
