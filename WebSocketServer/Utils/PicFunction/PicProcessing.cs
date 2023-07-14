@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using MinoriBot.Utils.ChatFunction;
 //using static System.Net.Mime.MediaTypeNames;
 
 namespace MinoriBot.Utils.PicFunction
@@ -14,6 +15,11 @@ namespace MinoriBot.Utils.PicFunction
         public static async Task Generate(string promts)
         {
             string url = "http://pancake.shinonomeena.icu:10386";
+
+
+            promts = await PicPromtsProcessing.Instance.GetRespond(promts);
+            promts += "best quality,highly detailed,masterpiece,ultra-detailed,illustration,";
+
 
             var payload = new
             {

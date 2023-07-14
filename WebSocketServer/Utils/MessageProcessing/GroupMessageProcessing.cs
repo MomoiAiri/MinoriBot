@@ -44,7 +44,7 @@ namespace MinoriBot.Utils.MessageProcessing
                 }
                 if (command.Contains("来点")&& command.Contains("涩图"))
                 {
-                    string text = "来点这是中间的内容涩图";
+                    string text = command;
                     string pattern = @"^来点(.*)涩图$";
                     MessageBuilder messageBuilder = new MessageBuilder();
                     
@@ -53,7 +53,7 @@ namespace MinoriBot.Utils.MessageProcessing
                     if (match.Success)
                     {
                         string promts = match.Groups[1].Value;
-                        //Console.WriteLine("中间的内容： " + promts);
+                        Console.WriteLine("中间的内容： " + promts);
                         //messageBuilder.WithAt(groupMessageReport.user_id).WithText("正在尝试生成");
                         SendSetuAsync(groupMessageReport.group_id,promts);
                     }
