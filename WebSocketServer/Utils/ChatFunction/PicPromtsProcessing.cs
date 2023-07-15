@@ -31,7 +31,7 @@ namespace MinoriBot.Utils.ChatFunction
         OpenAI_API.Chat.Conversation chat;
         public PicPromtsProcessing() 
         {
-            api = new OpenAIAPI("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");
+            api = new OpenAIAPI("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");
             Initialize();
         }
         public async Task<string> GetRespond(string TalkTo)
