@@ -26,12 +26,12 @@ namespace MinoriBot.Utils.ChatFunction
             }
         }
         static OpenAIAPI api; // shorthand
-        private static object padlock;
+        private static object padlock = new object();
         private static PicPromtsProcessing instance;
         OpenAI_API.Chat.Conversation chat;
         public PicPromtsProcessing() 
         {
-            api = new OpenAIAPI("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");
+            api = new OpenAIAPI("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");
             Initialize();
         }
         public async Task<string> GetRespond(string TalkTo)
@@ -41,10 +41,12 @@ namespace MinoriBot.Utils.ChatFunction
                 Console.WriteLine("在GetResponse");
                 chat.AppendUserInput(TalkTo);
                 string response = await chat.GetResponseFromChatbot();
+                
                 if (response == null)
                 {
                     return "快去请发电狗子修BUG";
                 }
+                Console.WriteLine("回复的promot=" + response);
                 return response;
             }
             catch (Exception e)
@@ -73,7 +75,7 @@ namespace MinoriBot.Utils.ChatFunction
                 chat.AppendExampleChatbotOutput("close eyes,Tashkent,");
 
                 string response = await chat.GetResponseFromChatbot();
-                Console.WriteLine("回复的promot="+response);
+                
                 return response;
             }
             catch (Exception e)

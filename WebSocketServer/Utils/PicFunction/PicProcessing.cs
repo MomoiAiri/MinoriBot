@@ -16,9 +16,12 @@ namespace MinoriBot.Utils.PicFunction
         {
             string url = "http://pancake.shinonomeena.icu:10386";
 
-
-            promts = await PicPromtsProcessing.Instance.GetRespond(promts);
-            promts += "best quality,highly detailed,masterpiece,ultra-detailed,illustration,";
+            if (ContainChinese(promts))
+            {
+                return;
+                promts = await PicPromtsProcessing.Instance.GetRespond(promts);
+            }
+            promts += ",best quality,highly detailed,masterpiece,ultra-detailed,illustration,";
 
 
             var payload = new
@@ -76,6 +79,18 @@ namespace MinoriBot.Utils.PicFunction
                     }
                 }
             }
+        }
+
+        private static bool ContainChinese(string promts)
+        {
+            foreach (char c in promts)
+            {
+                if(c >= '\u4e00' && c <= '\u9fff')
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
