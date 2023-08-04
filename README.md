@@ -8,6 +8,8 @@
 
 一个基于[go-cqhttp](https://github.com/Mrs4s/go-cqhttp) 以及[SekaiViewer](https://github.com/Sekai-World/sekai-viewer) 的乱七八糟但是以烧烤为主的QQ机器人
 
+</div>
+
 ##进度
 
 正在摸鱼开发中。。。
