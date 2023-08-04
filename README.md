@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="Image/minori1.png" width="200" height="200" alt="go-cqhttp">
+    <img src="Image/minori1.png" width="296" height="256" alt="go-cqhttp">
 </p>
 
 <div align="center">
