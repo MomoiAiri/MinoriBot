@@ -20,17 +20,17 @@ namespace MinoriBot.Utils
         {
             groupMessageProcessing = new GroupMessageProcessing();
         }
-        public async void ProcessingMessage(string message,WebSocket ws)
+        public async Task ProcessingMessage(string message,WebSocket ws)
         {
-            string result = "";
             try
             {
                 object back = await PraseJson(message,ws);
                 if (back != null)
                 {
-                    result = JsonConvert.SerializeObject(back);
+                    string result = JsonConvert.SerializeObject(back);
+                    await MessageSender.SendMessage(result, ws);
                 }
-                await MessageSender.SendMessage(result, ws);
+                
             }
             catch { }
         }

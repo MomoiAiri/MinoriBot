@@ -1,6 +1,6 @@
 ﻿#连接方式 1.正向ws  2.反向ws
-socketMode: 1
+socketMode: 2
 #监听端口，使用反向ws时填写
-listenPort: 
+listenPort: 12001
 #ws地址，使用正向ws时填写 格式例子: "ws://kohane.com:11451"
 wsAddr: "ws://ukeitsuki.top:6703"

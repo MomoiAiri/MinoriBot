@@ -20,12 +20,12 @@ public  class WebSocketReverse
     public WebSocketReverse(int listenPort)
     {
         _listener = new HttpListener();
-        _listener.Prefixes.Add($"http://0.0.0.0:{listenPort}/");
+        _listener.Prefixes.Add($"http://localhost:{listenPort}/");
         _cancellationTokenSource = new CancellationTokenSource();
         _praseMessage = new PraseMessage();
     }
 
-    public  async Task Start()
+    public async Task Start()
     {
         _listener.Start();
         Console.WriteLine("WebSocket server started.");
@@ -111,10 +111,13 @@ public  class WebSocketReverse
 public class WebSocketPositive
 {
     private ClientWebSocket _webSocket = new ClientWebSocket();
+    private WebSocket _ws;
     private string _wsAddr = string.Empty;
+    private PraseMessage _praseMessage;
     public WebSocketPositive(string wsAddr)
     {
         _wsAddr= wsAddr;
+        _praseMessage = new PraseMessage();
     }
 
     public async Task Start()
@@ -141,7 +144,8 @@ public class WebSocketPositive
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    Console.WriteLine($"Received message: {message}");
+                    Console.WriteLine(message);
+                    _praseMessage.ProcessingMessage(message, _webSocket);
                 }
             }
         }
@@ -159,4 +163,9 @@ public static class MessageSender
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
         await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
     }
+    //public static async Task SendMessage(string message,ClientWebSocket ws)
+    //{
+    //    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+    //    await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+    //}
 }
