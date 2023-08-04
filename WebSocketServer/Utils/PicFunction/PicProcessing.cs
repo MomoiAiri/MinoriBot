@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using MinoriBot.Utils.ChatFunction;
 //using static System.Net.Mime.MediaTypeNames;
 
 namespace MinoriBot.Utils.PicFunction
@@ -14,6 +15,17 @@ namespace MinoriBot.Utils.PicFunction
         public static async Task Generate(string promts)
         {
             string url = "http://pancake.shinonomeena.icu:10386";
+            StringBuilder Add = new StringBuilder();
+            promts = ChangeAzurLaneLora(promts,Add);
+
+
+            if (ContainChinese(promts))
+            {
+                //return;
+                promts = await PicPromtsProcessing.Instance.GetRespond(promts);
+            }
+            promts += ",best quality,highly detailed,masterpiece,ultra-detailed,illustration,";
+            promts += Add.ToString();
 
             var payload = new
             {
@@ -71,5 +83,45 @@ namespace MinoriBot.Utils.PicFunction
                 }
             }
         }
+
+        private static string ChangeAzurLaneLora(string promts,StringBuilder add)
+        {
+            add.Clear();
+            foreach (string origin in Lora.Keys)
+            {
+                if (promts.Contains(origin))
+                {
+                    add.Append(Lora[origin]);
+                    promts.Replace(origin, "");
+                }
+            }
+            return promts;
+        }
+
+        private static bool ContainChinese(string promts)
+        {
+            foreach (char c in promts)
+            {
+                if(c >= '\u4e00' && c <= '\u9fff')
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        static Dictionary<string,string> Lora = new Dictionary<string, string>() 
+        {
+            {"塔什干","<lora:塔什干常服:0.6>,1girl,"},
+            {"线稿","<lora:animeoutlineV4_16:0.6>,"},
+            {"绫波","<lora:Ayanami_AzurLan:0.6>,kimono, silver hair, hair_ornament, off_shoulder, navel,"},
+            {"恶毒","<lora:LeMalin_V7_8dim_e6:0.6>,LeMalinDefault,"},
+            {"能代","<lora:Azur Lane-noshiro fragrance of the eastern snow:0.6>,noshirodress,"},
+            {"企业"," <lora:Enterprisev10:0.6>,OriginalOutfit, military uniform,"},
+            {"埃塞克斯","<lora:EssexChameleonAI_v1.0:0.6>,essex,"},
+            {"光辉","<lora:illustrious (maiden lily's radiance):0.6>,illustrious (maiden lily's radiance) (azur lane),"},
+            {"新泽西","<lora:new_jersey-origin-bunny-wedding:0.6>,new_jersey,wedding,"},
+            {"普利茅斯","<lora:plmtazln_v25e1:0.6>,plmtazln,"},
+
+        };
     }
 }
