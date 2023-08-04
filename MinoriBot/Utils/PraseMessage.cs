@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,22 +20,21 @@ namespace MinoriBot.Utils
         {
             groupMessageProcessing = new GroupMessageProcessing();
         }
-        public string ProcessingMessage(string message)
+        public async void ProcessingMessage(string message,WebSocket ws)
         {
             string result = "";
             try
             {
-                object back = PraseJson(message);
+                object back = await PraseJson(message,ws);
                 if (back != null)
                 {
                     result = JsonConvert.SerializeObject(back);
                 }
+                await MessageSender.SendMessage(result, ws);
             }
             catch { }
-
-            return result;
         }
-        public object PraseJson(string json)
+        public async Task<object> PraseJson(string json,WebSocket ws)
         {
             BaseReport baseReport = new BaseReport();
             if (json != null)
@@ -50,7 +50,7 @@ namespace MinoriBot.Utils
                         case "group":
                             GroupMessageReport groupMessageReport = JsonConvert.DeserializeObject<GroupMessageReport>(json);
                             Console.WriteLine($"群{groupMessageReport.group_id} {groupMessageReport.sender.nickname} : {groupMessageReport.raw_message}");
-                            string msg = groupMessageProcessing.GroupMessageProcessAsync(groupMessageReport);
+                            string msg = await groupMessageProcessing.GroupMessageProcessAsync(groupMessageReport,ws);
                             if (msg != "")
                             {
                                 GroupMessage groupMessage = new GroupMessage() { group_id = groupMessageReport.group_id, message = msg };

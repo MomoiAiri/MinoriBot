@@ -7,25 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using MinoriBot.Utils;
 
-public static class WebSocket
+public  class WebSocketReverse
 {
-    private static HttpListener _listener;
+    private  HttpListener _listener;
 
-    private static CancellationTokenSource _cancellationTokenSource;
+    private  CancellationTokenSource _cancellationTokenSource;
 
-    private static PraseMessage _praseMessage;
+    private  PraseMessage _praseMessage;
 
-    private static List<System.Net.WebSockets.WebSocket> webSockets= new List<System.Net.WebSockets.WebSocket>();
+    private  List<System.Net.WebSockets.WebSocket> webSockets= new List<System.Net.WebSockets.WebSocket>();
 
-    static WebSocket()
+    public WebSocketReverse(int listenPort)
     {
         _listener = new HttpListener();
-        _listener.Prefixes.Add("http://localhost:1200/");
+        _listener.Prefixes.Add($"http://0.0.0.0:{listenPort}/");
         _cancellationTokenSource = new CancellationTokenSource();
         _praseMessage = new PraseMessage();
     }
 
-    public static async Task Start()
+    public  async Task Start()
     {
         _listener.Start();
         Console.WriteLine("WebSocket server started.");
@@ -45,14 +45,14 @@ public static class WebSocket
         }
     }
 
-    public static void Stop()
+    public  void Stop()
     {
         _listener.Stop();
         _cancellationTokenSource.Cancel();
         Console.WriteLine("WebSocket server stopped.");
     }
 
-    private static async void ProcessWebSocketRequest(HttpListenerContext context)
+    private  async void ProcessWebSocketRequest(HttpListenerContext context)
     {
         HttpListenerWebSocketContext webSocketContext = null;
 
@@ -79,7 +79,7 @@ public static class WebSocket
         }
     }
 
-    private static async Task HandleWebSocketRequest(System.Net.WebSockets.WebSocket webSocket)
+    private  async Task HandleWebSocketRequest(System.Net.WebSockets.WebSocket webSocket)
     {
         byte[] buffer = new byte[1024];
 
@@ -95,13 +95,7 @@ public static class WebSocket
                 // 在这里处理从客户端接收到的消息
 
                 // 将消息发送回客户端
-                string reply = _praseMessage.ProcessingMessage(message);
-                if (reply != "")
-                {
-                    byte[] responseBuffer = System.Text.Encoding.UTF8.GetBytes(reply);
-                    Console.WriteLine("Sended Message: " + reply);
-                    await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer, 0, responseBuffer.Length), WebSocketMessageType.Text, true, CancellationToken.None);
-                }
+                _praseMessage.ProcessingMessage(message,webSocket);
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
@@ -111,9 +105,57 @@ public static class WebSocket
             }
         }
     }
-    public static async Task SendMessage(string message)
+}
+
+public class WebSocketPositive
+{
+    private ClientWebSocket _webSocket = new ClientWebSocket();
+    private string _wsAddr = string.Empty;
+    public WebSocketPositive(string wsAddr)
+    {
+        _wsAddr= wsAddr;
+    }
+
+    public async Task Start()
+    {
+        try
+        {
+            await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);
+            Console.WriteLine("Connected to WebSocket server");
+            await ReceiveMessages();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"出现异常断开连接\nError: {ex.Message}");
+        }
+    }
+    private async Task ReceiveMessages()
+    {
+        try
+        {
+            var buffer = new byte[1024];
+            while (_webSocket.State == WebSocketState.Open)
+            {
+                var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Text)
+                {
+                    string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    Console.WriteLine($"Received message: {message}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in receiving messages: {ex.Message}");
+        }
+    } 
+}
+
+public static class MessageSender
+{
+    public static async Task SendMessage(string message,WebSocket ws)
     {
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
-        await webSockets[0].SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 }

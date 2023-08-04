@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,7 +17,7 @@ namespace MinoriBot.Utils.MessageProcessing
 {
     internal class GroupMessageProcessing
     {
-        public  string GroupMessageProcessAsync(GroupMessageReport groupMessageReport)
+        public async Task<string> GroupMessageProcessAsync(GroupMessageReport groupMessageReport,WebSocket ws)
         {
             //new PicFunction.PicProcessing
             string rawMessage = groupMessageReport.raw_message;
@@ -55,25 +56,20 @@ namespace MinoriBot.Utils.MessageProcessing
                         string promts = match.Groups[1].Value;
                         Console.WriteLine("中间的内容： " + promts);
                         //messageBuilder.WithAt(groupMessageReport.user_id).WithText("正在尝试生成");
-                        SendSetuAsync(groupMessageReport.group_id,promts);
+                        await SendSetuAsync(groupMessageReport.group_id,promts,ws);
                     }
                     else
                     {
                         //Console.WriteLine("未找到匹配的内容");
                         messageBuilder.WithAt(groupMessageReport.user_id).WithText("有病");
                     }
-                    
-                    
                     return messageBuilder.ToString();
-                    
-                    
                 }
             }
-
             return "";
         }
 
-        private async Task SendSetuAsync(long group_id,string promts)
+        private async Task SendSetuAsync(long group_id,string promts,WebSocket ws)
         {
             await PicProcessing.Generate(promts);
             MessageBuilder messageBuilder= new MessageBuilder();
@@ -83,7 +79,7 @@ namespace MinoriBot.Utils.MessageProcessing
             GroupMessage groupMessage = new GroupMessage() { group_id = group_id ,message = messageBuilder.ToString()};
             ReportBack<GroupMessage> reportBack = new ReportBack<GroupMessage>(groupMessage) { action = ActionTypes.send_group_msg.ToString() };
             string msg = JsonConvert.SerializeObject(reportBack);
-            WebSocket.SendMessage(msg);
+            await MessageSender.SendMessage(messageBuilder.ToString(),ws);
         }
 
         private string HTMLCodeEscape(string str)
