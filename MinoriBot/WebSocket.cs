@@ -107,6 +107,7 @@ public  class WebSocketReverse
     }
 }
 
+
 public class WebSocketPositive
 {
     private ClientWebSocket _webSocket = new ClientWebSocket();
@@ -158,4 +159,4 @@ public static class MessageSender
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
         await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
     }
-} 
+}
