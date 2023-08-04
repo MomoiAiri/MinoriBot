@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinoriBot.Enums.Sekai
 {
-    public class SkCards
-    {
-        public List<Card> cards = new List<Card>();
-    }
-    public class Card
+    public class SkCard
     {
         public int id;
         public int seq;

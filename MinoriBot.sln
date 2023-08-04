@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinoriBot", "WebSocketServer\MinoriBot.csproj", "{E14C219A-650E-4EA3-A472-FE4A57E31C2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinoriBot", "MinoriBot\MinoriBot.csproj", "{E14C219A-650E-4EA3-A472-FE4A57E31C2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
