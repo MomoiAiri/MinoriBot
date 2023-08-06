@@ -144,7 +144,7 @@ public class WebSocketPositive
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    Console.WriteLine(message);
+                    //Console.WriteLine(message);
                     _praseMessage.ProcessingMessage(message, _webSocket);
                 }
             }

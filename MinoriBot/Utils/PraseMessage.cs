@@ -44,6 +44,7 @@ namespace MinoriBot.Utils
             switch (baseReport.post_type)
             {
                 case "message":
+                    //Console.WriteLine(json);
                     MessageReport messageReport = JsonConvert.DeserializeObject<MessageReport>(json);
                     switch (messageReport.message_type)
                     {

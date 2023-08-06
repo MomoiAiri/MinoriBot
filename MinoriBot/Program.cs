@@ -17,12 +17,14 @@ class Program
             string yaml = File.ReadAllText("D:\\Code\\MinoriBot\\MinoriBot\\config.yaml");
             IDeserializer deserializer = new DeserializerBuilder().Build();
             Config config = deserializer.Deserialize<Config>(yaml);
+            //正向ws连接
             if (config.socketMode == 1 && config.wsAddr != "")
             {
                 WebSocketPositive ws = new WebSocketPositive(config.wsAddr);
                 ws.Start().Wait();
             }
-            if(config.socketMode == 2 && config.listenPort!= 0)
+            //反向ws监听
+            if (config.socketMode == 2 && config.listenPort!= 0)
             {
                 WebSocketReverse ws = new WebSocketReverse(config.listenPort);
                 ws.Start().Wait();
