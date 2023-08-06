@@ -1,4 +1,5 @@
 ﻿using MinoriBot.Enums;
+using MinoriBot.Enums.Bandori;
 using MinoriBot.Library.Messages;
 using MinoriBot.Library.Reports;
 using MinoriBot.Utils.PicFunction;
@@ -66,6 +67,48 @@ namespace MinoriBot.Utils.MessageProcessing
                     return messageBuilder.ToString();
                 }
             }
+            if (rawMessage.ToLower()=="t10")
+            {
+                using (var client = new HttpClient())
+                {
+                    string uri = "https://bestdori.com/api/eventtop/data?server=3&event=206&mid=0&interval=3600000";
+                    var response = await client.GetAsync(uri);
+                    string json = await response.Content.ReadAsStringAsync();
+                    LeaderBoard lb = JsonConvert.DeserializeObject<LeaderBoard>(json);
+                    StringBuilder sb = new StringBuilder();
+                    int index = 1;
+                    for(int i = lb.points.Count - 10; i < lb.points.Count; i++)
+                    {
+                        for(int j =0;j<lb.users.Count;j++)
+                        {
+                            if (lb.points[i].uid == lb.users[j].uid)
+                            {
+                                sb.Append($"{index}.{lb.users[j].name}  {lb.points[i].value}pt\n");
+                                index++;
+                                break;
+                            }
+                        }
+                    }
+                    DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(lb.points[lb.points.Count - 1].time);
+                    DateTime dateTime = dateTimeOffset.LocalDateTime;
+                    sb.Append("更新时间：" + dateTime.ToString("MM-dd HH:mm:ss"));
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    messageBuilder.WithText(sb.ToString());
+                    return messageBuilder.ToString();
+                }
+            }
+            //if(Regex.IsMatch(rawMessage,@"来点(.*?)涩图"))
+            //{
+            //    using(var client = new HttpClient())
+            //    {
+            //        Match match = Regex.Match(rawMessage, @"来点(.*?)涩图");
+            //        string tag = match.Groups[1].Value;
+            //        var response = await client.GetAsync($"https://api.lolicon.app/setu/v2?r18=0&tag={tag}");
+            //        Match url = Regex.Match(await response.Content.ReadAsStringAsync(), @"http.*\.(jpg|png)");
+            //        MessageBuilder message = new MessageBuilder();
+            //        return message.WithImage(url.Value, 0).ToString();
+            //    }
+            //}
             return "";
         }
 
