@@ -8,5 +8,6 @@ namespace MinoriBot.Enums.Sekai
 {
     internal class Members
     {
+
     }
 }
