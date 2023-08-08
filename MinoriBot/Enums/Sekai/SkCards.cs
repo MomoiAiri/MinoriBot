@@ -126,24 +126,20 @@ namespace MinoriBot.Enums.Sekai
             }
             return -1;
         }
-        public static List<int> GetGroupMenberIdsByGroupName(string group)
+        /// <summary>
+        /// 根据成员ID返回团队名
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public string GetGroupNameById()
         {
-            switch (group)
-            {
-                case "ln":
-                    return new List<int>() { 1, 2, 3, 4 };
-                case "mmj":
-                    return new List<int>() { 5, 6, 7, 8 };
-                case "vbs":
-                    return new List<int>() { 9, 10, 11, 12 };
-                case "ws":
-                    return new List<int>() { 13, 14, 15, 16 };
-                case "25":
-                    return new List<int>() { 17, 18, 19, 20 };
-                case "vs":
-                    return new List<int>() { 21, 22, 23, 24, 25, 26 };
-            }
-            return null;
+            if (id >= 1 && id <= 4) return "ln";
+            if (id >= 5 && id <= 8) return "mmj";
+            if (id >= 9 && id <= 12) return "vbs";
+            if (id >= 13 && id <= 16) return "ws";
+            if (id >= 17 && id <= 20) return "25";
+            if (id >= 21 && id <= 26) return "vs";
+            return "";
         }
     }
     
