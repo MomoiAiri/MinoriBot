@@ -1,4 +1,5 @@
 ﻿using MinoriBot.Enums.Sekai;
+using MinoriBot.Utils.StaticFilesLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace MinoriBot.Utils.Routers
         {
             string[] keywords = messgae.Split(' ');
             Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
-            List<SkCard> cards = new List<SkCard>();
+            List<SkCard> cards = FindMatchingCards(SkDataBase.skCards, keys);
             
         }
         private static List<SkCard> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
@@ -28,7 +29,7 @@ namespace MinoriBot.Utils.Routers
                         query = query.Where(card => card.attr == condition.Value);
                         break;
                     case "group":
-                        query = query.Where(card => card.Name == condition.Value);
+                        query = query.Where(card => card.GetGroupNameById() == condition.Value);
                         break;
                     case "character":
                         query = query.Where(card => card.id == int.Parse(condition.Value));
