@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="Image/minori1.png" width="296" height="256" alt="go-cqhttp">
+    <img src="Image/minori1.png" width="296" height="256" alt="minoribot">
 </p>
 
 <div align="center">
@@ -14,3 +14,7 @@
 
 - [ ] 查卡
 - [ ] 查活动
+
+### 其他
+
+菜狗摸鱼缓慢开发中。。。
