@@ -40,15 +40,21 @@ namespace MinoriBot.Enums.Sekai
             {"hanasatominori",5 },
             {"minori",5 },
             {"mnr",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 },
-            {"",5 }
+            {"桐谷遥",6 },
+            {"遥",6 },
+            {"kiritaniharuka",6 },
+            {"haruka",6 },
+            {"hrk",6 },
+            {"桃井爱莉",7 },
+            {"爱莉",7 },
+            {"momoiairi",7 },
+            {"airi",7 },
+            {"ar",7 },
+            {"日野森雫",8 },
+            {"雫",8},
+            {"hinomorishizuku",8 },
+            {"shizuku",8 },
+            {"szk",8 }
         };
         /// <summary>
         /// 根据昵称查找角色ID
