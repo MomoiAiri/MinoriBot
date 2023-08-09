@@ -95,6 +95,19 @@ namespace MinoriBot.Enums.Sekai
             {"25时","25" },
             {"25","25" }
         };
+        public static Dictionary<string, string> stars = new Dictionary<string, string>()
+        {
+            {"一星","rarity_1" },
+            {"1x","rarity_1" },
+            {"二星","rarity_2" },
+            {"2x","rarity_2" },
+            {"三星","rarity_3" },
+            {"3x","rarity_3" },
+            {"四星","rarity_4" },
+            {"4x","rarity_4" },
+            {"生日","rarity_birthday" },
+            {"bd","rarity_birthday" }
+        };
         /// <summary>
         /// 根据昵称查找角色ID
         /// </summary>

@@ -3,6 +3,7 @@ using MinoriBot.Enums.Bandori;
 using MinoriBot.Library.Messages;
 using MinoriBot.Library.Reports;
 using MinoriBot.Utils.PicFunction;
+using MinoriBot.Utils.Routers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,12 @@ namespace MinoriBot.Utils.MessageProcessing
                     }
                     return messageBuilder.ToString();
                 }
+            }
+            if (rawMessage.ToLower().StartsWith("sk查卡"))
+            {
+                string message = rawMessage.Substring(5);
+                string reply = await SearchInfo.SearchCharacter(message);
+                return reply;
             }
             if (rawMessage.ToLower()=="t10")
             {

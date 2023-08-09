@@ -29,9 +29,17 @@ namespace MinoriBot.Utils.StaticFilesLoader
         /// 启用SkDataBase
         /// </summary>
         /// <returns></returns>
-        static async Task Start()
+        public static async Task Start()
         {
-            await GetCardsDB();
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/cards.json"))
+            {
+                await GetCardsDB();
+            }
+            else
+            {
+                string json =await File.ReadAllTextAsync("./asset/db/cards.json");
+                skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
+            }
             UpdateDB();
         }
         /// <summary>

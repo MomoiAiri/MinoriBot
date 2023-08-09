@@ -133,12 +133,12 @@ namespace MinoriBot.Enums.Sekai
         /// <returns></returns>
         public string GetGroupNameById()
         {
-            if (id >= 1 && id <= 4) return "ln";
-            if (id >= 5 && id <= 8) return "mmj";
-            if (id >= 9 && id <= 12) return "vbs";
-            if (id >= 13 && id <= 16) return "ws";
-            if (id >= 17 && id <= 20) return "25";
-            if (id >= 21 && id <= 26) return "vs";
+            if (characterId >= 1 && characterId <= 4) return "ln";
+            if (characterId >= 5 && characterId <= 8) return "mmj";
+            if (characterId >= 9 && characterId <= 12) return "vbs";
+            if (characterId >= 13 && characterId <= 16) return "ws";
+            if (characterId >= 17 && characterId <= 20) return "25";
+            if (characterId >= 21 && characterId <= 26) return "vs";
             return "";
         }
     }

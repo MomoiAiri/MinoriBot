@@ -3,6 +3,7 @@ using MinoriBot.Utils.StaticFilesLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,15 +11,26 @@ namespace MinoriBot.Utils.Routers
 {
     internal static class SearchInfo
     {
-        public static async Task SearchCharacter(string messgae)
+        public static async Task<string> SearchCharacter(string messgae)
         {
             string[] keywords = messgae.Split(' ');
             Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
-            List<SkCard> cards = FindMatchingCards(SkDataBase.skCards, keys);
-            
+            foreach(KeyValuePair<string,string> dic in keys)
+            {
+                Console.WriteLine($"{dic.Key}:{dic.Value}");
+            }
+            List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
+            Console.WriteLine($"查询到{cards.Count}个结果");
+            StringBuilder sb = new StringBuilder();
+            foreach (SkCard card in cards)
+            {
+                sb.Append(card.prefix + "\n");
+            }
+            return sb.ToString();
         }
-        private static List<SkCard> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
+        private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
         {
+
             var query = cards.AsQueryable();
 
             foreach (var condition in searchConditions)
@@ -32,7 +44,10 @@ namespace MinoriBot.Utils.Routers
                         query = query.Where(card => card.GetGroupNameById() == condition.Value);
                         break;
                     case "character":
-                        query = query.Where(card => card.id == int.Parse(condition.Value));
+                        query = query.Where(card => card.characterId == int.Parse(condition.Value));
+                        break;
+                    case "star":
+                        query = query.Where(card => card.cardRarityType == condition.Value);
                         break;
                         // 添加其他条件
                 }

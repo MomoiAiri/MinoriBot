@@ -22,8 +22,8 @@ namespace MinoriBot.Utils
         }
         public async Task ProcessingMessage(string message,WebSocket ws)
         {
-            try
-            {
+            //try
+            //{
                 object back = await PraseJson(message,ws);
                 if (back != null)
                 {
@@ -31,8 +31,8 @@ namespace MinoriBot.Utils
                     await MessageSender.SendMessage(result, ws);
                 }
                 
-            }
-            catch { }
+            //}
+            //catch(Exception ex) { Console.WriteLine(ex); }
         }
         public async Task<object> PraseJson(string json,WebSocket ws)
         {

@@ -17,26 +17,22 @@ namespace MinoriBot.Utils.Routers
                 if (!result.ContainsKey("attribute") && NickName.attribute.ContainsKey(word))
                 {
                     result.Add("attribute", NickName.attribute[word]);
-                }
-                else
-                {
-                    return null;
+                    continue;
                 }
                 if(!result.ContainsKey("group") && NickName.groups.ContainsKey(word))
                 {
-                    result.Add("group", NickName.attribute[word]);
-                }
-                else
-                {
-                    return null;
+                    result.Add("group", NickName.groups[word]);
+                    continue;
                 }
                 if(!result.ContainsKey("character") && NickName.characters.ContainsKey(word))
                 {
-                    result.Add("character", NickName.attribute[word]);
+                    result.Add("character", NickName.characters[word].ToString());
+                    continue;
                 }
-                else
+                if(!result.ContainsKey("star") && NickName.stars.ContainsKey(word))
                 {
-                    return null; 
+                    result.Add("star", NickName.stars[word]);
+                    continue;
                 }
             }
             return result;
