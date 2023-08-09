@@ -7,9 +7,9 @@ using static System.Net.WebRequestMethods;
 
 namespace MinoriBot.Utils.StaticFilesLoader
 {
-    public class SekaiImageDownload
+    public static class SekaiImageDownload
     {
-        Dictionary<string, string> images = new Dictionary<string, string>()
+        static Dictionary<string, string> images = new Dictionary<string, string>()
         {
             {"mysterious","https://sekai.best/assets/icon_attribute_mysterious.3e1ce6e3.png" },
             {"cool","https://sekai.best/assets/icon_attribute_cool.a557ef6d.png" },
@@ -56,9 +56,9 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {"25","https://sekai.best/assets/chr_ts_25.83d109af.png" },
             {"26","https://sekai.best/assets/chr_ts_26.ce9e612d.png" },
         };
-        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        List<String> pathList;
-        public SekaiImageDownload()
+        static string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        static List<String> pathList;
+        static SekaiImageDownload()
         {
             pathList = new List<string>()
             {
@@ -67,9 +67,9 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 baseDirectory + "asset/thumbnail/chara_rip",
                 baseDirectory + "asset/temp"
             };
-            InitNormalImage();
+            //InitNormalImage();
         }
-        public async Task InitNormalImage()
+        public static async Task InitNormalImage()
         {
             //检查存储库路径是否存在
             foreach(string path in pathList)
@@ -84,6 +84,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 //查看文件是否已经存在
                 if (!System.IO.File.Exists(pathList[0] + $"/{kvp.Key}.png"))
                 {
+                    Console.WriteLine("缺少资源:" + kvp.Key);
                     using (HttpClient client = new HttpClient())
                     {
                         try

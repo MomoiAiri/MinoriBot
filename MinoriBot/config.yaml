@@ -3,4 +3,6 @@ socketMode: 1
 #监听端口，使用反向ws时填写
 listenPort: 12001
 #ws地址，使用正向ws时填写 格式例子: "ws://kohane.com:11451"
-wsAddr: "ws://127.0.0.1:6800"
+wsAddr: "ws://ukeitsuki.top:6703"
+#"ws://ukeitsuki.top:6703"
+#"ws://127.0.0.1:6800"

@@ -1,4 +1,5 @@
-﻿using MinoriBot.Enums;
+﻿using MinoriBot;
+using MinoriBot.Enums;
 using System;
 using System.Net;
 using System.Net.WebSockets;
@@ -10,8 +11,11 @@ using YamlDotNet.Serialization;
 class Program
 {
     
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
+        Console.WriteLine("初始化资源中。。。");
+        await Init.Start();
+        Console.WriteLine("初始化资源完成");
         try
         {
             string yaml = File.ReadAllText("D:\\Code\\MinoriBot\\MinoriBot\\config.yaml");
