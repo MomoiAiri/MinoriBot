@@ -8,9 +8,49 @@ using System.Threading.Tasks;
 
 namespace MinoriBot.Utils
 {
-    internal class ImageCreater
+    public class ImageCreater
     {
-        public async void DrawCardIcon(SkCard card, bool isTrained)
+        public async Task DrawCardIconImage(List<SkCard> cards,bool isTrained)
+        {
+            //根据角色ID与属性进行分类
+            Dictionary<int,Dictionary<string,List<SkCard>>> classifiedCards = new Dictionary<int, Dictionary<string, List<SkCard>>>();
+            foreach (SkCard card in cards)
+            {
+                if (!classifiedCards.ContainsKey(card.characterId))
+                {
+                    classifiedCards[card.characterId] = new Dictionary<string, List<SkCard>>();
+                }
+                if (!classifiedCards[card.characterId].ContainsKey(card.attr))
+                {
+                    classifiedCards[card.characterId][card.attr] = new List<SkCard>();
+                }
+                classifiedCards[card.characterId][card.attr].Add(card);
+            }
+            foreach (var kvp in classifiedCards)
+            {
+                Console.WriteLine($"ID: {kvp.Key}");
+                foreach (var attrKvp in kvp.Value)
+                {
+                    Console.WriteLine($"  Attr: {attrKvp.Key}");
+                    foreach (var card in attrKvp.Value)
+                    {
+                        Console.WriteLine($"    Name: {card.prefix}");
+                    }
+                }
+            }
+            List<SKBitmap> iconLines = new List<SKBitmap>();
+
+        }
+        public async Task<SKBitmap> DrawCardIconLine (List<SkCard> cards ,bool isTrained)
+        {
+
+            using(SKBitmap bitmap = new SKBitmap(100, 100))
+            {
+
+                return bitmap;
+            }
+        }
+        public async Task<SKBitmap> DrawCardIcon(SkCard card, bool isTrained)
         {
             string trainingStatus = isTrained ? "after_training" : "normal";
             string fileDirectory = "./asset/normal";
@@ -52,12 +92,14 @@ namespace MinoriBot.Utils
                         string text = "ID:" + card.id.ToString();
                         canvas.DrawText(text, 5, 175, paint);
                     }
-                    using (var image = SKImage.FromBitmap(bitmap))
-                    using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                    using (var stream = File.OpenWrite("./asset/temp/output.png"))
-                    {
-                        data.SaveTo(stream);
-                    }
+                    return bitmap;
+
+                    //using (var image = SKImage.FromBitmap(bitmap))
+                    //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                    //using (var stream = File.OpenWrite("./asset/temp/output.png"))
+                    //{
+                    //    data.SaveTo(stream);
+                    //}
                 }
             }
         }

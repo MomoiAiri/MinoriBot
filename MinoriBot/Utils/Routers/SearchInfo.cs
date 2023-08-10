@@ -14,6 +14,7 @@ namespace MinoriBot.Utils.Routers
         public static async Task<string> SearchCharacter(string messgae)
         {
             string[] keywords = messgae.Split(' ');
+            //将模糊的关键词转换成唯一的关键词
             Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
             foreach(KeyValuePair<string,string> dic in keys)
             {
@@ -26,6 +27,8 @@ namespace MinoriBot.Utils.Routers
             {
                 sb.Append(card.prefix + "\n");
             }
+            ImageCreater imageCreater = new ImageCreater();
+            await imageCreater.DrawCardIconImage(cards,true);
             return sb.ToString();
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
