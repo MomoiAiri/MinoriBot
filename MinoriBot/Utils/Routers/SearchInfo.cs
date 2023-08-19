@@ -28,7 +28,7 @@ namespace MinoriBot.Utils.Routers
                 sb.Append(card.prefix + "\n");
             }
             ImageCreater imageCreater = new ImageCreater();
-            await imageCreater.DrawCardIconImage(cards,true);
+            await imageCreater.DrawCardIconLine(cards,true);
             return sb.ToString();
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)

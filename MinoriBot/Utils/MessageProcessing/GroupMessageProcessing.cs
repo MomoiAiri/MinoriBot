@@ -78,7 +78,7 @@ namespace MinoriBot.Utils.MessageProcessing
             {
                 using (var client = new HttpClient())
                 {
-                    string uri = "https://bestdori.com/api/eventtop/data?server=3&event=206&mid=0&interval=3600000";
+                    string uri = "https://bestdori.com/api/eventtop/data?server=3&event=207&mid=0&interval=3600000";
                     var response = await client.GetAsync(uri);
                     string json = await response.Content.ReadAsStringAsync();
                     LeaderBoard lb = JsonConvert.DeserializeObject<LeaderBoard>(json);
@@ -104,6 +104,19 @@ namespace MinoriBot.Utils.MessageProcessing
                     return messageBuilder.ToString();
                 }
             }
+            //if (rawMessage.ToLower() == "ycm")
+            //{
+            //    Random random= new Random();
+            //    int r = random.Next(0, 11);
+            //    if (r < 3)
+            //    {
+            //        return "整天有车吗有车吗就不会自己开个车？";
+            //    }
+            //    else
+            //    {
+            //        return "";
+            //    }
+            //}
             //if(Regex.IsMatch(rawMessage,@"来点(.*?)涩图"))
             //{
             //    using(var client = new HttpClient())

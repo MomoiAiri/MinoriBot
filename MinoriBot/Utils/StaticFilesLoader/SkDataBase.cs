@@ -13,7 +13,9 @@ namespace MinoriBot.Utils.StaticFilesLoader
     internal static class SkDataBase
     {
         public static List<SkCard> skCards;
+        public static List<SkSkills> skSkills;
         static string cardsUri = "https://sekai-world.github.io/sekai-master-db-diff/cards.json";
+        static string cardSkillsUri = "https://sekai-world.github.io/sekai-master-db-diff/skills.json";
         static System.Timers.Timer timer;
 
         static SkDataBase()
@@ -40,6 +42,15 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 string json =await File.ReadAllTextAsync("./asset/db/cards.json");
                 skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
             }
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/skills.json"))
+            {
+                await GetCardSkillDB();
+            }
+            else
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/skills.json");
+                skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
+            }
             UpdateDB();
         }
         /// <summary>
@@ -57,6 +68,30 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/cards.json", json);
                         skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
+                        Console.WriteLine("获取数据成功");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("出现异常\n" + ex);
+                }
+            }
+        }
+        /// <summary>
+        /// 卡牌技能数据
+        /// </summary>
+        /// <returns></returns>
+        static async Task GetCardSkillDB()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    string json = await client.GetStringAsync(cardSkillsUri);
+                    if (json != null)
+                    {
+                        File.WriteAllText("./asset/db/skills.json", json);
+                        skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
                         Console.WriteLine("获取数据成功");
                     }
                 }

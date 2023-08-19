@@ -1,0 +1,64 @@
+角色大图：
+  特训前：https://storage.sekai.best/sekai-assets/character/member/res007_no027_rip/card_normal.png
+  特训后：https://storage.sekai.best/sekai-assets/character/member/res007_no027_rip/card_after_training.png
+角色头图：
+  特训前：https://storage.sekai.best/sekai-assets/thumbnail/chara_rip/res007_no024_normal.png
+  特训后：https://storage.sekai.best/sekai-assets/thumbnail/chara_rip/res007_no024_after_training.png
+属性：
+  紫月（mysterious）：https://sekai.best/assets/icon_attribute_mysterious.3e1ce6e3.png
+  蓝星（cool）：https://sekai.best/assets/icon_attribute_cool.a557ef6d.png
+  绿草（pure）：https://sekai.best/assets/icon_attribute_pure.a6d18973.png
+  黄心（happy）：https://sekai.best/assets/icon_attribute_happy.5b5502eb.png
+  粉花（cute）：https://sekai.best/assets/icon_attribute_cute.f299ec08.png
+星星：
+  特训前（黄星）：https://sekai.best/assets/rarity_star_normal.11f97176.png
+  特训后（彩星）：https://sekai.best/assets/rarity_star_afterTraining.442b961e.png
+  生日卡：https://sekai.best/assets/rarity_birthday.e2366ea2.png
+头像边框：
+  四星：https://sekai.best/assets/cardFrame_S_4.7bd58b3b.png
+  三星：
+  二星：
+  一星：
+  生日：https://sekai.best/assets/cardFrame_S_bd.a4eb6504.png
+卡面边框：
+  四星：https://sekai.best/assets/cardFrame_L_4.53f11c10.png
+  三星：https://sekai.best/assets/cardFrame_L_3.e1570788.png
+  二星：https://sekai.best/assets/cardFrame_L_2.316ac3ff.png
+  一星：https://sekai.best/assets/cardFrame_L_1.d476763d.png
+  生日：https://sekai.best/assets/cardFrame_L_bd.bd2a499c.png
+角色头图：
+  星乃一歌：https://sekai.best/assets/chr_ts_1.401e8301.png
+  天马咲希：https://sekai.best/assets/chr_ts_2.6d1e40cf.png
+  望月穗波：https://sekai.best/assets/chr_ts_3.176d81e8.png
+  日野森志步：https://sekai.best/assets/chr_ts_4.5caf27c5.png
+  花里实乃里：https://sekai.best/assets/chr_ts_5.3568c1d2.png
+  桐谷遥：https://sekai.best/assets/chr_ts_6.6409abaa.png
+  桃井爱莉：https://sekai.best/assets/chr_ts_7.59adc6cf.png
+  日野森雫：https://sekai.best/assets/chr_ts_8.503f2eda.png
+  小豆沢：https://sekai.best/assets/chr_ts_9.fad2bcfb.png
+  白石杏：https://sekai.best/assets/chr_ts_10.1375c978.png
+  东云彰人：https://sekai.best/assets/chr_ts_11.a0613678.png
+  青柳冬弥：https://sekai.best/assets/chr_ts_12.74f77746.png
+  天马司：https://sekai.best/assets/chr_ts_13.003213bc.png
+  凤笑梦：https://sekai.best/assets/chr_ts_14.38de5874.png
+  草薙宁宁：https://sekai.best/assets/chr_ts_15.06a049a5.png
+  神代类：https://sekai.best/assets/chr_ts_16.00b69576.png
+  宵崎奏：https://sekai.best/assets/chr_ts_17.a0cc7f22.png
+  朝比奈真冬：https://sekai.best/assets/chr_ts_18.dc5229c5.png
+  东云绘名：https://sekai.best/assets/chr_ts_19.1457130a.png
+  晓山瑞希：https://sekai.best/assets/chr_ts_20.999eb43d.png
+  初音未来：https://sekai.best/assets/chr_ts_21.024fabcc.png
+  镜音连：https://sekai.best/assets/chr_ts_22.4ab35893.png
+  镜音铃：https://sekai.best/assets/chr_ts_23.e342f1b7.png
+  巡音露卡：https://sekai.best/assets/chr_ts_24.5b4a2497.png
+  MEIKO：https://sekai.best/assets/chr_ts_25.83d109af.png
+  KAITO：https://sekai.best/assets/chr_ts_26.ce9e612d.png
+团队：
+  MORE MORE JUMP：https://sekai.best/images/jp/logol_outline/logo_idol.png
+  Leoneed：https://sekai.best/images/jp/logol_outline/logo_light_sound.png
+  VIRTUALSINGER：https://sekai.best/images/jp/logol_outline/logo_piapro.png
+  25时：https://sekai.best/images/jp/logol_outline/logo_school_refusal.png
+  VividBadSquad：https://sekai.best/images/jp/logol_outline/logo_street.png
+  ws：https://sekai.best/images/jp/logol_outline/logo_theme_park.png
+
+cards.json: https://sekai-world.github.io/sekai-master-db-diff/cards.json

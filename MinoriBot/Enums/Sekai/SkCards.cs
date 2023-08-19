@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using MinoriBot.Utils.StaticFilesLoader;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -141,6 +142,19 @@ namespace MinoriBot.Enums.Sekai
             if (characterId >= 21 && characterId <= 26) return "vs";
             return "";
         }
+        public string GetSkillDescription()
+        {
+            foreach(SkSkills skill in SkDataBase.skSkills)
+            {
+                if(skillId == skill.id)
+                {
+                    string description = skill.description;
+                    
+                }
+            }
+            return "";
+        }
+
     }
     
 }
