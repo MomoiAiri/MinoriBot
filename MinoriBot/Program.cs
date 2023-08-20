@@ -18,7 +18,7 @@ class Program
         Console.WriteLine("初始化资源完成");
         try
         {
-            string yaml = File.ReadAllText("D:\\Code\\MinoriBot\\MinoriBot\\config.yaml");
+            string yaml = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/config.yaml");
             IDeserializer deserializer = new DeserializerBuilder().Build();
             Config config = deserializer.Deserialize<Config>(yaml);
             //正向ws连接

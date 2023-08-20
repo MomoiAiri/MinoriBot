@@ -34,7 +34,7 @@ namespace MinoriBot.Library.Messages
         /// 
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="fileType">0:网页链接，1:本地链接</param>
+        /// <param name="fileType">0:网页链接，1:本地链接，3：base64编码</param>
         /// <returns></returns>
         public MessageBuilder WithImage(string file, int fileType)
         {
@@ -45,6 +45,10 @@ namespace MinoriBot.Library.Messages
             if (fileType == 1)
             {
                 _stringBuilder.Append($"[CQ:image,file=file:///{file}]");
+            }
+            if (fileType == 2)
+            {
+                _stringBuilder.Append($"[CQ:image,file=base64://{file}]");
             }
             return this;
         }
