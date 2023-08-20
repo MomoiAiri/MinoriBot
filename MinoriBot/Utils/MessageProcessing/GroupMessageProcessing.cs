@@ -71,7 +71,10 @@ namespace MinoriBot.Utils.MessageProcessing
             if (rawMessage.ToLower().StartsWith("sk查卡"))
             {
                 string message = rawMessage.Substring(5);
-                string reply = await SearchInfo.SearchCharacter(message);
+                string file = await SearchInfo.SearchCharacter(message);
+                MessageBuilder messageBuilder = new MessageBuilder();
+                string reply = messageBuilder.WithImage($"{file}",2).ToString();
+                //Console.WriteLine(reply);
                 return reply;
             }
             if (rawMessage.ToLower()=="t10")

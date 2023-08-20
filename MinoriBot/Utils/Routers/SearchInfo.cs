@@ -22,14 +22,14 @@ namespace MinoriBot.Utils.Routers
             }
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
-            StringBuilder sb = new StringBuilder();
-            foreach (SkCard card in cards)
-            {
-                sb.Append(card.prefix + "\n");
-            }
+            //StringBuilder sb = new StringBuilder();
+            //foreach (SkCard card in cards)
+            //{
+            //    sb.Append(card.prefix + "\n");
+            //}
             ImageCreater imageCreater = new ImageCreater();
-            await imageCreater.DrawCardIconLine(cards,true);
-            return sb.ToString();
+            string file = await imageCreater.DrawCardIconLine(cards,true);
+            return file;
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
         {

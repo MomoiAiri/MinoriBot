@@ -10,9 +10,11 @@ namespace MinoriBot.Utils
 {
     public class ImageCreater
     {
-        public async Task DrawCardIconLine(List<SkCard> cards,bool isTrained)
+        public async Task<string> DrawCardIconLine(List<SkCard> cards,bool isTrained)
         {
             string fileDirectory = "./asset/normal";
+            //string result = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+".png";
+            string base64String = string.Empty;
             //根据角色ID与属性进行分类
             Dictionary<int,Dictionary<string,List<SkCard>>> classifiedCards = new Dictionary<int, Dictionary<string, List<SkCard>>>();
             foreach (SkCard card in cards)
@@ -54,6 +56,7 @@ namespace MinoriBot.Utils
             Console.WriteLine($"需要输出{line}行图片，最长的一行有{maxLineCount}张卡");
             int width = 168 + (156 + 15) * maxLineCount;
             int height = 40 + (180 + 15) * line - 15;
+            Console.WriteLine("开始生成图片");
             using(SKBitmap bitmap = new SKBitmap(width, height))
             {
                 using(SKCanvas canvas = new SKCanvas(bitmap))
@@ -78,14 +81,17 @@ namespace MinoriBot.Utils
                         }
                         x = 20;
                     }
-                    using (var image = SKImage.FromBitmap(bitmap))
-                    using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                    using (var stream = File.OpenWrite("./asset/temp/output.png"))
-                    {
-                        data.SaveTo(stream);
-                    }
+                    //using (var image = SKImage.FromBitmap(bitmap))
+                    //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                    //using (var stream = File.OpenWrite($"./asset/temp/{result}"))
+                    //{
+                    //    data.SaveTo(stream);
+                    //    Console.WriteLine("图片生成完成");
+                    //}
+                    base64String = ConvertBitmapToBase64(bitmap);
                 }
             }
+            return base64String;
         }
         public async Task<SKBitmap> DrawCardIcon(SkCard card, bool isTrained)
         {
@@ -164,6 +170,23 @@ namespace MinoriBot.Utils
             if (attr == "mysterious") return 4;
             if (attr == "pure") return 5;
             return 0;
+        }
+        /// <summary>
+        /// 将SkBitmap转换成Base64
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public string ConvertBitmapToBase64(SKBitmap bitmap)
+        {
+            using (var image = SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode())
+            {
+                using (var stream = new MemoryStream())
+                {
+                    data.SaveTo(stream);
+                    return Convert.ToBase64String(stream.ToArray());
+                }
+            }
         }
     }
 }
