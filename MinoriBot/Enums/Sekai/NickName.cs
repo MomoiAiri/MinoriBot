@@ -23,8 +23,6 @@ namespace MinoriBot.Enums.Sekai
             {"望月穗波",3 },
             {"穗波",3 },
             {"穗妈",3 },
-            {"妈妈",3 },
-            {"上田",3 },
             {"mochizukihonami",3 },
             {"honami",3 },
             {"hnm",3 },
@@ -90,8 +88,6 @@ namespace MinoriBot.Enums.Sekai
             {"晓山瑞希",20 },
             {"mzk",20 },
             {"瑞希哥",20 }
-
-
         };
         public static Dictionary<string, string> attribute = new Dictionary<string, string>
         {
