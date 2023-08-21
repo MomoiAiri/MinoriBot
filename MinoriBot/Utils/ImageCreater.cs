@@ -2,6 +2,7 @@
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,13 @@ namespace MinoriBot.Utils
 {
     public class ImageCreater
     {
-        public async Task<string> DrawCardIconLine(List<SkCard> cards,bool isTrained)
+        /// <summary>
+        /// 画查卡列表
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="isTrained"></param>
+        /// <returns></returns>
+        public async Task<string> DrawCardIconList(List<SkCard> cards,bool isTrained)
         {
             string fileDirectory = "./asset/normal";
             //string result = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+".png";
@@ -81,18 +88,55 @@ namespace MinoriBot.Utils
                         }
                         x = 20;
                     }
-                    //using (var image = SKImage.FromBitmap(bitmap))
-                    //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                    //using (var stream = File.OpenWrite($"./asset/temp/{result}"))
-                    //{
-                    //    data.SaveTo(stream);
-                    //    Console.WriteLine("图片生成完成");
-                    //}
                     base64String = ConvertBitmapToBase64(bitmap);
                 }
             }
             return base64String;
         }
+        public async Task<string> DrawCardInfo(SkCard card)
+        {
+            string assetDir = "./asset/normal";
+            string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
+            using(SKBitmap bitmap = new SKBitmap(1000, 3000))
+            {
+                using(SKCanvas canvas = new SKCanvas(bitmap))
+                {
+                    canvas.Clear(SKColors.White);
+                    int x = 100;
+                    int y = 50;
+                    //标题背景颜色填充
+                    using (SKPaint paint = new SKPaint())
+                    {
+                        paint.Color = new SKColor(235, 235, 235);
+                        paint.IsAntialias = true;
+                        paint.Style = SKPaintStyle.Fill;
+                        canvas.DrawRect(new SKRect(x, y, x + 800, y + 130), paint);
+                    }
+                    //团体logo
+                    canvas.DrawBitmap(SKBitmap.Decode(logoDir), new SKRect(150, 60, 410, 160));
+                    //卡牌名与角色名
+                    using(SKPaint paint = new SKPaint())
+                    {
+                        paint.TextSize = 24;
+                        paint.Color = SKColors.Black;
+                        paint.TextAlign = SKTextAlign.Left;
+                        string text = card.prefix;
+                        canvas.DrawText(text, 470, 100, paint);
+                        paint.TextSize = 26;
+                        text = NickName.idToName[card.id];
+                        canvas.DrawText(text, 470, 155, paint);
+                    }
+
+                }
+                return ConvertBitmapToBase64(bitmap);
+            }
+        }
+        /// <summary>
+        /// 画卡牌头像
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="isTrained"></param>
+        /// <returns></returns>
         public async Task<SKBitmap> DrawCardIcon(SkCard card, bool isTrained)
         {
             string trainingStatus = isTrained ? "after_training" : "normal";
@@ -170,6 +214,23 @@ namespace MinoriBot.Utils
             if (attr == "mysterious") return 4;
             if (attr == "pure") return 5;
             return 0;
+        }
+        /// <summary>
+        /// 对卡面插图进行裁剪
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public SKBitmap CropCardIllustrationImage(SKBitmap input)
+        {
+            SKRectI cropRect = new SKRectI(0, 54, input.Width, input.Height - 54 - 55);
+            using(SKBitmap output = new SKBitmap(cropRect.Width, cropRect.Height))
+            {
+                using(SKCanvas canvas = new SKCanvas(output))
+                {
+                    canvas.DrawBitmap(input, cropRect, new SKRectI(0, 0, output.Width, output.Height));
+                    return output;
+                }
+            }
         }
         /// <summary>
         /// 将SkBitmap转换成Base64

@@ -55,6 +55,12 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {"24","https://sekai.best/assets/chr_ts_24.5b4a2497.png" },
             {"25","https://sekai.best/assets/chr_ts_25.83d109af.png" },
             {"26","https://sekai.best/assets/chr_ts_26.ce9e612d.png" },
+            {"logo_mmj","https://sekai.best/images/jp/logol_outline/logo_idol.png" },
+            {"logo_ln","https://sekai.best/images/jp/logol_outline/logo_light_sound.png" },
+            {"logo_vs","https://sekai.best/images/jp/logol_outline/logo_piapro.png" },
+            {"logo_25","https://sekai.best/images/jp/logol_outline/logo_school_refusal.png" },
+            {"logo_vbs","https://sekai.best/images/jp/logol_outline/logo_street.png" },
+            {"logo_ws","https://sekai.best/images/jp/logol_outline/logo_theme_park.png" }
         };
         static string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         static List<String> pathList;

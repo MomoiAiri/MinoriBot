@@ -72,6 +72,10 @@ namespace MinoriBot.Utils.MessageProcessing
             {
                 string message = rawMessage.Substring(5);
                 string file = await SearchInfo.SearchCharacter(message);
+                if (file == "error")
+                {
+                    return "无有效关键词";
+                }
                 MessageBuilder messageBuilder = new MessageBuilder();
                 string reply = messageBuilder.WithImage($"{file}",2).ToString();
                 //Console.WriteLine(reply);

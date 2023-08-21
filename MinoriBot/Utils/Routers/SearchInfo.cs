@@ -13,22 +13,38 @@ namespace MinoriBot.Utils.Routers
     {
         public static async Task<string> SearchCharacter(string messgae)
         {
+            if(int.TryParse(messgae,out int cardId))
+            {
+                bool isFound = false;
+                for(int i = 0;i<SkDataBase.skCards.Count;i++)
+                {
+                    if (SkDataBase.skCards[i].id == cardId)
+                    {
+                        isFound = true;
+                        ImageCreater creater = new ImageCreater();
+                        return await creater.DrawCardInfo(SkDataBase.skCards[i]);
+                    }
+                }
+                if (!isFound)
+                {
+                    return "error";
+                }
+            }
             string[] keywords = messgae.Split(' ');
             //将模糊的关键词转换成唯一的关键词
             Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
+            if(keys.Count== 0)
+            {
+                return "error";
+            }
             foreach(KeyValuePair<string,string> dic in keys)
             {
                 Console.WriteLine($"{dic.Key}:{dic.Value}");
             }
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
-            //StringBuilder sb = new StringBuilder();
-            //foreach (SkCard card in cards)
-            //{
-            //    sb.Append(card.prefix + "\n");
-            //}
             ImageCreater imageCreater = new ImageCreater();
-            string file = await imageCreater.DrawCardIconLine(cards,true);
+            string file = await imageCreater.DrawCardIconList(cards,true);
             return file;
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
