@@ -107,6 +107,78 @@ namespace MinoriBot.Enums.Sekai
             }
         }
         /// <summary>
+        /// 获取卡面插图
+        /// </summary>
+        /// <returns></returns>
+        public async Task<SKBitmap[]> GetCardIllustrationImage()
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string fileDirectory = basePath + $"asset/character/member/{assetbundleName}_rip";
+            string filePath1 = fileDirectory + "/card_normal.png";
+            string filePath2 = fileDirectory + "/card_after_training.png";
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            SKBitmap[] sKBitmap = new SKBitmap[2];
+            if (File.Exists(filePath1))
+            {
+                sKBitmap[0] = SKBitmap.Decode(filePath1);
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/character/member/{assetbundleName}_rip/card_normal.png");
+
+                        using (FileStream fileStream = new FileStream(filePath1, FileMode.Create))
+                        {
+                            await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                            Console.WriteLine($"保存图片{assetbundleName}_normal成功");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Download Image Failed" + e);
+                        return null;
+                    }
+                }
+                sKBitmap[0] = SKBitmap.Decode(filePath1);
+            }
+            if (GetStarsCount() >= 3)
+            {
+                if (File.Exists(filePath2))
+                {
+                    sKBitmap[1] = SKBitmap.Decode(filePath1);
+                }
+                else
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/character/member/{assetbundleName}_rip/card_after_training.png");
+
+                            using (FileStream fileStream = new FileStream(filePath2, FileMode.Create))
+                            {
+                                await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                                Console.WriteLine($"保存图片{assetbundleName}_after_training成功");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Download Image Failed" + e);
+                            return null;
+                        }
+                    }
+                    sKBitmap[1] = SKBitmap.Decode(filePath2);
+                }
+            }
+            return sKBitmap;
+        }
+        /// <summary>
         /// 获取卡牌的星级，0为生日卡
         /// </summary>
         /// <returns></returns>
