@@ -98,11 +98,23 @@ namespace MinoriBot.Utils
             Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
             string assetDir = "./asset/normal";
             string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
+            string cardFrameDir = string.Empty;
+            int starCount = card.GetStarsCount();
+            if (starCount > 0)
+            {
+                cardFrameDir = assetDir + $"/cardFrame_{starCount}.png";
+            }
+            else
+            {
+                cardFrameDir = assetDir + "/cardFrame_bd.png";
+            }
             using(SKBitmap bitmap = new SKBitmap(1000, 3000))
             {
                 using(SKCanvas canvas = new SKCanvas(bitmap))
                 {
+                    SKPaint highQuality = new SKPaint() { IsAntialias= true ,FilterQuality =SKFilterQuality.High};
                     canvas.Clear(SKColors.White);
+                    //x,y为当前所操作区块的左上角坐标
                     int x = 100;
                     int y = 50;
                     //标题背景颜色填充
@@ -115,7 +127,8 @@ namespace MinoriBot.Utils
                     }
                     //团体logo
                     SKBitmap logoImage = SKBitmap.Decode(logoDir);
-                    canvas.DrawBitmap(logoImage, new SKRect(150, 60, 410, 260 / logoImage.Width * logoImage.Height + 60));
+                    float logo_y = 260f / logoImage.Width * logoImage.Height + 60f;
+                    canvas.DrawBitmap(logoImage, new SKRect(150, 60, 410, logo_y), highQuality);
                     //卡牌名与角色名
                     using (SKTypeface typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"))
                     {
@@ -133,7 +146,45 @@ namespace MinoriBot.Utils
                             canvas.DrawText(text, 470, 155, paint);
                         }
                     }
+                    //画卡面插图 卡面大小900*506 星星大小48*47
+                    x = 50;
+                    y = 200;
+                    List<SKBitmap> cardIllustrationImage = await card.GetCardIllustrationImage();
+                    List<SKBitmap> cardIllustrationImage_afterCropping = new List<SKBitmap>();
+                    for(int i =0;i<cardIllustrationImage.Count;i++)
+                    {
+                        cardIllustrationImage_afterCropping.Add(CropCardIllustrationImage(cardIllustrationImage[i]));
+                    }
+                    canvas.DrawBitmap(cardIllustrationImage_afterCropping[0], new SKRect(x, y, x + 900, y + 506), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 900, y + 506), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 830, y, x + 900, y + 70), highQuality);
+                    SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
+                    //生日卡单独处理
+                    if (starCount == 0)
+                    {
+                        canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 442, x + 18 + 48, y + 442 + 47), highQuality);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < starCount; i++)
+                        {
+                            canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
+                        }
+                        if (cardIllustrationImage.Count > 1)
+                        {
+                            y = y + 506 + 20;
+                            SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
+                            canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 900, y + 506), highQuality);
+                            canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 900, y + 506), highQuality);
+                            canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 830, y, x + 900, y + 70), highQuality);
+                            for (int i = 0; i < starCount; i++)
+                            {
+                                canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
+                            }
+                        }
+                    }
                 }
+                Console.WriteLine("生成卡面信息图片成功");
                 return ConvertBitmapToBase64(bitmap);
             }
         }
@@ -150,6 +201,7 @@ namespace MinoriBot.Utils
             SKBitmap bitmap = new SKBitmap(156, 180);
             using (SKCanvas canvas = new SKCanvas(bitmap))
             {
+                SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
                 canvas.Clear(SKColors.White); ;
                 int starCount = card.GetStarsCount();
                 if (starCount < 3)
@@ -161,23 +213,24 @@ namespace MinoriBot.Utils
                 if (starCount > 0)
                 {
                     canvas.DrawBitmap(await card.GetCardIcon(isTrained), new SKRect(0, 0, 156, 156));
-                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/cardIconFrame_{starCount}.png"), new SKRect(0, 0, 156, 156));
+                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/cardIconFrame_{starCount}.png"), new SKRect(0, 0, 156, 156), highQuality);
                     for (int i = 0; i < starCount; i++)
                     {
-                        canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{trainingStatus}_star.png"), new SKRect(10 + i * 25, 121, 35 + i * 25, 146));
+                        canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{trainingStatus}_star.png"), new SKRect(10 + i * 25, 121, 35 + i * 25, 146), highQuality);
                     }
                 }
                 if (starCount == 0)
                 {
                     canvas.DrawBitmap(await card.GetCardIcon(false), new SKRect(0, 0, 156, 156));
-                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/cardIconFrame_bd.png"), new SKRect(0, 0, 156, 156));
-                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/birthday_star.png"), new SKRect(10, 116, 40, 146));
+                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/cardIconFrame_bd.png"), new SKRect(0, 0, 156, 156), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/birthday_star.png"), new SKRect(10, 116, 40, 146), highQuality);
                 }
                 //画属性
-                canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{card.attr}.png"), new SKRect(10, 10, 40, 40));
+                canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{card.attr}.png"), new SKRect(10, 10, 40, 40), highQuality);
                 //添加文字id
                 using (SKPaint paint = new SKPaint())
                 {
+                    paint.IsAntialias = true;
                     paint.TextSize = 20;
                     paint.Color = SKColors.DarkGray;
                     paint.TextAlign = SKTextAlign.Left;
@@ -228,14 +281,12 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public SKBitmap CropCardIllustrationImage(SKBitmap input)
         {
-            SKRectI cropRect = new SKRectI(0, 54, input.Width, input.Height - 54 - 55);
-            using(SKBitmap output = new SKBitmap(cropRect.Width, cropRect.Height))
+            SKRectI cropRect = new SKRectI(0, 54, input.Width, input.Height - 55);
+            SKBitmap output = new SKBitmap(cropRect.Width, cropRect.Height);
+            using (SKCanvas canvas = new SKCanvas(output))
             {
-                using(SKCanvas canvas = new SKCanvas(output))
-                {
-                    canvas.DrawBitmap(input, cropRect, new SKRectI(0, 0, output.Width, output.Height));
-                    return output;
-                }
+                canvas.DrawBitmap(input, cropRect, new SKRectI(0, 0, output.Width, output.Height));
+                return output;
             }
         }
         /// <summary>

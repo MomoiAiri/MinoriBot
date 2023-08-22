@@ -110,7 +110,7 @@ namespace MinoriBot.Enums.Sekai
         /// 获取卡面插图
         /// </summary>
         /// <returns></returns>
-        public async Task<SKBitmap[]> GetCardIllustrationImage()
+        public async Task<List<SKBitmap>> GetCardIllustrationImage()
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string fileDirectory = basePath + $"asset/character/member/{assetbundleName}_rip";
@@ -120,10 +120,10 @@ namespace MinoriBot.Enums.Sekai
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            SKBitmap[] sKBitmap = new SKBitmap[2];
+            List<SKBitmap> sKBitmap = new List<SKBitmap>();
             if (File.Exists(filePath1))
             {
-                sKBitmap[0] = SKBitmap.Decode(filePath1);
+                sKBitmap.Add(SKBitmap.Decode(filePath1));
             }
             else
             {
@@ -145,13 +145,13 @@ namespace MinoriBot.Enums.Sekai
                         return null;
                     }
                 }
-                sKBitmap[0] = SKBitmap.Decode(filePath1);
+                sKBitmap.Add(SKBitmap.Decode(filePath1));
             }
             if (GetStarsCount() >= 3)
             {
                 if (File.Exists(filePath2))
                 {
-                    sKBitmap[1] = SKBitmap.Decode(filePath1);
+                    sKBitmap.Add(SKBitmap.Decode(filePath2));
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace MinoriBot.Enums.Sekai
                             return null;
                         }
                     }
-                    sKBitmap[1] = SKBitmap.Decode(filePath2);
+                    sKBitmap.Add(SKBitmap.Decode(filePath2));
                 }
             }
             return sKBitmap;
