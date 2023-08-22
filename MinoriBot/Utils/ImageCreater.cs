@@ -95,6 +95,7 @@ namespace MinoriBot.Utils
         }
         public async Task<string> DrawCardInfo(SkCard card)
         {
+            Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
             string assetDir = "./asset/normal";
             string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
             using(SKBitmap bitmap = new SKBitmap(1000, 3000))
@@ -113,20 +114,25 @@ namespace MinoriBot.Utils
                         canvas.DrawRect(new SKRect(x, y, x + 800, y + 130), paint);
                     }
                     //团体logo
-                    canvas.DrawBitmap(SKBitmap.Decode(logoDir), new SKRect(150, 60, 410, 160));
+                    SKBitmap logoImage = SKBitmap.Decode(logoDir);
+                    canvas.DrawBitmap(logoImage, new SKRect(150, 60, 410, 260 / logoImage.Width * logoImage.Height + 60));
                     //卡牌名与角色名
-                    using(SKPaint paint = new SKPaint())
+                    using (SKTypeface typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"))
                     {
-                        paint.TextSize = 24;
-                        paint.Color = SKColors.Black;
-                        paint.TextAlign = SKTextAlign.Left;
-                        string text = card.prefix;
-                        canvas.DrawText(text, 470, 100, paint);
-                        paint.TextSize = 26;
-                        text = NickName.idToName[card.id];
-                        canvas.DrawText(text, 470, 155, paint);
+                        using (SKPaint paint = new SKPaint())
+                        {
+                            paint.Typeface = typeface;
+                            paint.IsAntialias = true;
+                            paint.TextSize = 24;
+                            paint.Color = SKColors.Black;
+                            paint.TextAlign = SKTextAlign.Left;
+                            string text = card.prefix;
+                            canvas.DrawText(text, 470, 100, paint);
+                            paint.TextSize = 26;
+                            text = NickName.idToName[card.characterId];
+                            canvas.DrawText(text, 470, 155, paint);
+                        }
                     }
-
                 }
                 return ConvertBitmapToBase64(bitmap);
             }
