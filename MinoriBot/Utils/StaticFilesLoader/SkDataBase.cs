@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -14,8 +15,12 @@ namespace MinoriBot.Utils.StaticFilesLoader
     {
         public static List<SkCard> skCards;
         public static List<SkSkills> skSkills;
+        public static List<SkEvents> skEvents;
+        public static List<SkEventCards> skEventCards;
         static string cardsUri = "https://sekai-world.github.io/sekai-master-db-diff/cards.json";
         static string cardSkillsUri = "https://sekai-world.github.io/sekai-master-db-diff/skills.json";
+        static string eventsUri = "https://sekai-world.github.io/sekai-master-db-diff/events.json";
+        static string eventCardsUri = "https://sekai-world.github.io/sekai-master-db-diff/eventCards.json";
         static System.Timers.Timer timer;
 
         static SkDataBase()
@@ -39,7 +44,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
             }
             else
             {
-                string json =await File.ReadAllTextAsync("./asset/db/cards.json");
+                string json = await File.ReadAllTextAsync("./asset/db/cards.json");
                 skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
             }
             if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/skills.json"))
@@ -51,6 +56,25 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 string json = await File.ReadAllTextAsync("./asset/db/skills.json");
                 skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
             }
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/events.json"))
+            {
+                await GetEventDB();
+            }
+            else
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/events.json");
+                skEvents = JsonConvert.DeserializeObject<List<SkEvents>>(json);
+            }
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/eventCards.json"))
+            {
+                await GetEventCardsDB();
+            }
+            else
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/eventCards.json");
+                skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
+            }
+
             UpdateDB();
         }
         /// <summary>
@@ -92,6 +116,54 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/skills.json", json);
                         skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
+                        Console.WriteLine("获取数据成功");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("出现异常\n" + ex);
+                }
+            }
+        }
+        /// <summary>
+        /// 活动数据
+        /// </summary>
+        /// <returns></returns>
+        static async Task GetEventDB()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    string json = await client.GetStringAsync(eventsUri);
+                    if (json != null)
+                    {
+                        File.WriteAllText("./asset/db/events.json", json);
+                        skEvents = JsonConvert.DeserializeObject<List<SkEvents>>(json);
+                        Console.WriteLine("获取数据成功");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("出现异常\n" + ex);
+                }
+            }
+        }
+        /// <summary>
+        /// 活动卡牌
+        /// </summary>
+        /// <returns></returns>
+        static async Task GetEventCardsDB()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    string json = await client.GetStringAsync(eventCardsUri);
+                    if (json != null)
+                    {
+                        File.WriteAllText("./asset/db/eventCards.json", json);
+                        skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
                         Console.WriteLine("获取数据成功");
                     }
                 }
