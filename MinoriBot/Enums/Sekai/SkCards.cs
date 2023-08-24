@@ -214,6 +214,23 @@ namespace MinoriBot.Enums.Sekai
             if (characterId >= 21 && characterId <= 26) return "vs";
             return "";
         }
+        public int GetMaxLevel()
+        {
+            switch (cardRarityType)
+            {
+                case "rarity_1":
+                    return 20;
+                case "rarity_2":
+                    return 30;
+                case "rarity_3":
+                    return 50;
+                case "rarity_4":
+                    return 60;
+                case "rarity_birthday":
+                    return 60;
+            }
+            return -1;
+        }
         public string GetSkillDescription()
         {
             foreach(SkSkills skill in SkDataBase.skSkills)
@@ -226,7 +243,67 @@ namespace MinoriBot.Enums.Sekai
             }
             return "";
         }
-
+        /// <summary>
+        /// 获取综合力
+        /// </summary>
+        /// <returns></returns>
+        public int[] GetPower()
+        {
+            //四星 小故事 （250+600）*3 突破200*3*5
+            //三星 小故事 （200 + 500）*3 突破150 * 3 * 5
+            //二星 小故事 （150 + 300）*3 突破100 * 3 * 5
+            //一星 小故事 （100 + 200）*3 突破50 * 3 * 5
+            //生日 小故事 （240 + 550）*3 突破180 * 3 * 5
+            int levelCount = GetMaxLevel();
+            int[] power = new int[]
+            { 
+                cardParameters[levelCount - 1].power + specialTrainingPower1BonusFixed,
+                cardParameters[levelCount * 2 - 1].power + specialTrainingPower2BonusFixed, 
+                cardParameters[levelCount * 3 - 1].power + specialTrainingPower3BonusFixed,
+                0
+            };
+            int starCount = GetStarsCount();
+            //增加小故事的综合力提升 数组最后一位是每种属性突破一级的提升
+            switch (starCount)
+            {
+                case 0:
+                    for (int i = 0; i < power.Length - 1; i++)
+                    {
+                        power[i] += 240 + 550;
+                    }
+                    power[3] = 180;
+                    break;
+                case 1:
+                    for (int i = 0; i < power.Length - 1; i++)
+                    {
+                        power[i] += 100 + 200;
+                    }
+                    power[3] = 50;
+                    break;
+                case 2:
+                    for (int i = 0; i < power.Length - 1; i++)
+                    {
+                        power[i] += 150 + 300;
+                    }
+                    power[3] = 100;
+                    break;
+                case 3:
+                    for (int i = 0; i < power.Length - 1; i++)
+                    {
+                        power[i] += 200 + 500;
+                    }
+                    power[3] = 150;
+                    break;
+                case 4:
+                    for (int i = 0; i < power.Length - 1; i++)
+                    {
+                        power[i] += 250 + 600;
+                    }
+                    power[3] = 200;
+                    break;
+            }
+            return power;
+        }
     }
     
 }

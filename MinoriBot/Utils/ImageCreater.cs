@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -114,6 +115,7 @@ namespace MinoriBot.Utils
                 {
                     SKPaint highQuality = new SKPaint() { IsAntialias= true ,FilterQuality =SKFilterQuality.High};
                     canvas.Clear(SKColors.White);
+                    SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true };
                     //x,y为当前所操作区块的左上角坐标
                     int x = 100;
                     int y = 50;
@@ -125,27 +127,22 @@ namespace MinoriBot.Utils
                         paint.Style = SKPaintStyle.Fill;
                         canvas.DrawRect(new SKRect(x, y, x + 800, y + 130), paint);
                     }
+
                     //团体logo
                     SKBitmap logoImage = SKBitmap.Decode(logoDir);
                     float logo_y = 260f / logoImage.Width * logoImage.Height + 60f;
                     canvas.DrawBitmap(logoImage, new SKRect(150, 60, 410, logo_y), highQuality);
+
                     //卡牌名与角色名
-                    using (SKTypeface typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"))
-                    {
-                        using (SKPaint paint = new SKPaint())
-                        {
-                            paint.Typeface = typeface;
-                            paint.IsAntialias = true;
-                            paint.TextSize = 24;
-                            paint.Color = SKColors.Black;
-                            paint.TextAlign = SKTextAlign.Left;
-                            string text = card.prefix;
-                            canvas.DrawText(text, 470, 100, paint);
-                            paint.TextSize = 26;
-                            text = NickName.idToName[card.characterId];
-                            canvas.DrawText(text, 470, 155, paint);
-                        }
-                    }
+                    font.TextSize = 30;
+                    font.Color = SKColors.Black;
+                    font.TextAlign = SKTextAlign.Left;
+                    string text = card.prefix;
+                    canvas.DrawText(text, 470, 100, font);
+                    font.TextSize = 32;
+                    text = NickName.idToName[card.characterId];
+                    canvas.DrawText(text, 470, 145, font);
+
                     //画卡面插图 卡面大小900*506 星星大小48*47
                     x = 50;
                     y = 200;
@@ -170,9 +167,11 @@ namespace MinoriBot.Utils
                         {
                             canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
                         }
+                        y = 726;
+                        //如果有特训后
                         if (cardIllustrationImage.Count > 1)
                         {
-                            y = y + 506 + 20;
+                            y = 200 + 506 + 20;
                             SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
                             canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 900, y + 506), highQuality);
                             canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 900, y + 506), highQuality);
@@ -181,8 +180,35 @@ namespace MinoriBot.Utils
                             {
                                 canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
                             }
+                            y = 1252;
                         }
                     }
+                    //卡面编号
+                    canvas.DrawBitmap(DrawPillShapeTitle("编号"), x, y);
+                    font.TextSize = 50;
+                    canvas.DrawText(card.id.ToString(), x + 25, y + 50 + 60, font);
+                    y += 110 + 50;
+                    //综合力
+                    canvas.DrawBitmap(DrawPillShapeTitle("综合力"), x, y);
+                    font.TextSize = 45;
+                    int[] power = card.GetPower();
+                    canvas.DrawText($"综合力: {power[0] + power[1] + power[2]}  +  ({power[3] * 3 * 5})", x + 25, y + 50 + 45, font);
+                    font.TextSize = 30;
+                    using(SKPaint bar = new SKPaint())
+                    {
+                        bar.IsAntialias = true;
+                        bar.Color = new SKColor(144, 238, 144);
+                        canvas.DrawText($"表现力: {power[0]} + ({power[3] * 5})", x + 25, y + 95 + 30 + 10, font);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 135 + 10, x + 25 + power[0] / 15000f * 850f, y + 145 + 30), 10, 10, bar);
+                        bar.Color = new SKColor(100, 149, 237);
+                        canvas.DrawText($"技术力: {power[1]} + ({power[3] * 5})", x + 25, y + 175 + 30, font);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 205 + 10, x + 25 + power[1] / 15000f * 850f, y + 215 + 30), 10, 10, bar);
+                        bar.Color = new SKColor(147, 112, 219);
+                        canvas.DrawText($"活力: {power[2]} + ({power[3] * 5})", x + 25, y + 245 + 30, font);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 850f, y + 285 + 30), 10, 10, bar);
+                    }
+                    y += 315 + 50;
+                    canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
                 }
                 Console.WriteLine("生成卡面信息图片成功");
                 return ConvertBitmapToBase64(bitmap);
@@ -247,6 +273,11 @@ namespace MinoriBot.Utils
                 return bitmap;
             }
         }
+        /// <summary>
+        /// 对查询到的所有卡牌进行排序
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <returns></returns>
         public Dictionary<int, Dictionary<string, List<SkCard>>> SortDictionary(Dictionary<int, Dictionary<string, List<SkCard>>> cards)
         {
             Dictionary<int, Dictionary<string, List<SkCard>>> result = new Dictionary<int, Dictionary<string, List<SkCard>>>();
@@ -287,6 +318,38 @@ namespace MinoriBot.Utils
             {
                 canvas.DrawBitmap(input, cropRect, new SKRectI(0, 0, output.Width, output.Height));
                 return output;
+            }
+        }
+        /// <summary>
+        /// 画参数标题图标
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public SKBitmap DrawPillShapeTitle(string title)
+        {
+            int width = title.Length * 40 + 50;
+            int height = 50;
+            SKBitmap sKBitmap = new SKBitmap(width, height);
+            using (var canvas = new SKCanvas(sKBitmap))
+            {
+                canvas.Clear(SKColors.Transparent);
+                using (var paint = new SKPaint())
+                {
+                    paint.IsAntialias = true;
+                    paint.Color = SKColors.LightBlue;
+                    var leftCircleRect = SKRect.Create(0, 0, height, height);
+                    canvas.DrawOval(leftCircleRect, paint);
+                    var rectRect = SKRect.Create(height / 2, 0, width - height, height);
+                    canvas.DrawRect(rectRect, paint);
+                    var rightCircleRect = SKRect.Create(width - height, 0, height, height);
+                    canvas.DrawOval(rightCircleRect, paint);
+                    paint.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                    paint.TextSize = 40;
+                    paint.Color = SKColors.White;
+                    paint.TextAlign = SKTextAlign.Left;
+                    canvas.DrawText(title, height / 2, height - 12, paint);
+                }
+                return sKBitmap;
             }
         }
         /// <summary>
