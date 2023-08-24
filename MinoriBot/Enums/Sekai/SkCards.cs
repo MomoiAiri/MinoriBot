@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MinoriBot.Enums.Sekai
@@ -233,15 +234,50 @@ namespace MinoriBot.Enums.Sekai
         }
         public string GetSkillDescription()
         {
+            string description = string.Empty;
             foreach(SkSkills skill in SkDataBase.skSkills)
             {
                 if(skillId == skill.id)
                 {
-                    string description = skill.description;
-                    
+                    description = skill.description;
+                    MatchCollection matches = Regex.Matches(description, @"\{\{([^{}]+)\}\}");
+                    foreach(Match match in matches)
+                    {
+                        string[] code = match.Groups[1].Value.Split(';');
+                        int id = int.Parse(code[0]);
+                        string parameter = code[1];
+                        int index = 0;
+                        string replaceStr = string.Empty;
+                        for (int i = 0; i < skill.skillEffects.Count; i++)
+                        {
+                            if (skill.skillEffects[i].id == id)
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                        switch(parameter)
+                        {
+                            case "d":
+                                replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectDuration.ToString();
+                                break;
+                            case "v":
+                                replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectValue.ToString();
+                                break;
+                            case "e":
+                                replaceStr = skill.skillEffects[index].skillEnhance.activateEffectValue.ToString();
+                                break;
+                            case "m":
+                                replaceStr = "150";
+                                break;
+                        }
+                        description = description.Replace($"{match.Value}", replaceStr);
+                        description = description.Replace("  ", " ");
+                    }
+                    break;
                 }
             }
-            return "";
+            return description;
         }
         /// <summary>
         /// 获取综合力

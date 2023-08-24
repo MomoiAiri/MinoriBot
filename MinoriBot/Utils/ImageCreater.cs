@@ -209,6 +209,13 @@ namespace MinoriBot.Utils
                     }
                     y += 315 + 50;
                     canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
+                    font.TextSize = 40;
+                    string skillDescription = card.GetSkillDescription();
+                    List<string> skillDescriptionList = SplitString(skillDescription, 25);
+                    for (int i = 0; i < skillDescriptionList.Count; i++)
+                    {
+                        canvas.DrawText(skillDescriptionList[i], x + 25, y + 50 + 40 + 40 * i, font);
+                    }
                 }
                 Console.WriteLine("生成卡面信息图片成功");
                 return ConvertBitmapToBase64(bitmap);
@@ -368,6 +375,29 @@ namespace MinoriBot.Utils
                     return Convert.ToBase64String(stream.ToArray());
                 }
             }
+        }
+        /// <summary>
+        /// 字符串换行
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="interval">换行位置</param>
+        /// <returns></returns>
+        public List<string> SplitString(string input, int interval)
+        {
+            List<string> result = new List<string>();
+            string temp = string.Empty;
+            for (int i = 0; i < input.Length; i++)
+            {
+                temp += input[i];
+
+                if (temp.Length == interval || i == input.Length - 1)
+                {
+                    result.Add(temp);
+                    temp = string.Empty;
+                }
+            }
+
+            return result;
         }
     }
 }

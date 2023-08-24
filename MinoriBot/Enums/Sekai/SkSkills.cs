@@ -14,6 +14,7 @@ namespace MinoriBot.Enums.Sekai
         public string descriptionSpriteName;
         public int skillFilterId;
         public List<SkillEffects> skillEffects;
+        
 
         public class SkillEffects
         {
@@ -21,6 +22,7 @@ namespace MinoriBot.Enums.Sekai
             public string skillEffectType;
             public string activateNotesJudgmentType;
             public List<SkillEffectDetails> skillEffectDetails;
+            public SkillEnhance skillEnhance;
 
             public class SkillEffectDetails
             {
@@ -30,6 +32,21 @@ namespace MinoriBot.Enums.Sekai
                 public string activateEffectValueType;//判断类型
                 public int activateEffectValue;//加成数值
             }
+            public class SkillEnhance
+            {
+                public int id;
+                public string skillEnhanceType;
+                public string activateEffectValueType;
+                public int activateEffectValue;
+                public SkillEnhanceCondition skillEnhanceCondition;
+                public class SkillEnhanceCondition
+                {
+                    public int id;
+                    public int seq;
+                    public string unit;
+                }
+            }
         }
+        
     }
 }
