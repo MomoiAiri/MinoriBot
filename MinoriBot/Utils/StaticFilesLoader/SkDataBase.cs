@@ -17,10 +17,14 @@ namespace MinoriBot.Utils.StaticFilesLoader
         public static List<SkSkills> skSkills;
         public static List<SkEvents> skEvents;
         public static List<SkEventCards> skEventCards;
+        public static List<SkEventDeckBonuses> skEventDeckBonuses;
+        public static List<SkGameCharacterUnits> skGameCharacterUnits;
         static string cardsUri = "https://sekai-world.github.io/sekai-master-db-diff/cards.json";
         static string cardSkillsUri = "https://sekai-world.github.io/sekai-master-db-diff/skills.json";
         static string eventsUri = "https://sekai-world.github.io/sekai-master-db-diff/events.json";
         static string eventCardsUri = "https://sekai-world.github.io/sekai-master-db-diff/eventCards.json";
+        static string eventDeckBonusesUri = "https://sekai-world.github.io/sekai-master-db-diff/eventDeckBonuses.json";
+        static string gameCharacterUnitsUri = "https://sekai-world.github.io/sekai-master-db-diff/gameCharacterUnits.json";
         static System.Timers.Timer timer;
 
         static SkDataBase()
@@ -74,7 +78,24 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 string json = await File.ReadAllTextAsync("./asset/db/eventCards.json");
                 skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
             }
-
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/eventDeckBonuses.json"))
+            {
+                await GetEventDeckBonusesDB();
+            }
+            else
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/eventDeckBonuses.json");
+                skEventDeckBonuses = JsonConvert.DeserializeObject<List<SkEventDeckBonuses>>(json);
+            }
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/gameCharacterUnits.json"))
+            {
+                await GetGameCharacterUnitsDB();
+            }
+            else
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/gameCharacterUnits.json");
+                skGameCharacterUnits = JsonConvert.DeserializeObject<List<SkGameCharacterUnits>>(json);
+            }
             UpdateDB();
         }
         /// <summary>
@@ -164,6 +185,50 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/eventCards.json", json);
                         skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
+                        Console.WriteLine("获取数据成功");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("出现异常\n" + ex);
+                }
+            }
+        }
+        /// <summary>
+        /// 活动加成
+        /// </summary>
+        /// <returns></returns>
+        static async Task GetEventDeckBonusesDB()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    string json = await client.GetStringAsync(eventDeckBonusesUri);
+                    if (json != null)
+                    {
+                        File.WriteAllText("./asset/db/eventDeckBonuses.json", json);
+                        skEventDeckBonuses = JsonConvert.DeserializeObject<List<SkEventDeckBonuses>>(json);
+                        Console.WriteLine("获取数据成功");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("出现异常\n" + ex);
+                }
+            }
+        }
+        static async Task GetGameCharacterUnitsDB()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    string json = await client.GetStringAsync(gameCharacterUnitsUri);
+                    if (json != null)
+                    {
+                        File.WriteAllText("./asset/db/gameCharacterUnits.json", json);
+                        skGameCharacterUnits = JsonConvert.DeserializeObject<List<SkGameCharacterUnits>>(json);
                         Console.WriteLine("获取数据成功");
                     }
                 }

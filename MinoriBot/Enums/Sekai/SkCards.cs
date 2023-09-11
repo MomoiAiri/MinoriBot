@@ -259,10 +259,26 @@ namespace MinoriBot.Enums.Sekai
                         switch(parameter)
                         {
                             case "d":
-                                replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectDuration.ToString();
+                                for(int i =0;i< skill.skillEffects[index].skillEffectDetails.Count; i++)
+                                {
+                                    replaceStr += skill.skillEffects[index].skillEffectDetails[i].activateEffectDuration.ToString();
+                                    if(i< skill.skillEffects[index].skillEffectDetails.Count - 1)
+                                    {
+                                        replaceStr += "/";
+                                    }
+                                }
+                                //replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectDuration.ToString();
                                 break;
                             case "v":
-                                replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectValue.ToString();
+                                for (int i = 0; i < skill.skillEffects[index].skillEffectDetails.Count; i++)
+                                {
+                                    replaceStr += skill.skillEffects[index].skillEffectDetails[i].activateEffectValue.ToString();
+                                    if (i < skill.skillEffects[index].skillEffectDetails.Count - 1)
+                                    {
+                                        replaceStr += "/";
+                                    }
+                                }
+                                //replaceStr = skill.skillEffects[index].skillEffectDetails[skill.skillEffects[index].skillEffectDetails.Count - 1].activateEffectValue.ToString();
                                 break;
                             case "e":
                                 replaceStr = skill.skillEffects[index].skillEnhance.activateEffectValue.ToString();
@@ -339,6 +355,33 @@ namespace MinoriBot.Enums.Sekai
                     break;
             }
             return power;
+        }
+        /// <summary>
+        /// 获取卡牌活动出处，返回值为null表示开服卡
+        /// </summary>
+        /// <returns></returns>
+        public SkEvents GetEvent()
+        {
+            int eventId = 0;
+            for (int i = 0; i < SkDataBase.skEventCards.Count; i++)
+            {
+                if(id == SkDataBase.skEventCards[i].cardId)
+                {
+                    eventId = SkDataBase.skEventCards[i].cardId;
+                    break;
+                }
+            }
+            if (eventId != 0)
+            {
+                for(int i = 0; i < SkDataBase.skEvents.Count; i++)
+                {
+                    if(eventId == SkDataBase.skEvents[i].id)
+                    {
+                        return SkDataBase.skEvents[i];
+                    }
+                }
+            }
+            return null;
         }
     }
     

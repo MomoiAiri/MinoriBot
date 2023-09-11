@@ -81,11 +81,19 @@ namespace MinoriBot.Utils.MessageProcessing
                 //Console.WriteLine(reply);
                 return reply;
             }
-            if (rawMessage.ToLower()=="t10")
+            if (rawMessage.ToLower().StartsWith("t10"))
             {
+                int eventId = 210;
+                if (rawMessage.Length > 3)
+                {
+                    if(int.TryParse(rawMessage.Substring(4), out int result))
+                    {
+                        eventId = result;
+                    }
+                }
                 using (var client = new HttpClient())
                 {
-                    string uri = "https://bestdori.com/api/eventtop/data?server=3&event=207&mid=0&interval=3600000";
+                    string uri = $"https://bestdori.com/api/eventtop/data?server=3&event={eventId}&mid=0&interval=3600000";
                     var response = await client.GetAsync(uri);
                     string json = await response.Content.ReadAsStringAsync();
                     LeaderBoard lb = JsonConvert.DeserializeObject<LeaderBoard>(json);
