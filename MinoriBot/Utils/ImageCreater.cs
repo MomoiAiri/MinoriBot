@@ -81,7 +81,7 @@ namespace MinoriBot.Utils
                         {
                             foreach(var card in attrKvp.Value)
                             {
-                                canvas.DrawBitmap(await DrawCardIcon(card, isTrained), new SKRect(x, y, x + 156, y + 180));
+                                canvas.DrawBitmap(await DrawCardIcon(card, isTrained,true), new SKRect(x, y, x + 156, y + 180));
                                 x = x + 156 + 15;
                             }
                             x = 163;
@@ -109,6 +109,7 @@ namespace MinoriBot.Utils
             {
                 cardFrameDir = assetDir + "/cardFrame_bd.png";
             }
+            //计算卡面信息所需要的图片高度
             using(SKBitmap bitmap = new SKBitmap(1000, 3000))
             {
                 using(SKCanvas canvas = new SKCanvas(bitmap))
@@ -189,6 +190,7 @@ namespace MinoriBot.Utils
                     canvas.DrawText(card.id.ToString(), x + 25, y + 50 + 60, font);
                     y += 110 + 50;
                     //综合力
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("综合力"), x, y);
                     font.TextSize = 45;
                     int[] power = card.GetPower();
@@ -208,13 +210,38 @@ namespace MinoriBot.Utils
                         canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 850f, y + 285 + 30), 10, 10, bar);
                     }
                     y += 315 + 50;
+                    //技能
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
                     font.TextSize = 40;
+                    canvas.DrawText(card.cardSkillName, x + 25, y + 50 + 40, font);
+                    y = y + 90;
                     string skillDescription = card.GetSkillDescription();
                     List<string> skillDescriptionList = SplitString(skillDescription, 25);
                     for (int i = 0; i < skillDescriptionList.Count; i++)
                     {
-                        canvas.DrawText(skillDescriptionList[i], x + 25, y + 50 + 40 + 40 * i, font);
+                        canvas.DrawText(skillDescriptionList[i], x + 25, y + 40, font);
+                        y += 40;
+                    }
+                    y += 50;
+                    //招募语
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawPillShapeTitle("招募语"), x, y);
+                    canvas.DrawText(card.gachaPhrase, x + 25, y + 50 + 40, font);
+                    y += 130;
+                    //发布日期
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawPillShapeTitle("发布日期"), x, y);
+                    DateTime releaseTime = DateTimeOffset.FromUnixTimeMilliseconds(card.releaseAt).DateTime;
+                    canvas.DrawText(releaseTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
+                    y += 130;
+                    //缩略图
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawPillShapeTitle("缩略图"), x, y);
+                    canvas.DrawBitmap(await DrawCardIcon(card, false,false), x + 25, y + 50 + 20);
+                    if (starCount > 2)
+                    {
+                        canvas.DrawBitmap(await DrawCardIcon(card, true,false), x + 20 + 156 + 20, y + 50 + 20);
                     }
                 }
                 Console.WriteLine("生成卡面信息图片成功");
@@ -227,7 +254,7 @@ namespace MinoriBot.Utils
         /// <param name="card"></param>
         /// <param name="isTrained"></param>
         /// <returns></returns>
-        public async Task<SKBitmap> DrawCardIcon(SkCard card, bool isTrained)
+        public async Task<SKBitmap> DrawCardIcon(SkCard card, bool isTrained, bool needId)
         {
             string trainingStatus = isTrained ? "after_training" : "normal";
             string fileDirectory = "./asset/normal";
@@ -261,16 +288,18 @@ namespace MinoriBot.Utils
                 //画属性
                 canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{card.attr}.png"), new SKRect(10, 10, 40, 40), highQuality);
                 //添加文字id
-                using (SKPaint paint = new SKPaint())
+                if (needId)
                 {
-                    paint.IsAntialias = true;
-                    paint.TextSize = 20;
-                    paint.Color = SKColors.DarkGray;
-                    paint.TextAlign = SKTextAlign.Left;
-                    string text = "ID:" + card.id.ToString();
-                    canvas.DrawText(text, 5, 175, paint);
+                    using (SKPaint paint = new SKPaint())
+                    {
+                        paint.IsAntialias = true;
+                        paint.TextSize = 20;
+                        paint.Color = SKColors.DarkGray;
+                        paint.TextAlign = SKTextAlign.Left;
+                        string text = "ID:" + card.id.ToString();
+                        canvas.DrawText(text, 5, 175, paint);
+                    }
                 }
-
                 //using (var image = SKImage.FromBitmap(bitmap))
                 //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 //using (var stream = File.OpenWrite($"./asset/temp/{card.id}.png"))
@@ -358,6 +387,41 @@ namespace MinoriBot.Utils
                 }
                 return sKBitmap;
             }
+        }
+        public SKBitmap DrawEventLogo(int eventId ,bool needBonus)
+        {
+            int width = 900;
+            int height = 500;
+            if (needBonus)
+            {
+                height = 600;
+            }
+            SKBitmap eventlogo = new SKBitmap(width, height);
+            using(var canvas = new SKCanvas(eventlogo))
+            {
+
+            }
+            return eventlogo;
+        }
+        public SKBitmap DrawDottedLine(int width,int height)
+        {
+            SKBitmap dottedline = new SKBitmap(width, height);
+            using(var canvas = new SKCanvas(dottedline))
+            using(var paint = new SKPaint())
+            {
+                paint.IsAntialias = true;
+                paint.Color = SKColors.LightGray;
+                paint.StrokeWidth = height;
+                paint.Style = SKPaintStyle.Stroke;
+                paint.StrokeCap = SKStrokeCap.Round;
+                float[] intervals = new float[] { 1, 20 };
+                SKPath path =new SKPath();
+                path.MoveTo(height/2f, height / 2f);
+                path.LineTo(width, height / 2f);
+                paint.PathEffect = SKPathEffect.CreateDash(intervals, 0);
+                canvas.DrawPath(path, paint);
+            }
+            return dottedline;
         }
         /// <summary>
         /// 将SkBitmap转换成Base64
