@@ -63,7 +63,7 @@ namespace MinoriBot.Enums.Sekai
                 {
                     try
                     {
-                        byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/home/banner/{assetbundleName}_rip/{assetbundleName}.png");
+                        byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/home/banner/{assetbundleName}_rip/{assetbundleName}.png");
 
                         using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
                         {
@@ -90,7 +90,7 @@ namespace MinoriBot.Enums.Sekai
             List<int> bunusCharacter = new List<int>();
             for(int i = 0; i < SkDataBase.skEventDeckBonuses.Count; i++)
             {
-                if(id == SkDataBase.skEventDeckBonuses[i].eventId)
+                if (id == SkDataBase.skEventDeckBonuses[i].eventId && SkDataBase.skEventDeckBonuses[i].cardAttr == null)
                 {
                     int charcterid = CharacterUnitIdToCharacterId(SkDataBase.skEventDeckBonuses[i].gameCharacterUnitId);
                     if (charcterid > 0)
@@ -101,6 +101,17 @@ namespace MinoriBot.Enums.Sekai
             }
             return bunusCharacter;
         }
+        public double GetBunusCharacterRate()
+        {
+            for (int i = 0; i < SkDataBase.skEventDeckBonuses.Count; i++)
+            {
+                if (id == SkDataBase.skEventDeckBonuses[i].eventId && SkDataBase.skEventDeckBonuses[i].cardAttr == null)
+                {
+                    return SkDataBase.skEventDeckBonuses[i].bonusRate;
+                }
+            }
+            return 0;
+        }
         /// <summary>
         /// 获取当期加成颜色
         /// </summary>
@@ -109,12 +120,23 @@ namespace MinoriBot.Enums.Sekai
         {
             for (int i = 0; i < SkDataBase.skEventDeckBonuses.Count; i++)
             {
-                if (id == SkDataBase.skEventDeckBonuses[i].eventId&& SkDataBase.skEventDeckBonuses[i].cardAttr!="")
+                if (id == SkDataBase.skEventDeckBonuses[i].eventId&& SkDataBase.skEventDeckBonuses[i].cardAttr!=null)
                 {
                     return SkDataBase.skEventDeckBonuses[i].cardAttr;
                 }
             }
             return "";
+        }
+        public double GetBunusAttRate()
+        {
+            for (int i = 0; i < SkDataBase.skEventDeckBonuses.Count; i++)
+            {
+                if (id == SkDataBase.skEventDeckBonuses[i].eventId && SkDataBase.skEventDeckBonuses[i].cardAttr != null&& SkDataBase.skEventDeckBonuses[i].gameCharacterUnitId==0)
+                {
+                    return SkDataBase.skEventDeckBonuses[i].bonusRate;
+                }
+            }
+            return 0;
         }
         public int CharacterUnitIdToCharacterId(int characterUnitId)
         {

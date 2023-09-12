@@ -367,7 +367,7 @@ namespace MinoriBot.Enums.Sekai
             {
                 if(id == SkDataBase.skEventCards[i].cardId)
                 {
-                    eventId = SkDataBase.skEventCards[i].cardId;
+                    eventId = SkDataBase.skEventCards[i].eventId;
                     break;
                 }
             }

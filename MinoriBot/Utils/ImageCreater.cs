@@ -1,4 +1,5 @@
-﻿using MinoriBot.Enums.Sekai;
+﻿using Microsoft.Extensions.Logging;
+using MinoriBot.Enums.Sekai;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -243,6 +244,12 @@ namespace MinoriBot.Utils
                     {
                         canvas.DrawBitmap(await DrawCardIcon(card, true,false), x + 20 + 156 + 20, y + 50 + 20);
                     }
+                    y = y + 70 + 156 + 40;
+                    //相关活动
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
+                    SkEvents skEvent = card.GetEvent();
+                    canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x , y + 50);
                 }
                 Console.WriteLine("生成卡面信息图片成功");
                 return ConvertBitmapToBase64(bitmap);
@@ -388,7 +395,7 @@ namespace MinoriBot.Utils
                 return sKBitmap;
             }
         }
-        public SKBitmap DrawEventLogo(int eventId ,bool needBonus)
+        public async Task<SKBitmap> DrawEventLogo(SkEvents skEvnet ,bool needBonus)
         {
             int width = 900;
             int height = 500;
@@ -398,8 +405,44 @@ namespace MinoriBot.Utils
             }
             SKBitmap eventlogo = new SKBitmap(width, height);
             using(var canvas = new SKCanvas(eventlogo))
+            using (var paint = new SKPaint())
             {
-
+                paint.IsAntialias = true;
+                paint.FilterQuality = SKFilterQuality.High;
+                SKBitmap eventface = await skEvnet.GetEventLogo();
+                canvas.DrawBitmap(eventface, 25, 25, paint);
+                SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true };
+                font.TextSize = 40;
+                canvas.DrawText($"类型: {skEvnet.eventType}    ID: {skEvnet.id}", 25, eventface.Height + 25 + 40, font);
+                if (needBonus)
+                {
+                    SKBitmap attr = SKBitmap.Decode($"./asset/normal/{skEvnet.GetBunusAttr()}.png");
+                    canvas.DrawBitmap(attr, new SKRect(25 + eventface.Width + 25, 25, 25 + eventface.Width + 75, 75), paint);
+                    canvas.DrawText($"+{(int)skEvnet.GetBunusAttRate()}%", 100 + eventface.Width + 25, 25 + 40, font);
+                    List<int> characterIds = skEvnet.GetBunusCharacters();
+                    int charaIconY = 100;
+                    int charaIconLeftX = eventface.Width + 50;
+                    for (int i = 0; i < characterIds.Count; i++)
+                    {
+                        if (charaIconLeftX + 50 > width)
+                        {
+                            charaIconY += 55;
+                            charaIconLeftX = eventface.Width + 50;
+                        }
+                        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{characterIds[i]}.png"), new SKRect(charaIconLeftX, charaIconY, 50 + charaIconLeftX, charaIconY + 50), paint);
+                        charaIconLeftX += 55;
+                    }
+                    if (charaIconLeftX + 100 > width)
+                    {
+                        charaIconY += 60;
+                        charaIconLeftX = eventface.Width + 50;
+                    }
+                    else
+                    {
+                        charaIconLeftX += 25;
+                    }
+                    canvas.DrawText($"+{(int)skEvnet.GetBunusCharacterRate()}%", charaIconLeftX, charaIconY + 40, font);
+                }
             }
             return eventlogo;
         }
