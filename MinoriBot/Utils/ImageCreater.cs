@@ -395,21 +395,23 @@ namespace MinoriBot.Utils
                 return sKBitmap;
             }
         }
+        /// <summary>
+        /// 活动简图
+        /// </summary>
+        /// <param name="skEvnet"></param>
+        /// <param name="needBonus"></param>
+        /// <returns></returns>
         public async Task<SKBitmap> DrawEventLogo(SkEvents skEvnet ,bool needBonus)
         {
+            SKBitmap eventface = await skEvnet.GetEventLogo();
             int width = 900;
-            int height = 500;
-            if (needBonus)
-            {
-                height = 600;
-            }
+            int height = 25+40+eventface.Height;
             SKBitmap eventlogo = new SKBitmap(width, height);
             using(var canvas = new SKCanvas(eventlogo))
             using (var paint = new SKPaint())
             {
                 paint.IsAntialias = true;
                 paint.FilterQuality = SKFilterQuality.High;
-                SKBitmap eventface = await skEvnet.GetEventLogo();
                 canvas.DrawBitmap(eventface, 25, 25, paint);
                 SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true };
                 font.TextSize = 40;
