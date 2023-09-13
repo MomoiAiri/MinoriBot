@@ -97,6 +97,9 @@ namespace MinoriBot.Utils
         }
         public async Task<string> DrawCardInfo(SkCard card)
         {
+            int width = 1000;
+            int height = 0;
+            int cardIllustrationImageCount = 0;
             Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
             string assetDir = "./asset/normal";
             string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
@@ -110,8 +113,15 @@ namespace MinoriBot.Utils
             {
                 cardFrameDir = assetDir + "/cardFrame_bd.png";
             }
+            cardIllustrationImageCount = starCount > 2 ? 2 : 1;
             //计算卡面信息所需要的图片高度
-            using(SKBitmap bitmap = new SKBitmap(1000, 3000))
+            string skillDescription = card.GetSkillDescription();
+            List<string> skillDescriptionList = SplitString(skillDescription, 25);
+            SkEvents skEvent = card.GetEvent();
+            int hasEvent = skEvent == null ? 0 : 1;
+            //200标题,526一张插图与空隙，160编号，370综合力，140+40*技能描述行数,130招募语，130发布日期，266缩略图，370*hasEvent是否有活动图
+            height = 200 + 526 * cardIllustrationImageCount + 160 + 370 + 140 + 40 * skillDescriptionList.Count + 130 + 130 + 266 + 370 * hasEvent;
+            using (SKBitmap bitmap = new SKBitmap(1000, height))
             {
                 using(SKCanvas canvas = new SKCanvas(bitmap))
                 {
@@ -162,6 +172,7 @@ namespace MinoriBot.Utils
                     if (starCount == 0)
                     {
                         canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 442, x + 18 + 48, y + 442 + 47), highQuality);
+                        y = 726;
                     }
                     else
                     {
@@ -217,8 +228,6 @@ namespace MinoriBot.Utils
                     font.TextSize = 40;
                     canvas.DrawText(card.cardSkillName, x + 25, y + 50 + 40, font);
                     y = y + 90;
-                    string skillDescription = card.GetSkillDescription();
-                    List<string> skillDescriptionList = SplitString(skillDescription, 25);
                     for (int i = 0; i < skillDescriptionList.Count; i++)
                     {
                         canvas.DrawText(skillDescriptionList[i], x + 25, y + 40, font);
@@ -246,10 +255,12 @@ namespace MinoriBot.Utils
                     }
                     y = y + 70 + 156 + 40;
                     //相关活动
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
-                    canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
-                    SkEvents skEvent = card.GetEvent();
-                    canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x , y + 50);
+                    if (skEvent != null)
+                    {
+                        canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                        canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
+                        canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 50);
+                    }
                 }
                 Console.WriteLine("生成卡面信息图片成功");
                 return ConvertBitmapToBase64(bitmap);
@@ -405,7 +416,7 @@ namespace MinoriBot.Utils
         {
             SKBitmap eventface = await skEvnet.GetEventLogo();
             int width = 900;
-            int height = 25+40+eventface.Height;
+            int height = 25+45+eventface.Height;
             SKBitmap eventlogo = new SKBitmap(width, height);
             using(var canvas = new SKCanvas(eventlogo))
             using (var paint = new SKPaint())
@@ -448,6 +459,12 @@ namespace MinoriBot.Utils
             }
             return eventlogo;
         }
+        /// <summary>
+        /// 画虚线
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         public SKBitmap DrawDottedLine(int width,int height)
         {
             SKBitmap dottedline = new SKBitmap(width, height);

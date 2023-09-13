@@ -4,6 +4,7 @@ using MinoriBot.Library.Messages;
 using MinoriBot.Library.Reports;
 using MinoriBot.Utils.PicFunction;
 using MinoriBot.Utils.Routers;
+using MinoriBot.Utils.StaticFilesLoader;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,10 @@ namespace MinoriBot.Utils.MessageProcessing
                     MessageBuilder messageBuilder = new MessageBuilder();
                     messageBuilder.WithText(cqCode);
                     return messageBuilder.ToString();
+                }
+                if (command.ToLower() == "sk更新")
+                {
+                    return await SkDataBase.UpdateDB_Command();
                 }
                 if (command.Contains("来点")&& command.Contains("涩图"))
                 {

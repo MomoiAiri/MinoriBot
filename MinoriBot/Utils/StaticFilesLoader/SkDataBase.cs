@@ -1,7 +1,9 @@
-﻿using MinoriBot.Enums.Sekai;
+﻿using Microsoft.Extensions.Logging;
+using MinoriBot.Enums.Sekai;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Reflection;
@@ -113,7 +115,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/cards.json", json);
                         skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取cards.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -137,7 +139,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/skills.json", json);
                         skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取skill.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -161,7 +163,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/events.json", json);
                         skEvents = JsonConvert.DeserializeObject<List<SkEvents>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取event.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -185,7 +187,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/eventCards.json", json);
                         skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取eventCards.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -209,7 +211,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/eventDeckBonuses.json", json);
                         skEventDeckBonuses = JsonConvert.DeserializeObject<List<SkEventDeckBonuses>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取eventDeckBonuses.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -229,7 +231,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
                     {
                         File.WriteAllText("./asset/db/gameCharacterUnits.json", json);
                         skGameCharacterUnits = JsonConvert.DeserializeObject<List<SkGameCharacterUnits>>(json);
-                        Console.WriteLine("获取数据成功");
+                        Console.WriteLine("DateBase:获取gameCharacterUnits.json成功");
                     }
                 }
                 catch (Exception ex)
@@ -246,12 +248,35 @@ namespace MinoriBot.Utils.StaticFilesLoader
             timer = new System.Timers.Timer();
             int intervalInMilliseconds = 60 * 60 * 1000;
             timer.Interval = intervalInMilliseconds;
-            timer.Elapsed += async (sender, e) => await UpdateCards(sender, e); 
+            timer.Elapsed += async (sender, e) => await UpdateDB(sender, e); 
             timer.Start();
         }
-        static async Task UpdateCards(object sender,ElapsedEventArgs e)
+        static async Task UpdateDB(object sender,ElapsedEventArgs e)
         {
+            Console.WriteLine("DataBase:正在更新数据库");
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             await GetCardsDB();
+            await GetCardSkillDB();
+            await GetEventDB();
+            await GetEventCardsDB();
+            await GetEventDeckBonusesDB();
+            await GetGameCharacterUnitsDB();
+            stopwatch.Stop();
+            Console.WriteLine($"DataBase:更新数据库执行完成，花费时间{stopwatch.ElapsedMilliseconds/1000}秒");
+        }
+        public static async Task<string> UpdateDB_Command()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            await GetCardsDB();
+            await GetCardSkillDB();
+            await GetEventDB();
+            await GetEventCardsDB();
+            await GetEventDeckBonusesDB();
+            await GetGameCharacterUnitsDB();
+            stopwatch.Stop();
+            return $"更新数据库执行完成，花费时间{stopwatch.ElapsedMilliseconds / 1000}秒";
         }
     }
 }
