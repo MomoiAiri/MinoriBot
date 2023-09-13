@@ -268,6 +268,26 @@ namespace MinoriBot.Utils
             }
         }
         /// <summary>
+        /// 活动列表
+        /// </summary>
+        /// <param name="skEvents"></param>
+        /// <returns></returns>
+        public async Task<string> DrawEventList(List<SkEvents> skEvents)
+        {
+
+            return "";
+        }
+        /// <summary>
+        /// 活动信息
+        /// </summary>
+        /// <param name="skEvent"></param>
+        /// <returns></returns>
+        public async Task<string> DrawEventInfo(SkEvents skEvent)
+        {
+
+            return "";
+        }
+        /// <summary>
         /// 画卡牌头像
         /// </summary>
         /// <param name="card"></param>

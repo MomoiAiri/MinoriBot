@@ -162,7 +162,9 @@ namespace MinoriBot.Enums.Sekai
             {"vbs","vbs" },
             {"ws","ws" },
             {"25时","25" },
-            {"25","25" }
+            {"25","25" },
+            {"混活","mix" },
+            {"混","mix" }
         };
         public static Dictionary<string, string> stars = new Dictionary<string, string>()
         {
@@ -176,6 +178,12 @@ namespace MinoriBot.Enums.Sekai
             {"4x","rarity_4" },
             {"生日","rarity_birthday" },
             {"bd","rarity_birthday" }
+        };
+        public static Dictionary<string, string> eventType = new Dictionary<string, string>()
+        {
+            {"协力","marathon" },
+            {"5v5","cheerful_carnival" },
+            {"5V5","cheerful_carnival" }
         };
         /// <summary>
         /// 根据昵称查找角色ID

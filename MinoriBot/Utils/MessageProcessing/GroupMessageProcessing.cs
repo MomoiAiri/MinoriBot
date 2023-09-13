@@ -86,6 +86,19 @@ namespace MinoriBot.Utils.MessageProcessing
                 //Console.WriteLine(reply);
                 return reply;
             }
+            if (rawMessage.ToLower().StartsWith("sk查活动"))
+            {
+                string message = rawMessage.Substring(5);
+                string file = await SearchEvent.SearchSkEvents(message);
+                if (file == "error")
+                {
+                    return "无有效关键词";
+                }
+                MessageBuilder messageBuilder = new MessageBuilder();
+                //string reply = messageBuilder.WithImage($"{file}", 2).ToString();
+                //Console.WriteLine(reply);
+                return file;
+            }
             if (rawMessage.ToLower().StartsWith("t10"))
             {
                 int eventId = 210;

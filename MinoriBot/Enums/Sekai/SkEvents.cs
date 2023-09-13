@@ -149,5 +149,44 @@ namespace MinoriBot.Enums.Sekai
             }
             return 0;
         }
+        /// <summary>
+        /// 获取活动团队种类（厢活/混活）
+        /// </summary>
+        /// <returns></returns>
+        public string GetEventGroupType()
+        {
+            List<int> bunusCharacters = GetBunusCharacters();
+            List<int> compareList = new List<int>() {1,2,3,4 };
+            if (compareList.All(item => bunusCharacters.Contains(item)))
+            {
+                return "ln";
+            }
+            compareList = new List<int>() { 5,6,7,8 };
+            if (compareList.All(item => bunusCharacters.Contains(item)))
+            {
+                return "mmj";
+            }
+            compareList = new List<int>() { 9,10,11,12};
+            if (compareList.All(item => bunusCharacters.Contains(item)))
+            {
+                return "vbs";
+            }
+            compareList = new List<int>() { 13,14,15,16 };
+            if (compareList.All(item => bunusCharacters.Contains(item)))
+            {
+                return "ws";
+            }
+            compareList = new List<int>() { 17,18,19,20 };
+            if (compareList.All(item => bunusCharacters.Contains(item)))
+            {
+                return "25";
+            }
+            compareList = new List<int>() { 21,22,23,24,25,26 };
+            if (compareList.All(item => bunusCharacters.Contains(item))&&bunusCharacters.Count==6)
+            {
+                return "vs";
+            }
+            return "mix";
+        }
     }
 }
