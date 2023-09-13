@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MinoriBot.Utils.Routers
 {
-    internal static class SearchInfo
+    internal static class SearchCard
     {
         public static async Task<string> SearchCharacter(string messgae)
         {
-            if(int.TryParse(messgae,out int cardId))
+            if (int.TryParse(messgae, out int cardId))
             {
                 bool isFound = false;
-                for(int i = 0;i<SkDataBase.skCards.Count;i++)
+                for (int i = 0; i < SkDataBase.skCards.Count; i++)
                 {
                     if (SkDataBase.skCards[i].id == cardId)
                     {
@@ -32,22 +32,23 @@ namespace MinoriBot.Utils.Routers
             }
             string[] keywords = messgae.Split(' ');
             //将模糊的关键词转换成唯一的关键词
-            Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
-            if(keys.Count== 0)
+            //Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
+            Dictionary<string, List<string>> keys = FuzzySearch.FuzzySearchCharacter2(keywords);
+            if (keys.Count == 0)
             {
                 return "error";
             }
-            foreach(KeyValuePair<string,string> dic in keys)
-            {
-                Console.WriteLine($"{dic.Key}:{dic.Value}");
-            }
+            //foreach (KeyValuePair<string, string> dic in keys)
+            //{
+            //    Console.WriteLine($"{dic.Key}:{dic.Value}");
+            //}
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
             ImageCreater imageCreater = new ImageCreater();
-            string file = await imageCreater.DrawCardIconList(cards,true);
+            string file = await imageCreater.DrawCardIconList(cards, true);
             return file;
         }
-        private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards,Dictionary<string,string> searchConditions)
+        private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards, Dictionary<string, string> searchConditions)
         {
 
             var query = cards.AsQueryable();
@@ -68,12 +69,38 @@ namespace MinoriBot.Utils.Routers
                     case "star":
                         query = query.Where(card => card.cardRarityType == condition.Value);
                         break;
-                        // 添加其他条件
                 }
             }
 
             return query.ToList();
         }
-        
+
+        private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards, Dictionary<string, List<string>> searchConditions)
+        {
+
+            var query = cards.AsQueryable();
+
+            foreach (var condition in searchConditions)
+            {
+                switch (condition.Key)
+                {
+                    case "attribute":
+                        query = query.Where(card => condition.Value.Contains(card.attr));
+                        break;
+                    case "group":
+                        query = query.Where(card => condition.Value.Contains(card.GetGroupNameById()));
+                        break;
+                    case "character":
+                        query = query.Where(card => condition.Value.Contains(card.characterId.ToString()));
+                        break;
+                    case "star":
+                        query = query.Where(card => condition.Value.Contains(card.cardRarityType));
+                        break;
+                }
+            }
+
+            return query.ToList();
+
+        }
     }
 }

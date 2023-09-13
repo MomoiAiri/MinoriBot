@@ -76,7 +76,7 @@ namespace MinoriBot.Utils.MessageProcessing
             if (rawMessage.ToLower().StartsWith("sk查卡"))
             {
                 string message = rawMessage.Substring(5);
-                string file = await SearchInfo.SearchCharacter(message);
+                string file = await SearchCard.SearchCharacter(message);
                 if (file == "error")
                 {
                     return "无有效关键词";

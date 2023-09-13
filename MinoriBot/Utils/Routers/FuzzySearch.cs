@@ -37,6 +37,50 @@ namespace MinoriBot.Utils.Routers
             }
             return result;
         }
+        public static Dictionary<string, List<string>> FuzzySearchCharacter2(string[] keywords)
+        {
+            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
+            foreach (string word in keywords)
+            {
+                if (NickName.attribute.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("attribute"))
+                    {
+                        result.Add("attribute", new List<string>());
+                    }
+                    result["attribute"].Add(NickName.attribute[word]);
+                    continue;
+                }
+                if (NickName.groups.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("group"))
+                    {
+                        result.Add("group", new List<string>());
+                    }
+                    result["group"].Add(NickName.groups[word]);
+                    continue;
+                }
+                if ( NickName.characters.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("character"))
+                    {
+                        result.Add("character", new List<string>());
+                    }
+                    result["character"].Add(NickName.characters[word].ToString());
+                    continue;
+                }
+                if (NickName.stars.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("star"))
+                    {
+                        result.Add("star", new List<string>());
+                    }
+                    result["star"].Add(NickName.stars[word]);
+                    continue;
+                }
+            }
+            return result;
+        }
         public static Dictionary<string,string> FuzzySearchEvent(string[] keywords)
         {
             return null;

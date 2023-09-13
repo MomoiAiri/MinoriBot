@@ -92,6 +92,7 @@ namespace MinoriBot.Utils
                     }
                     base64String = ConvertBitmapToBase64(bitmap);
                 }
+
             }
             return base64String;
         }
