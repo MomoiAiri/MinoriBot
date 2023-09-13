@@ -11,9 +11,9 @@ namespace MinoriBot.Utils.Routers
 {
     internal static class SearchCard
     {
-        public static async Task<string> SearchCharacter(string messgae)
+        public static async Task<string> SearchCharacter(string message)
         {
-            if (int.TryParse(messgae, out int cardId))
+            if (int.TryParse(message, out int cardId))
             {
                 bool isFound = false;
                 for (int i = 0; i < SkDataBase.skCards.Count; i++)
@@ -30,10 +30,9 @@ namespace MinoriBot.Utils.Routers
                     return "error";
                 }
             }
-            string[] keywords = messgae.Split(' ');
+            string[] keywords = message.Split(' ');
             //将模糊的关键词转换成唯一的关键词
-            //Dictionary<string, string> keys = FuzzySearch.FuzzySearchCharacter(keywords);
-            Dictionary<string, List<string>> keys = FuzzySearch.FuzzySearchCharacter2(keywords);
+            Dictionary<string, List<string>> keys = FuzzySearch.FuzzySearchCharacter(keywords);
             if (keys.Count == 0)
             {
                 return "error";
