@@ -188,5 +188,27 @@ namespace MinoriBot.Enums.Sekai
             }
             return "mix";
         }
+        /// <summary>
+        /// 获取当期卡牌
+        /// </summary>
+        /// <returns></returns>
+        public List<SkCard> GetCurrentCards()
+        {
+            List<SkCard> cards = new List<SkCard>();
+            List<int> cardIds = new List<int>();
+            for(int i = 0; i < SkDataBase.skEventCards.Count; i++)
+            {
+                if (SkDataBase.skEventCards[i].eventId == id)
+                {
+                    cardIds.Add(SkDataBase.skEventCards[i].cardId);
+                }
+            }
+            cards = SkDataBase.skCards.Where(card => cardIds.Contains(card.id)).ToList();
+            return cards;
+        }
+        public string GetEventType()
+        {
+            return eventType=="marathon"?"协力":"5v5";
+        }
     }
 }

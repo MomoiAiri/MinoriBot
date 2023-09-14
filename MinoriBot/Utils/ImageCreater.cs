@@ -274,8 +274,24 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public async Task<string> DrawEventList(List<SkEvents> skEvents)
         {
-
-            return "";
+            int width = 1000;
+            int height = 100 + 330 * skEvents.Count;
+            SKBitmap eventList = new SKBitmap(width,height);
+            using(var canvas = new SKCanvas(eventList))
+            {
+                canvas.Clear(SKColors.White);
+                int x = 50;
+                int y = 50;
+                SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
+                for (int i=0;i<skEvents.Count; i++)
+                {
+                    canvas.DrawBitmap(await DrawSimpleEventImage(skEvents[i]), x, y, highQuality);
+                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y + 320);
+                    y += 330;
+                }
+            }
+            Console.WriteLine("活动列表绘制完毕");
+            return ConvertBitmapToBase64(eventList);
         }
         /// <summary>
         /// 活动信息
@@ -286,6 +302,49 @@ namespace MinoriBot.Utils
         {
 
             return "";
+        }
+        public async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
+        {
+            int width = 900;
+            List<int> bonusChara = skEvent.GetBunusCharacters();
+            List<SkCard> currentCards = skEvent.GetCurrentCards();
+            int height = 150 + 10 + 150 * (int)Math.Ceiling(currentCards.Count/6.0);
+            SKBitmap eventImage = new SKBitmap(width,height);
+            SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
+            SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true, TextSize = 23 };
+            using (var canvas = new SKCanvas(eventImage))
+            {
+                canvas.Clear(SKColors.White);
+                canvas.DrawBitmap(await skEvent.GetEventLogo(), new SKRect(0, 0, 350, 150), highQuality);
+                canvas.DrawText($"ID:{skEvent.id}    类型:{skEvent.GetEventType()}", 350 + 20, 25, font);
+                DateTime startTime = DateTimeOffset.FromUnixTimeMilliseconds(skEvent.startAt).DateTime;
+                DateTime endTime = DateTimeOffset.FromUnixTimeMilliseconds(skEvent.aggregateAt).DateTime;
+                canvas.DrawText(startTime.ToString("yyyy年MM月dd日 HH:mm") + " - " + endTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 60, font);
+                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(350 + 20, 75, 350 + 20 + 30, 105), highQuality);
+                canvas.DrawText("+" + skEvent.GetBunusAttRate().ToString("F0") + "%", 420, 98, font);
+                for(int i = 0; i < bonusChara.Count; i++)
+                {
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusChara[i]}.png"), new SKRect(370 + i * 35, 115, 400 + i * 35, 145), highQuality);
+                }
+                canvas.DrawText("+" + skEvent.GetBunusCharacterRate().ToString("F0") + "%", 370 + 35 * bonusChara.Count + 20, 138, font);
+                int x = 0;
+                int y = 160;
+                for(int i = 0; i < currentCards.Count; i++)
+                {
+                    if (i % 6 ==0)
+                    {
+                        x = 0;
+                        y = 160 + i / 6;
+                    }
+                    canvas.DrawBitmap(await DrawCardIcon(currentCards[i], true, true), new SKRect(x, y, x + 135, y + 150), highQuality);
+                    x += 140;
+                }
+            }
+            return eventImage;
+        }
+        public async Task<string> TestImage(SkEvents skEvent)
+        {
+            return ConvertBitmapToBase64(await DrawSimpleEventImage(skEvent));
         }
         /// <summary>
         /// 画卡牌头像

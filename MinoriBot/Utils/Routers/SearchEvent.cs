@@ -21,7 +21,7 @@ namespace MinoriBot.Utils.Routers
                     {
                         isFound = true;
                         ImageCreater creater = new ImageCreater();
-                        return await creater.DrawEventInfo(SkDataBase.skEvents[i]);
+                        return await creater.TestImage(SkDataBase.skEvents[i]);
                     }
                 }
                 if (!isFound)
@@ -50,12 +50,14 @@ namespace MinoriBot.Utils.Routers
             Console.WriteLine(matchwords.ToString());
 
             List<SkEvents> skEvents = await GetMatchingEvents(SkDataBase.skEvents, keys);
-            StringBuilder sb = new StringBuilder();
-            foreach(SkEvents e in skEvents)
-            {
-                sb.Append(e.id +":"+ e.name + "\n");
-            }
-            return sb.ToString();
+            //StringBuilder sb = new StringBuilder();
+            //foreach(SkEvents e in skEvents)
+            //{
+            //    sb.Append(e.id +":"+ e.name + "\n");
+            //}
+            ImageCreater imageCreater = new ImageCreater();
+            string file = await imageCreater.DrawEventList(skEvents);
+            return file;
         }
         static async Task<List<SkEvents>> GetMatchingEvents(List<SkEvents> skEvents, Dictionary<string, List<string>> searchConditions)
         {

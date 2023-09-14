@@ -82,8 +82,7 @@ namespace MinoriBot.Utils.MessageProcessing
                     return "无有效关键词";
                 }
                 MessageBuilder messageBuilder = new MessageBuilder();
-                string reply = messageBuilder.WithImage($"{file}",2).ToString();
-                //Console.WriteLine(reply);
+                string reply = messageBuilder.WithImage(file,2).ToString();
                 return reply;
             }
             if (rawMessage.ToLower().StartsWith("sk查活动"))
@@ -95,9 +94,8 @@ namespace MinoriBot.Utils.MessageProcessing
                     return "无有效关键词";
                 }
                 MessageBuilder messageBuilder = new MessageBuilder();
-                //string reply = messageBuilder.WithImage($"{file}", 2).ToString();
-                //Console.WriteLine(reply);
-                return file;
+                string reply = messageBuilder.WithImage(file, 2).ToString();
+                return reply;
             }
             if (rawMessage.ToLower().StartsWith("t10"))
             {
