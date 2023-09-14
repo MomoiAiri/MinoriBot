@@ -388,14 +388,15 @@ namespace MinoriBot.Utils
                 //添加文字id
                 if (needId)
                 {
-                    using (SKPaint paint = new SKPaint())
+                    using (SKPaint font = new SKPaint())
                     {
-                        paint.IsAntialias = true;
-                        paint.TextSize = 20;
-                        paint.Color = SKColors.DarkGray;
-                        paint.TextAlign = SKTextAlign.Left;
+                        font.IsAntialias = true;
+                        font.TextSize = 20;
+                        font.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                        font.Color = SKColors.DarkGray;
+                        font.TextAlign = SKTextAlign.Left;
                         string text = "ID:" + card.id.ToString();
-                        canvas.DrawText(text, 5, 175, paint);
+                        canvas.DrawText(text, 5, 175, font);
                     }
                 }
                 //using (var image = SKImage.FromBitmap(bitmap))
