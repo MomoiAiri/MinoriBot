@@ -40,13 +40,13 @@ namespace MinoriBot.Enums.Sekai
             }
         }
         /// <summary>
-        /// 获取活动logo
+        /// 获取活动banner
         /// </summary>
         /// <returns></returns>
-        public async Task<SKBitmap> GetEventLogo()
+        public async Task<SKBitmap> GetEventBanner()
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string fileDirectory = basePath + $"asset/event";
+            string fileDirectory = basePath + $"asset/event/banner";
             string filePath = fileDirectory + $"/{assetbundleName}.png";
             if (!Directory.Exists(fileDirectory))
             {
@@ -69,6 +69,45 @@ namespace MinoriBot.Enums.Sekai
                         {
                             await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
                             Console.WriteLine($"保存图片{assetbundleName}成功");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Download Image Failed" + e);
+                        return null;
+                    }
+                }
+                SKBitmap sKBitmap = SKBitmap.Decode(filePath);
+                return sKBitmap;
+            }
+        }
+        public async Task<SKBitmap> GetEventDegreeMain()
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string assetName = GetHonorAssetName();
+            string fileDirectory = basePath + $"asset/event/degree/{assetName}";
+            string filePath = fileDirectory + "/degree_main.png";
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            if (File.Exists(filePath))
+            {
+                SKBitmap sKBitmap = SKBitmap.Decode(filePath);
+                return sKBitmap;
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/honor/{assetName}/degree_main.png");
+
+                        using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                            Console.WriteLine($"保存图片{assetName}成功");
                         }
                     }
                     catch (Exception e)
@@ -209,6 +248,17 @@ namespace MinoriBot.Enums.Sekai
         public string GetEventType()
         {
             return eventType=="marathon"?"协力":"5v5";
+        }
+        string GetHonorAssetName()
+        {
+            for(int i =0;i<SkDataBase.skHonorGroups.Count;i++)
+            {
+                if(name == SkDataBase.skHonorGroups[i].name)
+                {
+                    return SkDataBase.skHonorGroups[i].backgroundAssetbundleName + "_rip";
+                }
+            }
+            return "";
         }
     }
 }

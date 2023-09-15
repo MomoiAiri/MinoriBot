@@ -21,7 +21,7 @@ namespace MinoriBot.Utils.Routers
                     {
                         isFound = true;
                         ImageCreater creater = new ImageCreater();
-                        return await creater.TestImage(SkDataBase.skEvents[i]);
+                        return await creater.DrawEventInfo(SkDataBase.skEvents[i]);
                     }
                 }
                 if (!isFound)
