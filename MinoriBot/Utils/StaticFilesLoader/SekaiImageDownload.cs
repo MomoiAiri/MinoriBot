@@ -60,7 +60,15 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {"logo_vs","https://sekai.best/images/jp/logol_outline/logo_piapro.png" },
             {"logo_25","https://sekai.best/images/jp/logol_outline/logo_school_refusal.png" },
             {"logo_vbs","https://sekai.best/images/jp/logol_outline/logo_street.png" },
-            {"logo_ws","https://sekai.best/images/jp/logol_outline/logo_theme_park.png" }
+            {"logo_ws","https://sekai.best/images/jp/logol_outline/logo_theme_park.png" },
+            {"degree_frame3","https://sekai.best/assets/frame_degree_m_4.b6cf8612.png" },
+            {"degree_frame2","https://sekai.best/assets/frame_degree_m_2.dc66de7d.png" },
+            {"degree_top1","https://storage.sekai.best/sekai-assets/honor/honor_top_000001_rip/rank_main.png" },
+            {"degree_top2","https://storage.sekai.best/sekai-assets/honor/honor_top_000002_rip/rank_main.png" },
+            {"degree_top3","https://storage.sekai.best/sekai-assets/honor/honor_top_000003_rip/rank_main.png" },
+            {"degree_top10","https://storage.sekai.best/sekai-assets/honor/honor_top_000010_rip/rank_main.png" },
+            {"degree_top100","https://storage.sekai.best/sekai-assets/honor/honor_top_000100_rip/rank_main.png" },
+            {"degree_top1000","https://storage.sekai.best/sekai-assets/honor/honor_top_001000_rip/rank_main.png" },
         };
         static string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         static List<String> pathList;
