@@ -122,15 +122,23 @@ public class WebSocketPositive
 
     public async Task Start()
     {
-        try
+        while (true)
         {
-            await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);
-            Console.WriteLine("Connected to WebSocket server");
-            await ReceiveMessages();
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine($"出现异常断开连接\nError: {ex.Message}");
+            try
+            {
+                if (_webSocket.State != WebSocketState.Open)
+                {
+                    await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);
+                    Console.WriteLine($"已连接到gocq服务{_wsAddr}");
+                }
+                await ReceiveMessages();
+                Console.WriteLine("连接出现异常已断开，尝试重新连接");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"出现异常断开连接\nError: {ex.Message}");
+            }
+            await Task.Delay(TimeSpan.FromSeconds(5));
         }
     }
     private async Task ReceiveMessages()
