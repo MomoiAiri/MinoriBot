@@ -98,7 +98,7 @@ namespace MinoriBot.Utils
         }
         public async Task<string> DrawCardInfo(SkCard card)
         {
-            int width = 1000;
+            int width = 900;
             int height = 0;
             int cardIllustrationImageCount = 0;
             Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
@@ -121,8 +121,8 @@ namespace MinoriBot.Utils
             SkEvents skEvent = card.GetEvent();
             int hasEvent = skEvent == null ? 0 : 1;
             //200标题,526一张插图与空隙，160编号，370综合力，140+40*技能描述行数,130招募语，130发布日期，266缩略图，370*hasEvent是否有活动图
-            height = 200 + 526 * cardIllustrationImageCount + 160 + 370 + 140 + 40 * skillDescriptionList.Count + 130 + 130 + 266 + 370 * hasEvent;
-            using (SKBitmap bitmap = new SKBitmap(1000, height))
+            height = 200 + 450 * cardIllustrationImageCount + 160 + 370 + 140 + 40 * skillDescriptionList.Count + 130 + 130 + 266 + 370 * hasEvent;
+            using (SKBitmap bitmap = new SKBitmap(width, height))
             {
                 using(SKCanvas canvas = new SKCanvas(bitmap))
                 {
@@ -130,7 +130,7 @@ namespace MinoriBot.Utils
                     canvas.Clear(SKColors.White);
                     SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true };
                     //x,y为当前所操作区块的左上角坐标
-                    int x = 100;
+                    int x = 50;
                     int y = 50;
                     //标题背景颜色填充
                     using (SKPaint paint = new SKPaint())
@@ -156,7 +156,7 @@ namespace MinoriBot.Utils
                     text = NickName.idToName[card.characterId];
                     canvas.DrawText(text, 470, 145, font);
 
-                    //画卡面插图 卡面大小900*506 星星大小48*47
+                    //画卡面插图 卡面大小800*450 星星大小40*39
                     x = 50;
                     y = 200;
                     List<SKBitmap> cardIllustrationImage = await card.GetCardIllustrationImage();
@@ -165,36 +165,36 @@ namespace MinoriBot.Utils
                     {
                         cardIllustrationImage_afterCropping.Add(CropCardIllustrationImage(cardIllustrationImage[i]));
                     }
-                    canvas.DrawBitmap(cardIllustrationImage_afterCropping[0], new SKRect(x, y, x + 900, y + 506), highQuality);
-                    canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 900, y + 506), highQuality);
-                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 830, y, x + 900, y + 70), highQuality);
+                    canvas.DrawBitmap(cardIllustrationImage_afterCropping[0], new SKRect(x, y, x + 800, y + 450), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
                     SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
                     //生日卡单独处理
                     if (starCount == 0)
                     {
-                        canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 442, x + 18 + 48, y + 442 + 47), highQuality);
-                        y = 726;
+                        canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 393, x + 18 + 40, y + 393 + 39), highQuality);
+                        y = 200 + 450 + 20;
                     }
                     else
                     {
                         for (int i = 0; i < starCount; i++)
                         {
-                            canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
+                            canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
                         }
-                        y = 726;
+                        y = 200 + 450 + 20;
                         //如果有特训后
                         if (cardIllustrationImage.Count > 1)
                         {
-                            y = 200 + 506 + 20;
+                            y = 200 + 450 + 20;
                             SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
-                            canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 900, y + 506), highQuality);
-                            canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 900, y + 506), highQuality);
-                            canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 830, y, x + 900, y + 70), highQuality);
+                            canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 800, y + 450), highQuality);
+                            canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
+                            canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
                             for (int i = 0; i < starCount; i++)
                             {
-                                canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 442 - 47 * i, x + 18 + 48, y + 442 + 47 - 47 * i), highQuality);
+                                canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
                             }
-                            y = 1252;
+                            y = 200 + 450 * 2 + 20 * 2;
                         }
                     }
                     //卡面编号
@@ -203,7 +203,7 @@ namespace MinoriBot.Utils
                     canvas.DrawText(card.id.ToString(), x + 25, y + 50 + 60, font);
                     y += 110 + 50;
                     //综合力
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("综合力"), x, y);
                     font.TextSize = 45;
                     int[] power = card.GetPower();
@@ -214,17 +214,17 @@ namespace MinoriBot.Utils
                         bar.IsAntialias = true;
                         bar.Color = new SKColor(144, 238, 144);
                         canvas.DrawText($"表现力: {power[0]} + ({power[3] * 5})", x + 25, y + 95 + 30 + 10, font);
-                        canvas.DrawRoundRect(new SKRect(x + 25, y + 135 + 10, x + 25 + power[0] / 15000f * 850f, y + 145 + 30), 10, 10, bar);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 135 + 10, x + 25 + power[0] / 15000f * 750f, y + 145 + 30), 10, 10, bar);
                         bar.Color = new SKColor(100, 149, 237);
                         canvas.DrawText($"技术力: {power[1]} + ({power[3] * 5})", x + 25, y + 175 + 30, font);
-                        canvas.DrawRoundRect(new SKRect(x + 25, y + 205 + 10, x + 25 + power[1] / 15000f * 850f, y + 215 + 30), 10, 10, bar);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 205 + 10, x + 25 + power[1] / 15000f * 750f, y + 215 + 30), 10, 10, bar);
                         bar.Color = new SKColor(147, 112, 219);
                         canvas.DrawText($"活力: {power[2]} + ({power[3] * 5})", x + 25, y + 245 + 30, font);
-                        canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 850f, y + 285 + 30), 10, 10, bar);
+                        canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 750f, y + 285 + 30), 10, 10, bar);
                     }
                     y += 315 + 50;
                     //技能
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
                     font.TextSize = 40;
                     canvas.DrawText(card.cardSkillName, x + 25, y + 50 + 40, font);
@@ -236,18 +236,18 @@ namespace MinoriBot.Utils
                     }
                     y += 50;
                     //招募语
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("招募语"), x, y);
                     canvas.DrawText(card.gachaPhrase, x + 25, y + 50 + 40, font);
                     y += 130;
                     //发布日期
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("发布日期"), x, y);
                     DateTime releaseTime = DateTimeOffset.FromUnixTimeMilliseconds(card.releaseAt).DateTime;
                     canvas.DrawText(releaseTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
                     y += 130;
                     //缩略图
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("缩略图"), x, y);
                     canvas.DrawBitmap(await DrawCardIcon(card, false,false), x + 25, y + 50 + 20);
                     if (starCount > 2)
@@ -258,7 +258,7 @@ namespace MinoriBot.Utils
                     //相关活动
                     if (skEvent != null)
                     {
-                        canvas.DrawBitmap(DrawDottedLine(900, 5), x, y - 20);
+                        canvas.DrawBitmap(DrawDottedLine(800, 5), x, y - 20);
                         canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
                         canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 50);
                     }
@@ -274,7 +274,7 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public async Task<string> DrawEventList(List<SkEvents> skEvents)
         {
-            int width = 1000;
+            int width = 900;
             int height = 100 + 330 * skEvents.Count;
             SKBitmap eventList = new SKBitmap(width,height);
             using(var canvas = new SKCanvas(eventList))
@@ -286,7 +286,7 @@ namespace MinoriBot.Utils
                 for (int i=0;i<skEvents.Count; i++)
                 {
                     canvas.DrawBitmap(await DrawSimpleEventImage(skEvents[i]), x, y, highQuality);
-                    canvas.DrawBitmap(DrawDottedLine(900, 5), x, y + 320);
+                    canvas.DrawBitmap(DrawDottedLine(800, 5), x, y + 320);
                     y += 330;
                 }
             }
@@ -305,7 +305,7 @@ namespace MinoriBot.Utils
         }
         public async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
         {
-            int width = 900;
+            int width = 800;
             List<int> bonusChara = skEvent.GetBunusCharacters();
             List<SkCard> currentCards = skEvent.GetCurrentCards();
             int height = 150 + 10 + 150 * (int)Math.Ceiling(currentCards.Count/6.0);
@@ -319,9 +319,10 @@ namespace MinoriBot.Utils
                 canvas.DrawText($"ID:{skEvent.id}    类型:{skEvent.GetEventType()}", 350 + 20, 25, font);
                 DateTime startTime = DateTimeOffset.FromUnixTimeMilliseconds(skEvent.startAt).DateTime;
                 DateTime endTime = DateTimeOffset.FromUnixTimeMilliseconds(skEvent.aggregateAt).DateTime;
-                canvas.DrawText(startTime.ToString("yyyy年MM月dd日 HH:mm") + " - " + endTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 60, font);
-                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(350 + 20, 75, 350 + 20 + 30, 105), highQuality);
-                canvas.DrawText("+" + skEvent.GetBunusAttRate().ToString("F0") + "%", 420, 98, font);
+                canvas.DrawText("开始时间: " + startTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 50, font);
+                canvas.DrawText("结束时间: " + endTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 75, font);
+                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(350 + 20, 80, 350 + 20 + 30, 110), highQuality);
+                canvas.DrawText("+" + skEvent.GetBunusAttRate().ToString("F0") + "%", 420, 103, font);
                 for(int i = 0; i < bonusChara.Count; i++)
                 {
                     canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusChara[i]}.png"), new SKRect(370 + i * 35, 115, 400 + i * 35, 145), highQuality);
@@ -496,7 +497,7 @@ namespace MinoriBot.Utils
         public async Task<SKBitmap> DrawEventLogo(SkEvents skEvnet ,bool needBonus)
         {
             SKBitmap eventface = await skEvnet.GetEventLogo();
-            int width = 900;
+            int width = 800;
             int height = 25+45+eventface.Height;
             SKBitmap eventlogo = new SKBitmap(width, height);
             using(var canvas = new SKCanvas(eventlogo))
@@ -514,7 +515,7 @@ namespace MinoriBot.Utils
                     canvas.DrawBitmap(attr, new SKRect(25 + eventface.Width + 25, 25, 25 + eventface.Width + 75, 75), paint);
                     canvas.DrawText($"+{(int)skEvnet.GetBunusAttRate()}%", 100 + eventface.Width + 25, 25 + 40, font);
                     List<int> characterIds = skEvnet.GetBunusCharacters();
-                    int charaIconY = 100;
+                    int charaIconY = 75;
                     int charaIconLeftX = eventface.Width + 50;
                     for (int i = 0; i < characterIds.Count; i++)
                     {
@@ -524,7 +525,7 @@ namespace MinoriBot.Utils
                             charaIconLeftX = eventface.Width + 50;
                         }
                         canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{characterIds[i]}.png"), new SKRect(charaIconLeftX, charaIconY, 50 + charaIconLeftX, charaIconY + 50), paint);
-                        charaIconLeftX += 55;
+                        charaIconLeftX += 50;
                     }
                     if (charaIconLeftX + 100 > width)
                     {
@@ -533,9 +534,9 @@ namespace MinoriBot.Utils
                     }
                     else
                     {
-                        charaIconLeftX += 25;
+                        charaIconLeftX += 15;
                     }
-                    canvas.DrawText($"+{(int)skEvnet.GetBunusCharacterRate()}%", charaIconLeftX, charaIconY + 40, font);
+                    canvas.DrawText($"+{(int)skEvnet.GetBunusCharacterRate()}%", charaIconLeftX, charaIconY + 32, font);
                 }
             }
             return eventlogo;
