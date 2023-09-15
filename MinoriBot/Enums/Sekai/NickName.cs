@@ -123,7 +123,23 @@ namespace MinoriBot.Enums.Sekai
             {"enana",19 },
             {"晓山瑞希",20 },
             {"mzk",20 },
-            {"瑞希哥",20 }
+            {"瑞希哥",20 },
+            {"初音未来",21 },
+            {"初音",21 },
+            {"miku",21 },
+            {"葱葱",21 },
+            {"葱",21 },
+            {"镜音铃",22 },
+            {"铃",22 },
+            {"rin",22 },
+            {"镜音连",23 },
+            {"连",23 },
+            {"ren",23 },
+            {"巡音露卡",24 },
+            {"露卡",24 },
+            {"luka",24 },
+            {"meiko",25 },
+            {"kaito",26 }
         };
         public static Dictionary<string, string> attribute = new Dictionary<string, string>
         {
