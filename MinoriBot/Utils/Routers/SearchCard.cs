@@ -21,8 +21,8 @@ namespace MinoriBot.Utils.Routers
                     if (SkDataBase.skCards[i].id == cardId)
                     {
                         isFound = true;
-                        ImageCreater creater = new ImageCreater();
-                        return await creater.DrawCardInfo(SkDataBase.skCards[i]);
+
+                        return await ImageCreater.DrawCardInfo(SkDataBase.skCards[i]);
                     }
                 }
                 if (!isFound)
@@ -43,8 +43,7 @@ namespace MinoriBot.Utils.Routers
             //}
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
-            ImageCreater imageCreater = new ImageCreater();
-            string file = await imageCreater.DrawCardIconList(cards, true);
+            string file = await ImageCreater.DrawCardIconList(cards, true);
             return file;
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards, Dictionary<string, string> searchConditions)

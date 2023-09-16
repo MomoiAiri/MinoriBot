@@ -19,9 +19,7 @@ namespace MinoriBot.Utils.Routers
                 {
                     if (SkDataBase.skEvents[i].id == eventId)
                     {
-                        isFound = true;
-                        ImageCreater creater = new ImageCreater();
-                        return await creater.DrawEventInfo(SkDataBase.skEvents[i]);
+                        return await ImageCreater.DrawEventInfo(SkDataBase.skEvents[i]);
                     }
                 }
                 if (!isFound)
@@ -55,8 +53,7 @@ namespace MinoriBot.Utils.Routers
             //{
             //    sb.Append(e.id +":"+ e.name + "\n");
             //}
-            ImageCreater imageCreater = new ImageCreater();
-            string file = await imageCreater.DrawEventList(skEvents);
+            string file = await ImageCreater.DrawEventList(skEvents);
             return file;
         }
         static async Task<List<SkEvents>> GetMatchingEvents(List<SkEvents> skEvents, Dictionary<string, List<string>> searchConditions)

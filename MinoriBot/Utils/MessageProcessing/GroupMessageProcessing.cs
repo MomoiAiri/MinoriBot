@@ -29,8 +29,9 @@ namespace MinoriBot.Utils.MessageProcessing
                 string command = rawMessage.Substring(1);
                 if (command == "help")
                 {
+                    string help = "指令列表：\nsk查卡\nsk查活动";
                     MessageBuilder messageBuilder = new MessageBuilder();
-                    messageBuilder.WithAt(groupMessageReport.user_id).WithText("暂无帮助");
+                    messageBuilder.WithAt(groupMessageReport.user_id).WithText(help);
                     return messageBuilder.ToString();
                 }
                 if (command == "wiki")
@@ -96,6 +97,17 @@ namespace MinoriBot.Utils.MessageProcessing
                 MessageBuilder messageBuilder = new MessageBuilder();
                 string reply = messageBuilder.WithImage(file, 2).ToString();
                 return reply;
+            }
+            if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
+            {
+                string command = rawMessage.Substring(1);
+                if (command == "help")
+                {
+                    string help = "指令列表：\nsk查卡  查询烧烤卡牌\nsk查活动  查询烧烤活动（半成品）\n注：词条之间使用空格分开";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    messageBuilder.WithAt(groupMessageReport.user_id).WithText(help);
+                    return messageBuilder.ToString();
+                }
             }
             if (rawMessage.ToLower().StartsWith("t10"))
             {

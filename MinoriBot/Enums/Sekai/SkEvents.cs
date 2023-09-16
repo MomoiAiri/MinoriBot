@@ -245,10 +245,34 @@ namespace MinoriBot.Enums.Sekai
             cards = SkDataBase.skCards.Where(card => cardIds.Contains(card.id)).ToList();
             return cards;
         }
+        /// <summary>
+        /// 获取活动类型
+        /// </summary>
+        /// <returns></returns>
         public string GetEventType()
         {
             return eventType=="marathon"?"协力":"5v5";
         }
+        /// <summary>
+        /// 获取当期追加的歌曲
+        /// </summary>
+        /// <returns></returns>
+        public List<SkMusics> GetEventMusics()
+        {
+            List<SkMusics> musics = new List<SkMusics>();
+            for(int i =0;i<SkDataBase.skMusics.Count;i++)
+            {
+                if (SkDataBase.skMusics[i].publishedAt>=startAt&& SkDataBase.skMusics[i].publishedAt < closedAt)
+                {
+                    musics.Add(SkDataBase.skMusics[i]);
+                }
+            }
+            return musics;
+        }
+        /// <summary>
+        /// 获取活动排名牌子背景图片资源名称
+        /// </summary>
+        /// <returns></returns>
         string GetHonorAssetName()
         {
             for(int i =0;i<SkDataBase.skHonorGroups.Count;i++)
@@ -260,5 +284,6 @@ namespace MinoriBot.Enums.Sekai
             }
             return "";
         }
+
     }
 }
