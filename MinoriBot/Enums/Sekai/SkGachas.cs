@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MinoriBot.Utils.StaticFilesLoader;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,6 +76,83 @@ namespace MinoriBot.Enums.Sekai
             public int gachId;
             public string summary;
             public string description;
+        }
+
+        public async Task<SKBitmap> GetGachaBanner()
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string fileDirectory = basePath + $"asset/gacha/banner";
+            string filePath = fileDirectory + $"/banner_gacha{id}.png";
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            if (File.Exists(filePath))
+            {
+                SKBitmap sKBitmap = SKBitmap.Decode(filePath);
+                return sKBitmap;
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        byte[] imageBytes;
+                        //string type = GetGachaType();
+                        //if (type != "生日" || type != "")
+                        //{
+                        //    imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/home/banner/banner_gacha{id}_rip/banner_gacha{id}.png");
+                        //}
+                        //else
+                        //{
+                            imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/gacha/{assetbundleName}/logo_rip/logo.png");
+                        //}
+
+                        using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                            Console.WriteLine($"保存图片banner_gacha{id}成功");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Download Image Failed" + e);
+                        return null;
+                    }
+                }
+                SKBitmap sKBitmap = SKBitmap.Decode(filePath);
+                return sKBitmap;
+            }
+        }
+        /// <summary>
+        /// 获取卡池类型（常驻/限定）
+        /// </summary>
+        /// <returns></returns>
+        public string GetGachaType()
+        {
+            int left = 0;
+            int right = SkDataBase.skGachaCeilItemscs.Count;
+            int mid;
+            while (left <= right)
+            {
+                mid = (left + right) / 2;
+                if (SkDataBase.skGachaCeilItemscs[mid].gachaId < id)
+                {
+                    left = mid + 1;
+                }
+                else if (SkDataBase.skGachaCeilItemscs[mid].gachaId > id)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    if (SkDataBase.skGachaCeilItemscs[mid].assetbundleName == "ceil_item") return "常驻";
+                    if (SkDataBase.skGachaCeilItemscs[mid].assetbundleName == "ceil_item_limited") return "限定";
+                    if (SkDataBase.skGachaCeilItemscs[mid].assetbundleName == "ceil_item_birthday") return "生日";
+                }
+            }
+            return "";
         }
     }
 }

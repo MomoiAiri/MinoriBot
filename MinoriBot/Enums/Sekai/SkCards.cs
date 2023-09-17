@@ -383,6 +383,34 @@ namespace MinoriBot.Enums.Sekai
             }
             return null;
         }
+        /// <summary>
+        /// 获取UP过该卡的卡池
+        /// </summary>
+        /// <returns></returns>
+        public List<SkGachas> GetGachas(ref string cardType)
+        {
+            List<SkGachas> gachas = new List<SkGachas>();
+            List<SkGachas> allGachas = SkDataBase.skGachas;
+            gachas = allGachas.Where(gacha=>gacha.gachaPickups.Any(pickup=>pickup.cardId == id)).ToList();
+            if (gachas.Count > 0)
+            {
+                cardType = gachas[0].GetGachaType();
+            }
+            else
+            {
+                cardType = "常驻";
+            }
+            return gachas;
+        }
+        public string IsLimit(ref string cardType)
+        {
+            List<SkGachas> gachas = GetGachas(ref cardType);
+            if(gachas.Count > 0)
+            {
+                return gachas[0].GetGachaType();
+            }
+            return "常驻";
+        }
     }
     
 }
