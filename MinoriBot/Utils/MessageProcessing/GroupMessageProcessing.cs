@@ -8,6 +8,7 @@ using MinoriBot.Utils.StaticFilesLoader;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
@@ -49,7 +50,14 @@ namespace MinoriBot.Utils.MessageProcessing
                 }
                 if (command.ToLower() == "sk更新")
                 {
-                    return await SkDataBase.UpdateDB_Command();
+                    return await SkDataBase.UpdateDB_Command(Mode.Update);
+                }
+                if (command.ToLower() == "memory")
+                {
+                    Process currentProcess = Process.GetCurrentProcess();
+                    long menoryUsed = currentProcess.WorkingSet64;
+                    double menoryUsedMB = menoryUsed / (1024.0 * 1024.0);
+                    return $"当前占用内存：{menoryUsedMB.ToString("F0")}MB";
                 }
                 if (command.Contains("来点")&& command.Contains("涩图"))
                 {

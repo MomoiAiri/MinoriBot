@@ -270,6 +270,27 @@ namespace MinoriBot.Enums.Sekai
             return musics;
         }
         /// <summary>
+        /// 获取活动期间卡池
+        /// </summary>
+        /// <returns></returns>
+        public List<SkGachas> GetGachasInEvent()
+        {
+            List<SkGachas> gachas = new List<SkGachas>();
+            List<SkGachas> allGachas = SkDataBase.skGachas;
+            gachas = allGachas.Where(gacha =>
+            (gacha.startAt >= startAt && gacha.startAt <= closedAt) ||
+            (gacha.endAt >= startAt && gacha.endAt <= closedAt) ||
+            (gacha.startAt <= closedAt && gacha.endAt >= closedAt)).ToList();
+            for(int i = gachas.Count-1;i>=0;i--)
+            {
+                if (gachas[i].name == "カラフルパスガチャ"|| gachas[i].gachaType == "beginner")
+                {
+                    gachas.RemoveAt(i);
+                }
+            }
+            return gachas;
+        }
+        /// <summary>
         /// 获取活动排名牌子背景图片资源名称
         /// </summary>
         /// <returns></returns>
