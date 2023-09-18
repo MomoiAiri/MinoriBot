@@ -22,7 +22,7 @@ namespace MinoriBot.Enums.Sekai
         public string attr;
         public string supportUnit;
         public int skillId;
-        public string cardSkillName;
+        public string cardSkillname;
         public string prefix;//卡牌名称
         public string assetbundleName;//资源名称
         public string gachaPhrase;
@@ -207,12 +207,12 @@ namespace MinoriBot.Enums.Sekai
         /// <returns></returns>
         public string GetGroupNameById()
         {
-            if (characterId >= 1 && characterId <= 4) return "ln";
-            if (characterId >= 5 && characterId <= 8) return "mmj";
-            if (characterId >= 9 && characterId <= 12) return "vbs";
-            if (characterId >= 13 && characterId <= 16) return "ws";
-            if (characterId >= 17 && characterId <= 20) return "25";
-            if (characterId >= 21 && characterId <= 26) return "vs";
+            if (characterId >= 1 && characterId <= 4) return "light_sound";
+            if (characterId >= 5 && characterId <= 8) return "idol";
+            if (characterId >= 9 && characterId <= 12) return "street";
+            if (characterId >= 13 && characterId <= 16) return "theme_park";
+            if (characterId >= 17 && characterId <= 20) return "school_refusal";
+            if (characterId >= 21 && characterId <= 26) return "piapro";
             return "";
         }
         public int GetMaxLevel()

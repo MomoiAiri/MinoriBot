@@ -198,32 +198,32 @@ namespace MinoriBot.Enums.Sekai
             List<int> compareList = new List<int>() {1,2,3,4 };
             if (compareList.All(item => bunusCharacters.Contains(item)))
             {
-                return "ln";
+                return "light_sound";
             }
             compareList = new List<int>() { 5,6,7,8 };
             if (compareList.All(item => bunusCharacters.Contains(item)))
             {
-                return "mmj";
+                return "idol";
             }
             compareList = new List<int>() { 9,10,11,12};
             if (compareList.All(item => bunusCharacters.Contains(item)))
             {
-                return "vbs";
+                return "street";
             }
             compareList = new List<int>() { 13,14,15,16 };
             if (compareList.All(item => bunusCharacters.Contains(item)))
             {
-                return "ws";
+                return "theme_park";
             }
             compareList = new List<int>() { 17,18,19,20 };
             if (compareList.All(item => bunusCharacters.Contains(item)))
             {
-                return "25";
+                return "school_refusal";
             }
             compareList = new List<int>() { 21,22,23,24,25,26 };
             if (compareList.All(item => bunusCharacters.Contains(item))&&bunusCharacters.Count==6)
             {
-                return "vs";
+                return "piapro";
             }
             return "mix";
         }

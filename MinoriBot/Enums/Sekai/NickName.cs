@@ -168,17 +168,17 @@ namespace MinoriBot.Enums.Sekai
         };
         public static Dictionary<string, string> groups = new Dictionary<string, string>()
         {
-            {"vs","vs" },
-            {"virtual singer","vs" },
-            {"leoneed","ln" },
-            {"ln","ln" },
-            {"more more jumm","mmj" },
-            {"mmj","mmj" },
-            {"vivid bad squad","vbs" },
-            {"vbs","vbs" },
-            {"ws","ws" },
-            {"25时","25" },
-            {"25","25" },
+            {"vs","piapro" },
+            {"virtual singer","piapro" },
+            {"leoneed","light_sound" },
+            {"ln","light_sound" },
+            {"more more jumm","idol" },
+            {"mmj","idol" },
+            {"vivid bad squad","street" },
+            {"vbs","street" },
+            {"ws","theme_park" },
+            {"25时","school_refusal" },
+            {"25h","school_refusal" },
             {"混活","mix" },
             {"混","mix" }
         };
