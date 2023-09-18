@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Win32.SafeHandles;
 using MinoriBot.Enums.Sekai;
 using SkiaSharp;
 using System;
@@ -118,13 +119,14 @@ namespace MinoriBot.Utils
             cardIllustrationImageCount = starCount > 2 ? 2 : 1;
             //计算卡面信息所需要的图片高度
             string skillDescription = card.GetSkillDescription().Replace("\n","");
-            List<string> skillDescriptionList = SplitString(skillDescription, 40,750);
+            List<string> skillDescriptionList = SplitString(skillDescription, 30,750);
             SkEvents skEvent = card.GetEvent();
             int hasEvent = skEvent == null ? 0 : 1;
             List<SkGachas> gachas = card.GetGachas(ref cardType);
-            int hasGachas = gachas.Count > 0 ? 1 : 0;
-            //200标题,450一张插图与空隙，150编号，360综合力，130+40*技能描述行数,130招募语，130发布日期，256缩略图，360*hasEvent是否有活动图
-            height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 130 + 40 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 260 * hasGachas + 70;
+            int gachaHight = (gachas.Count / 2 + gachas.Count % 2) * 200;
+            int hasGacha = gachas.Count > 0 ? 1 : 0;
+            //200标题,450一张插图与空隙，150编号，360综合力，140+30*技能描述行数,130招募语，130发布日期，256缩略图，360*hasEvent是否有活动图
+            height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 140 + 30 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 60 * hasGacha + gachaHight + 70;
             SKBitmap cardInfo = new SKBitmap(width, height);
             using (SKCanvas canvas = new SKCanvas(cardInfo))
             using(SKPaint font =new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true })
@@ -146,18 +148,17 @@ namespace MinoriBot.Utils
                 //团体logo
                 SKBitmap dottedLine = DrawDottedLine(800, 5);
                 SKBitmap logoImage = SKBitmap.Decode(logoDir);
-                float logo_y = 260f / logoImage.Width * logoImage.Height + 60f;
-                canvas.DrawBitmap(logoImage, new SKRect(150, 60, 410, logo_y), highQuality);
+                float logoWidth = 100f / logoImage.Height * logoImage.Width;
+                canvas.DrawBitmap(logoImage, new SKRect(120,65,120+logoWidth,165), highQuality);
 
                 //卡牌名与角色名
-                font.TextSize = 30;
+                font.TextSize = 40;
                 font.Color = SKColors.Black;
                 font.TextAlign = SKTextAlign.Left;
                 string text = card.prefix;
-                canvas.DrawText(text, 470, 100, font);
-                font.TextSize = 32;
+                canvas.DrawText(text, 420, 100, font);
                 text = NickName.idToName[card.characterId];
-                canvas.DrawText(text, 470, 145, font);
+                canvas.DrawText(text, 420, 150, font);
 
                 //画卡面插图 卡面大小800*450 星星大小40*39
                 x = 50;
@@ -233,13 +234,22 @@ namespace MinoriBot.Utils
                 canvas.DrawBitmap(dottedLine, x, y - 20);
                 canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
                 font.TextSize = 40;
-                canvas.DrawText(card.cardSkillName, x + 25, y + 50 + 40, font);
-                y = y + 90;
+                canvas.DrawText(card.cardSkillname, x + 25, y + 50 + 40, font);
+                y = y + 100;
+                using (SKPaint paint = new SKPaint())
+                {
+                    paint.Color = new SKColor(221,221,221);
+                    paint.IsAntialias = true;
+                    paint.Style = SKPaintStyle.Fill;
+                    canvas.DrawRect(new SKRect(x + 15, y + 5, x + 750 + 30, y + skillDescriptionList.Count * 30 + 10), paint);
+                }
+                font.TextSize = 30;
                 for (int i = 0; i < skillDescriptionList.Count; i++)
                 {
-                    canvas.DrawText(skillDescriptionList[i], x + 25, y + 40, font);
-                    y += 40;
+                    canvas.DrawText(skillDescriptionList[i], x + 25, y + 30, font);
+                    y += 30;
                 }
+                font.TextSize = 40;
                 y += 40;
                 //招募语
                 canvas.DrawBitmap(dottedLine, x, y - 20);
@@ -260,6 +270,14 @@ namespace MinoriBot.Utils
                 {
                     canvas.DrawBitmap(await DrawCardIcon(card, true, false), x + 20 + 156 + 20, y + 40 + 20);
                 }
+                //附属团
+                if(card.supportUnit != "none")
+                {
+                    canvas.DrawBitmap(DrawPillShapeTitle("附属团"), x + 400, y);
+                    SKBitmap supportUnitLogo = SKBitmap.Decode($"./asset/normal/logo_{card.supportUnit}.png");
+                    float supportUnitLogoWith = 100f / supportUnitLogo.Height * supportUnitLogo.Width;
+                    canvas.DrawBitmap(supportUnitLogo, new SKRect(x + 400 + 25, y + 60, x + 400 + 25 + logoWidth, y + 160), highQuality);
+                }
                 y = y + 60 + 156 + 40;
                 //相关活动
                 if (skEvent != null)
@@ -268,13 +286,13 @@ namespace MinoriBot.Utils
                     canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
                     canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 60);
                 }
-                if (hasGachas != 0)
+                if (gachaHight > 0)
                 {
                     y += 360;
-                    for(int i =0;i<gachas.Count;i++)
+                    canvas.DrawBitmap(dottedLine, x, y - 20);
+                    canvas.DrawBitmap(DrawPillShapeTitle("相关卡池"), x, y);
+                    for (int i =0;i<gachas.Count;i++)
                     {
-                        canvas.DrawBitmap(dottedLine, x, y - 20);
-                        canvas.DrawBitmap(DrawPillShapeTitle("相关卡池"), x, y);
                         if (i % 2 == 0)
                         {
                             canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25, y + 60);
@@ -282,7 +300,7 @@ namespace MinoriBot.Utils
                         else
                         {
                             canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25 + 25 + 350, y + 60);
-                            y += 60;
+                            y += 200;
                         }
                     }
                 }
