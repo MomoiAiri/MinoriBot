@@ -13,6 +13,6 @@ namespace MinoriBot.Enums.Sekai
         public string musicDifficulty;
         public int playLevel;
         public int releaseConditionId;
-        public int totalNoteCount;
+        public int totalnoteCount;
     }
 }
