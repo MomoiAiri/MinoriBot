@@ -118,7 +118,7 @@ namespace MinoriBot.Utils
             cardIllustrationImageCount = starCount > 2 ? 2 : 1;
             //计算卡面信息所需要的图片高度
             string skillDescription = card.GetSkillDescription().Replace("\n","");
-            List<string> skillDescriptionList = SplitString(skillDescription, 21);
+            List<string> skillDescriptionList = SplitString(skillDescription, 40,750);
             SkEvents skEvent = card.GetEvent();
             int hasEvent = skEvent == null ? 0 : 1;
             List<SkGachas> gachas = card.GetGachas(ref cardType);
@@ -844,18 +844,24 @@ namespace MinoriBot.Utils
         /// <param name="input"></param>
         /// <param name="interval">换行位置</param>
         /// <returns></returns>
-        public static List<string> SplitString(string input, int interval)
+        public static List<string> SplitString(string input, int textSize ,int maxWidth)
         {
             List<string> result = new List<string>();
-            string temp = string.Empty;
-            for (int i = 0; i < input.Length; i++)
+            using(SKPaint font =new SKPaint())
             {
-                temp += input[i];
-
-                if (temp.Length == interval || i == input.Length - 1)
+                font.TextSize = textSize;
+                font.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                font.IsAntialias = true;
+                font.Color = SKColors.Black;
+                float textWidth = font.MeasureText(input);
+                int linesCount = (int)Math.Ceiling(textWidth / maxWidth);
+                long charCount = 0;
+                string text = input;
+                for(int i =0;i< linesCount;i++)
                 {
-                    result.Add(temp);
-                    temp = string.Empty;
+                    charCount = font.BreakText(text, maxWidth);
+                    result.Add(text.Substring(0, (int)charCount));
+                    text =text.Remove(0, (int)charCount);
                 }
             }
             return result;

@@ -108,14 +108,10 @@ namespace MinoriBot.Utils.MessageProcessing
             }
             if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
             {
-                string command = rawMessage.Substring(1);
-                if (command == "help")
-                {
-                    string help = "指令列表：\nsk查卡  查询烧烤卡牌\nsk查活动  查询烧烤活动（半成品）\n注：词条之间使用空格分开";
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    messageBuilder.WithAt(groupMessageReport.user_id).WithText(help);
-                    return messageBuilder.ToString();
-                }
+                string help = "指令列表：\nsk查卡  查询烧烤卡牌\nsk查活动  查询烧烤活动\n注：词条之间使用空格分开";
+                MessageBuilder messageBuilder = new MessageBuilder();
+                messageBuilder.WithAt(groupMessageReport.user_id).WithText(help);
+                return messageBuilder.ToString();
             }
             if (rawMessage.ToLower().StartsWith("t10"))
             {
