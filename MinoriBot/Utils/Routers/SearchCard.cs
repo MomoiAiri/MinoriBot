@@ -94,6 +94,9 @@ namespace MinoriBot.Utils.Routers
                     case "star":
                         query = query.Where(card => condition.Value.Contains(card.cardRarityType));
                         break;
+                    case "type":
+                        query = query.Where(card => condition.Value.Contains(card.GetCardLimitType()));
+                        break;
                 }
             }
 

@@ -78,6 +78,15 @@ namespace MinoriBot.Utils.Routers
                     result["star"].Add(NickName.stars[word]);
                     continue;
                 }
+                if (NickName.cardType.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("type"))
+                    {
+                        result.Add("type", new List<string>());
+                    }
+                    result["type"].Add(NickName.cardType[word]);
+                    continue;
+                }
             }
             return result;
         }

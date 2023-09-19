@@ -402,12 +402,13 @@ namespace MinoriBot.Enums.Sekai
             }
             return gachas;
         }
-        public string IsLimit(ref string cardType)
+        public string GetCardLimitType()
         {
-            List<SkGachas> gachas = GetGachas(ref cardType);
+            string result = string.Empty;
+            List<SkGachas> gachas = GetGachas(ref result);
             if(gachas.Count > 0)
             {
-                return gachas[0].GetGachaType();
+                return result;
             }
             return "常驻";
         }

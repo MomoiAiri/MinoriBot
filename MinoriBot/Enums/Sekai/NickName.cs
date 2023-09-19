@@ -182,6 +182,19 @@ namespace MinoriBot.Enums.Sekai
             {"混活","mix" },
             {"混","mix" }
         };
+        public static Dictionary<string, string> cardType = new Dictionary<string, string>() 
+        {
+            {"生日","生日" },
+            {"生日卡","生日" },
+            {"birthday","生日" },
+            {"bd","生日" },
+            {"常驻","常驻" },
+            {"常驻卡","常驻" },
+            {"normal","常驻" },
+            {"限定","限定" },
+            {"限定卡","限定" },
+            {"limit","限定" }
+        };
         public static Dictionary<string, string> stars = new Dictionary<string, string>()
         {
             {"一星","rarity_1" },
