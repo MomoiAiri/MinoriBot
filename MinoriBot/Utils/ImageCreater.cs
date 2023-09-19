@@ -14,6 +14,7 @@ namespace MinoriBot.Utils
 {
     public static class ImageCreater
     {
+        static SKTypeface _typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
         /// <summary>
         /// 画查卡列表
         /// </summary>
@@ -24,7 +25,6 @@ namespace MinoriBot.Utils
         {
             string fileDirectory = "./asset/normal";
             //string result = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+".png";
-            string base64String = string.Empty;
             //根据角色ID与属性进行分类
             Dictionary<int,Dictionary<string,List<SkCard>>> classifiedCards = new Dictionary<int, Dictionary<string, List<SkCard>>>();
             foreach (SkCard card in cards)
@@ -64,42 +64,48 @@ namespace MinoriBot.Utils
                 }
             }
             Console.WriteLine($"需要输出{line}行图片，最长的一行有{maxLineCount}张卡");
-            int width = 168 + (156 + 15) * maxLineCount;
-            int height = 40 + (180 + 15) * line - 15;
+            int width = 248 + (156 + 15) * maxLineCount +100;
+            int height = 100 + (180 + 15) * line - 15 +250;
             Console.WriteLine("开始生成图片");
-            using(SKBitmap bitmap = new SKBitmap(width, height))
+            SKBitmap cardList = new SKBitmap(width, height);
+            using (SKCanvas canvas = new SKCanvas(cardList))
             {
-                using(SKCanvas canvas = new SKCanvas(bitmap))
+                int x = 100;
+                int y = 250;
+                DrawBackGroud(cardList, "卡牌");
+                foreach (var kvp in classifiedCards)
                 {
-                    int x = 20;
-                    int y = 20;
-                    canvas.Clear(SKColors.White); 
-                    foreach(var kvp in classifiedCards)
+                    //画角色头图
+                    canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{kvp.Key}.png"), new SKRect(x, y, x + 128, y + 128));
+                    x = 248;
+                    foreach (var attrKvp in kvp.Value)
                     {
-                        //画角色头图
-                        canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{kvp.Key}.png"), new SKRect(x, y, x+128, y+128));
-                        x = 163;
-                        foreach(var attrKvp in kvp.Value)
+                        foreach (var card in attrKvp.Value)
                         {
-                            foreach(var card in attrKvp.Value)
-                            {
-                                canvas.DrawBitmap(await DrawCardIcon(card, isTrained,true), new SKRect(x, y, x + 156, y + 180));
-                                x = x + 156 + 15;
-                            }
-                            x = 163;
-                            y = y + 180 + 15;
+                            canvas.DrawBitmap(await DrawCardIcon(card, isTrained, true), new SKRect(x, y, x + 156, y + 180));
+                            x = x + 156 + 15;
                         }
-                        x = 20;
+                        x = 248;
+                        y = y + 180 + 15;
                     }
-                    base64String = ConvertBitmapToBase64(bitmap);
+                    x = 20;
                 }
-
+                //水印
+                using (SKPaint mark = new SKPaint())
+                {
+                    mark.TextAlign = SKTextAlign.Center;
+                    mark.TextSize = 30;
+                    mark.Color = SKColors.Gray;
+                    mark.IsAntialias = true;
+                    mark.Typeface = _typeface;
+                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+                }
             }
-            return base64String;
+            return ConvertBitmapToBase64(cardList); 
         }
         public static async Task<string> DrawCardInfo(SkCard card)
         {
-            int width = 900;
+            int width = 1000;
             int height = 0;
             int cardIllustrationImageCount = 0;
             Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
@@ -126,16 +132,16 @@ namespace MinoriBot.Utils
             int gachaHight = (gachas.Count / 2 + gachas.Count % 2) * 200;
             int hasGacha = gachas.Count > 0 ? 1 : 0;
             //200标题,450一张插图与空隙，150编号，360综合力，140+30*技能描述行数,130招募语，130发布日期，256缩略图，360*hasEvent是否有活动图
-            height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 140 + 30 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 60 * hasGacha + gachaHight + 70;
+            height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 140 + 30 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 60 * hasGacha + gachaHight + 70 + 250;
             SKBitmap cardInfo = new SKBitmap(width, height);
             using (SKCanvas canvas = new SKCanvas(cardInfo))
-            using(SKPaint font =new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true })
+            using(SKPaint font =new SKPaint() { Typeface = _typeface, IsAntialias = true })
             using(SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             {
-                canvas.Clear(SKColors.White);
+                DrawBackGroud(cardInfo, "卡牌");
                 //x,y为当前所操作区块的左上角坐标
-                int x = 50;
-                int y = 50;
+                int x = 100;
+                int y = 250;
                 //标题背景颜色填充
                 using (SKPaint paint = new SKPaint())
                 {
@@ -149,20 +155,20 @@ namespace MinoriBot.Utils
                 SKBitmap dottedLine = DrawDottedLine(800, 5);
                 SKBitmap logoImage = SKBitmap.Decode(logoDir);
                 float logoWidth = 100f / logoImage.Height * logoImage.Width;
-                canvas.DrawBitmap(logoImage, new SKRect(120,65,120+logoWidth,165), highQuality);
+                canvas.DrawBitmap(logoImage, new SKRect(x + 70, y + 15, x + 70 + logoWidth, y + 115), highQuality);
 
                 //卡牌名与角色名
-                font.TextSize = 40;
+                font.TextSize = 30;
                 font.Color = SKColors.Black;
                 font.TextAlign = SKTextAlign.Left;
                 string text = card.prefix;
-                canvas.DrawText(text, 420, 100, font);
+                canvas.DrawText(text, x+350, y+50, font);
                 text = NickName.idToName[card.characterId];
-                canvas.DrawText(text, 420, 150, font);
+                font.TextSize = 40;
+                canvas.DrawText(text, x+350, y+100, font);
 
                 //画卡面插图 卡面大小800*450 星星大小40*39
-                x = 50;
-                y = 200;
+                y = 400;
                 List<SKBitmap> cardIllustrationImage = await card.GetCardIllustrationImage();
                 List<SKBitmap> cardIllustrationImage_afterCropping = new List<SKBitmap>();
                 for (int i = 0; i < cardIllustrationImage.Count; i++)
@@ -177,7 +183,7 @@ namespace MinoriBot.Utils
                 if (starCount == 0)
                 {
                     canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 393, x + 18 + 40, y + 393 + 39), highQuality);
-                    y = 200 + 450 + 20;
+                    y = y + 450 + 20;
                 }
                 else
                 {
@@ -185,11 +191,11 @@ namespace MinoriBot.Utils
                     {
                         canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
                     }
-                    y = 200 + 450 + 20;
+                    y = y + 450 + 20;
                     //如果有特训后
                     if (cardIllustrationImage.Count > 1)
                     {
-                        y = 200 + 450 + 20;
+                        y = 400 + 450 + 20;
                         SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
                         canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 800, y + 450), highQuality);
                         canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
@@ -198,7 +204,7 @@ namespace MinoriBot.Utils
                         {
                             canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
                         }
-                        y = 200 + 450 * 2 + 20 * 2;
+                        y = 400 + 450 * 2 + 20 * 2;
                     }
                 }
                 //卡面编号
@@ -278,17 +284,18 @@ namespace MinoriBot.Utils
                     float supportUnitLogoWith = 100f / supportUnitLogo.Height * supportUnitLogo.Width;
                     canvas.DrawBitmap(supportUnitLogo, new SKRect(x + 400 + 25, y + 60, x + 400 + 25 + logoWidth, y + 160), highQuality);
                 }
-                y = y + 60 + 156 + 40;
+                y += 60 + 156 + 40;
                 //相关活动
                 if (skEvent != null)
                 {
                     canvas.DrawBitmap(dottedLine, x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
                     canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 60);
+                    y += 360;
                 }
+                //相关卡池
                 if (gachaHight > 0)
                 {
-                    y += 360;
                     canvas.DrawBitmap(dottedLine, x, y - 20);
                     canvas.DrawBitmap(DrawPillShapeTitle("相关卡池"), x, y);
                     for (int i =0;i<gachas.Count;i++)
@@ -310,7 +317,7 @@ namespace MinoriBot.Utils
                     mark.TextSize = 25;
                     mark.Color = SKColors.Gray;
                     mark.IsAntialias = true;
-                    mark.Typeface = font.Typeface;
+                    mark.Typeface = _typeface;
                     canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
                 }
                 dottedLine.Dispose();
@@ -325,8 +332,8 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public static async Task<string> DrawEventList(List<SkEvents> skEvents)
         {
-            int width = 900;
-            int height = 80;
+            int width = 1000;
+            int height = 280;
             List<SKBitmap> eventImages = new List<SKBitmap>();
             for(int i = 0; i < skEvents.Count; i++)
             {
@@ -336,9 +343,9 @@ namespace MinoriBot.Utils
             SKBitmap eventList = new SKBitmap(width,height);
             using(var canvas = new SKCanvas(eventList))
             {
-                canvas.Clear(SKColors.White);
-                int x = 50;
-                int y = 50;
+                DrawBackGroud(eventList, "活动");
+                int x = 100;
+                int y = 250;
                 SKBitmap dottedLine = DrawDottedLine(800, 5);
                 SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
                 for (int i=0;i<eventImages.Count; i++)
@@ -346,6 +353,15 @@ namespace MinoriBot.Utils
                     canvas.DrawBitmap(eventImages[i], x, y, highQuality);
                     canvas.DrawBitmap(dottedLine, x, y + eventImages[i].Height +10);
                     y += eventImages[i].Height +30;
+                }
+                using (SKPaint mark = new SKPaint())
+                {
+                    mark.TextAlign = SKTextAlign.Center;
+                    mark.TextSize = 25;
+                    mark.Color = SKColors.Gray;
+                    mark.IsAntialias = true;
+                    mark.Typeface = _typeface;
+                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
                 }
             }
             Console.WriteLine("活动列表绘制完毕");
@@ -358,7 +374,7 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public static async Task<string> DrawEventInfo(SkEvents skEvent)
         {
-            int width = 900;
+            int width = 1000;
             int height = 0;
             List<SkMusics> currentMusics = skEvent.GetEventMusics();
             List<SkGachas> gachas = skEvent.GetGachasInEvent();
@@ -369,19 +385,19 @@ namespace MinoriBot.Utils
                 gachaImages.Add(await DrawGachaCard(gachas[i]));
             }
             
-            //430大图,130单行文字+标题，280卡牌，100+90n相关歌曲,50+gachaHeight相关卡池，50底部留白
-            height = 430 + 130 + 130 + 130 + 130 + 130 + 130 + 220 + 280 + 280 + 100 + currentMusics.Count * 90 + 50 + gachaHeight + 50;
+            //430大图,130单行文字+标题，280卡牌，100+90n相关歌曲,50+gachaHeight相关卡池，50底部留白,250背景留空
+            height = 430 + 130 + 130 + 130 + 130 + 130 + 130 + 220 + 280 + 280 + 100 + currentMusics.Count * 90 + 50 + gachaHeight + 50 +250;
             SKBitmap eventInfo = new SKBitmap(width,height);
             using(var canvas = new SKCanvas(eventInfo))
             {
-                canvas.Clear(SKColors.White);
+                DrawBackGroud(eventInfo, "活动");
                 SKBitmap dottedLine = DrawDottedLine(800, 5);
                 SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
-                SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true, TextSize = 40 };
-                int x = 50;
-                int y = 50;
-                canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(x, y, x + 800, x + 341), highQuality);
-                y = 50 + 340 + 40;
+                SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 40 };
+                int x = 100;
+                int y = 250;
+                canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(x, y, x + 800, y + 341), highQuality);
+                y = y + 340 + 40;
                 canvas.DrawBitmap(DrawPillShapeTitle("活动名称"), x, y);
                 canvas.DrawText(skEvent.name, x + 25, y + 50 + 40, font);
                 y += 90 + 40;
@@ -507,7 +523,7 @@ namespace MinoriBot.Utils
             int height = 150 + 10 + 150 * (int)Math.Ceiling(currentCards.Count/5.0);
             SKBitmap eventImage = new SKBitmap(width,height);
             SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
-            SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true, TextSize = 23 };
+            SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 23 };
             using (var canvas = new SKCanvas(eventImage))
             {
                 canvas.Clear(SKColors.White);
@@ -582,6 +598,11 @@ namespace MinoriBot.Utils
                 }
                 //画属性
                 canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{card.attr}.png"), new SKRect(10, 10, 40, 40), highQuality);
+                //是否限定
+                if (card.GetCardLimitType() == "限定")
+                {
+                    canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/badge_limited.png"), 45, 0, highQuality);
+                }
                 //添加文字id
                 if (needId)
                 {
@@ -589,7 +610,7 @@ namespace MinoriBot.Utils
                     {
                         font.IsAntialias = true;
                         font.TextSize = 20;
-                        font.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                        font.Typeface = _typeface;
                         font.Color = SKColors.DarkGray;
                         font.TextAlign = SKTextAlign.Left;
                         string text = "ID:" + card.id.ToString();
@@ -676,14 +697,34 @@ namespace MinoriBot.Utils
                     canvas.DrawRect(rectRect, paint);
                     var rightCircleRect = SKRect.Create(width - height, 0, height, height);
                     canvas.DrawOval(rightCircleRect, paint);
-                    paint.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                    paint.Typeface = _typeface;
                     paint.TextSize = 34;
                     paint.Color = SKColors.White;
                     paint.TextAlign = SKTextAlign.Left;
                     canvas.DrawText(title, height / 2, height - 8, paint);
                 }
-                return sKBitmap;
             }
+            return sKBitmap;
+        }
+        public static SKBitmap DrawPillShapeTitle(int height ,int width ,SKColor bgColor)
+        {
+            SKBitmap sKBitmap = new SKBitmap(width, height);
+            using (var canvas = new SKCanvas(sKBitmap))
+            {
+                canvas.Clear(SKColors.Transparent);
+                using (var paint = new SKPaint())
+                {
+                    paint.IsAntialias = true;
+                    paint.Color = bgColor;
+                    var leftCircleRect = SKRect.Create(0, 0, height, height);
+                    canvas.DrawOval(leftCircleRect, paint);
+                    var rectRect = SKRect.Create(height / 2, 0, width - height, height);
+                    canvas.DrawRect(rectRect, paint);
+                    var rightCircleRect = SKRect.Create(width - height, 0, height, height);
+                    canvas.DrawOval(rightCircleRect, paint);
+                }
+            }
+            return sKBitmap;
         }
         /// <summary>
         /// 活动简图
@@ -703,7 +744,7 @@ namespace MinoriBot.Utils
                 paint.IsAntialias = true;
                 paint.FilterQuality = SKFilterQuality.High;
                 canvas.DrawBitmap(eventBanner, 25, 0, paint);
-                SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true };
+                SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true };
                 font.TextSize = 40;
                 canvas.DrawText($"类型: {skEvnet.GetEventType()}    ID: {skEvnet.id}", 25, eventBanner.Height + 40, font);
                 if (needBonus)
@@ -743,7 +784,7 @@ namespace MinoriBot.Utils
         {
             SKBitmap musicCard = new SKBitmap(800, 80);
             using(var canvas = new SKCanvas(musicCard))
-            using (SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true,TextSize = 24 ,TextAlign = SKTextAlign.Left})
+            using (SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true,TextSize = 24 ,TextAlign = SKTextAlign.Left})
             using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             {
                 canvas.DrawText(music.id.ToString(), 25, 32, font);
@@ -770,7 +811,7 @@ namespace MinoriBot.Utils
             //int height = gacha.GetGachaType() == "生日" ? 160 : 149;
             SKBitmap gachaCard = new SKBitmap(350, 190);
             using(var canvas =new SKCanvas(gachaCard))
-            using(var font =new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true, TextSize = 25 })
+            using(var font =new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 25 })
             using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             {
                 canvas.DrawBitmap(gachaBanner, new SKRect(0, 0, 350, 160), highQuality);
@@ -783,7 +824,7 @@ namespace MinoriBot.Utils
         {
             SKBitmap bitmap = new SKBitmap(radius * 2, radius * 2);
             using (var canvas = new SKCanvas(bitmap))
-            using (SKPaint font = new SKPaint() { Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf"), IsAntialias = true, TextSize = textSize ,TextAlign = SKTextAlign.Center})
+            using (SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = textSize ,TextAlign = SKTextAlign.Center})
             using (SKPaint paint = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High ,Color = color})
             {
                 canvas.DrawCircle(radius, radius, radius, paint);
@@ -840,6 +881,44 @@ namespace MinoriBot.Utils
             return main;
         }
         /// <summary>
+        /// 添加背景以及指令标题
+        /// </summary>
+        /// <param name="image"></param>
+        public static void DrawBackGroud(SKBitmap image,string commad)
+        {
+            using(SKCanvas canvas = new SKCanvas(image))
+            using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
+            {
+                SKBitmap backGroud = SKBitmap.Decode("./asset/normal/searchBg.png");
+                int bgHeight = (int)((float)image.Width / backGroud.Width * backGroud.Height);
+                for(int y =0;y<image.Height; y += bgHeight)
+                {
+                    canvas.DrawBitmap(backGroud, new SKRect(0, y, image.Width, y + bgHeight),highQuality);
+                }
+                canvas.DrawBitmap(DrawPillShapeTitle(70, 510, SKColors.White), 50, 90);
+                canvas.DrawBitmap(DrawPillShapeTitle(50, 450, SKColors.LightBlue), 50, 50);
+                canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/Minori01.png"), new SKRect(556, 20, 775, 220), highQuality);
+                using(SKPaint font = new SKPaint())
+                {
+                    font.Color = SKColors.White;
+                    font.TextSize = 34;
+                    font.Typeface = _typeface;
+                    font.IsAntialias = true;
+                    canvas.DrawText("查询", 80, 88, font);
+                    font.TextSize = 40;
+                    font.Color = SKColors.Black;
+                    canvas.DrawText(commad, 100, 145, font);
+                }
+                using (SKPaint paint = new SKPaint())
+                {
+                    paint.Color = SKColors.White;
+                    paint.IsAntialias = true;
+                    paint.Style = SKPaintStyle.Fill;
+                    canvas.DrawRect(new SKRect(50, 200, image.Width - 50, image.Height - 50), paint);
+                }
+            }
+        }
+        /// <summary>
         /// 将SkBitmap转换成Base64
         /// </summary>
         /// <param name="bitmap"></param>
@@ -868,7 +947,7 @@ namespace MinoriBot.Utils
             using(SKPaint font =new SKPaint())
             {
                 font.TextSize = textSize;
-                font.Typeface = SKTypeface.FromFile("./asset/Fonts/old.ttf");
+                font.Typeface = _typeface;
                 font.IsAntialias = true;
                 font.Color = SKColors.Black;
                 float textWidth = font.MeasureText(input);
