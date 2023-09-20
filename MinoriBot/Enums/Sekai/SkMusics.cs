@@ -75,6 +75,123 @@ namespace MinoriBot.Enums.Sekai
             return difficulties;
         }
         /// <summary>
+        /// 获取特定难度的难度等级
+        /// </summary>
+        /// <param name="diffType"></param>
+        /// <returns></returns>
+        public int GetDifficulty(string diffType)
+        {
+            List<int> difficulties = GetDifficulties();
+            if (difficulties.Count > 0)
+            {
+                switch (diffType)
+                {
+                    case "easy":
+                        return difficulties[0];
+                    case "normal":
+                        return difficulties[1];
+                    case "hard":
+                        return difficulties[2];
+                    case "expert":
+                        return difficulties[3];
+                    case "master":
+                        return difficulties[4];
+                }
+                return 0;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        /// <summary>
+        /// 获取演唱者
+        /// </summary>
+        /// <returns></returns>
+        public List<List<int>> GetVocals()
+        {
+            List<SkMusicVocals> musicVocals = SkDataBase.skMusicVocals.Where(vocal => vocal.musicId == id).ToList();
+            List<List<int>> result = new List<List<int>>(); 
+            for(int i =0;i<musicVocals.Count;i++)
+            {
+                List<int> characters = new List<int>();
+                for(int j = 0; j < musicVocals[i].characters.Count; j++)
+                {
+                    if (musicVocals[i].characters[j].characterType == "game_character")
+                    {
+                        characters.Add(musicVocals[i].characters[j].characterId);
+                    }
+                }
+                result.Add(characters);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取该曲所属团队
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetGroups()
+        {
+            List<string> result = new List<string>();
+            List<List<int>> vocals = GetVocals();
+            if(vocals.Count > 1)
+            {
+                for (int i = 0; i < vocals.Count; i++)
+                {
+                    int groupId = -1;
+                    bool isOneGroup = true;
+                    for (int j = 0; j < vocals[i].Count; j++)
+                    {
+                        if (groupId == -1)
+                        {
+                            if (vocals[i][j] < 21 || vocals[i][j] > 26)
+                            {
+                                groupId = (vocals[i][j] - 1) / 4;
+                            }
+                        }
+                        else
+                        {
+                            if (groupId != (vocals[i][j] - 1) / 4)
+                            {
+                                if (vocals[i][j] < 21 || vocals[i][j] > 26)
+                                {
+                                    result.Add("others");
+                                    isOneGroup = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (isOneGroup)
+                    {
+                        switch (groupId)
+                        {
+                            case 0:
+                                result.Add("light_sound");
+                                break;
+                            case 1:
+                                result.Add("idol");
+                                break;
+                            case 2:
+                                result.Add("street");
+                                break;
+                            case 3:
+                                result.Add("theme_park");
+                                break;
+                            case 4:
+                                result.Add("school_refusal");
+                                break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (vocals[0].All(item => item >= 21 && item <= 26)) result.Add("piapro");
+            }
+            return result;
+        }
+        /// <summary>
         /// 获取音乐封面
         /// </summary>
         /// <returns></returns>
@@ -109,7 +226,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        return SKBitmap.Decode("./asset/normal/err.png");
                     }
                 }
                 SKBitmap sKBitmap = SKBitmap.Decode(filePath);

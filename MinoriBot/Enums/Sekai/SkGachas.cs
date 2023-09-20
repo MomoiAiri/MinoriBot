@@ -118,7 +118,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        return SKBitmap.Decode("./asset/normal/err.png");
                     }
                 }
                 SKBitmap sKBitmap = SKBitmap.Decode(filePath);

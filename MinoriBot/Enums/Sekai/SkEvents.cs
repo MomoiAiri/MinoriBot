@@ -74,7 +74,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        return SKBitmap.Decode("./asset/normal/err.png");
                     }
                 }
                 SKBitmap sKBitmap = SKBitmap.Decode(filePath);
@@ -113,7 +113,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        return SKBitmap.Decode("./asset/normal/err.png");
                     }
                 }
                 SKBitmap sKBitmap = SKBitmap.Decode(filePath);
@@ -278,9 +278,9 @@ namespace MinoriBot.Enums.Sekai
             List<SkGachas> gachas = new List<SkGachas>();
             List<SkGachas> allGachas = SkDataBase.skGachas;
             gachas = allGachas.Where(gacha =>
-            (gacha.startAt >= startAt && gacha.startAt <= closedAt) ||
-            (gacha.endAt >= startAt && gacha.endAt <= closedAt) ||
-            (gacha.startAt <= closedAt && gacha.endAt >= closedAt)).ToList();
+            (gacha.startAt >= startAt && gacha.startAt <= aggregateAt) ||
+            (gacha.endAt >= startAt && gacha.endAt <= aggregateAt) ||
+            (gacha.startAt <= aggregateAt && gacha.endAt >= aggregateAt)).ToList();
             for(int i = gachas.Count-1;i>=0;i--)
             {
                 if (gachas[i].name == "カラフルパスガチャ"|| gachas[i].gachaType == "beginner")

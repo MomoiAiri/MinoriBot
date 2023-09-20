@@ -100,7 +100,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        return SKBitmap.Decode("./asset/normal/err.png");
                     }
                 }
                 SKBitmap sKBitmap = SKBitmap.Decode(filePath);
@@ -143,7 +143,7 @@ namespace MinoriBot.Enums.Sekai
                     catch (Exception e)
                     {
                         Console.WriteLine("Download Image Failed" + e);
-                        return null;
+                        sKBitmap.Add(SKBitmap.Decode("./asset/normal/err.png"));
                     }
                 }
                 sKBitmap.Add(SKBitmap.Decode(filePath1));
@@ -171,7 +171,7 @@ namespace MinoriBot.Enums.Sekai
                         catch (Exception e)
                         {
                             Console.WriteLine("Download Image Failed" + e);
-                            return null;
+                            sKBitmap.Add(SKBitmap.Decode(filePath1));
                         }
                     }
                     sKBitmap.Add(SKBitmap.Decode(filePath2));
