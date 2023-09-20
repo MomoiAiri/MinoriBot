@@ -35,6 +35,7 @@ namespace MinoriBot.Utils.Routers
                 return "error";
             }
             List<SkEvents> skEvents = await GetMatchingEvents(SkDataBase.skEvents, keys);
+            if (skEvents.Count == 0) return "none";
             string file = await ImageCreater.DrawEventList(skEvents);
             return file;
         }

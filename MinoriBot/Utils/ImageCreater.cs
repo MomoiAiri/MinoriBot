@@ -536,6 +536,16 @@ namespace MinoriBot.Utils
                     }
                     y += 90;
                 }
+                //水印
+                using (SKPaint mark = new SKPaint())
+                {
+                    mark.TextAlign = SKTextAlign.Center;
+                    mark.TextSize = 30;
+                    mark.Color = SKColors.Gray;
+                    mark.IsAntialias = true;
+                    mark.Typeface = _typeface;
+                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+                }
             }
             Console.WriteLine("歌曲列表绘制完成");
             return ConvertBitmapToBase64(musicList);

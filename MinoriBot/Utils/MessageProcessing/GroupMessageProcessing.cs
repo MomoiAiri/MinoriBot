@@ -86,10 +86,8 @@ namespace MinoriBot.Utils.MessageProcessing
             {
                 string message = rawMessage.Substring(5).ToLower();
                 string file = await SearchCard.SearchCharacter(message);
-                if (file == "error")
-                {
-                    return "无有效关键词";
-                }
+                if (file == "error") return "无有效关键词";
+                if (file == "none") return "未查询到相关卡牌";
                 MessageBuilder messageBuilder = new MessageBuilder();
                 string reply = messageBuilder.WithImage(file,2).ToString();
                 return reply;
@@ -98,10 +96,8 @@ namespace MinoriBot.Utils.MessageProcessing
             {
                 string message = rawMessage.Substring(6).ToLower();
                 string file = await SearchEvent.SearchSkEvents(message);
-                if (file == "error")
-                {
-                    return "无有效关键词";
-                }
+                if (file == "error") return "无有效关键词";
+                if (file == "none") return "未查询到相关活动";
                 MessageBuilder messageBuilder = new MessageBuilder();
                 string reply = messageBuilder.WithImage(file, 2).ToString();
                 return reply;
@@ -110,10 +106,8 @@ namespace MinoriBot.Utils.MessageProcessing
             {
                 string message = rawMessage.Substring(5).ToLower();
                 string file = await SearchMusic.SearchSkMusics(message);
-                if (file == "error")
-                {
-                    return "无有效关键词";
-                }
+                if (file == "error") return "无有效关键词";
+                if (file == "none") return "未查询到相关歌曲";
                 MessageBuilder messageBuilder = new MessageBuilder();
                 string reply = messageBuilder.WithImage(file, 2).ToString();
                 return reply;

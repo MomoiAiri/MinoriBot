@@ -40,6 +40,7 @@ namespace MinoriBot.Utils.Routers
             {
                 Console.WriteLine(music.id + " "+ music.title + "    " +music.creator);
             }
+            if (skMusics.Count == 0) return "none";
             string file = await ImageCreater.DrawMusicList(skMusics);
             return file;
         }
