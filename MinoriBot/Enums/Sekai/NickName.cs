@@ -180,7 +180,8 @@ namespace MinoriBot.Enums.Sekai
             {"25时","school_refusal" },
             {"25h","school_refusal" },
             {"混活","mix" },
-            {"混","mix" }
+            {"混","mix" },
+            {"其他","others" }
         };
         public static Dictionary<string, string> cardType = new Dictionary<string, string>() 
         {
@@ -213,6 +214,23 @@ namespace MinoriBot.Enums.Sekai
             {"协力","marathon" },
             {"5v5","cheerful_carnival" },
             {"5V5","cheerful_carnival" }
+        };
+        public static Dictionary<string, string> diffType = new Dictionary<string, string>()
+        {
+            {"easy","easy" },
+            {"ez","easy" },
+            {"简单","easy" },
+            {"normal","normal" },
+            {"nm","normal" },
+            {"普通","normal" },
+            {"hard","hard" },
+            {"hd","hard" },
+            {"困难","hard" },
+            {"expert","expert" },
+            {"ex","expert" },
+            {"master","master" },
+            {"ma","master" },
+            {"大师","master" }
         };
         /// <summary>
         /// 根据昵称查找角色ID

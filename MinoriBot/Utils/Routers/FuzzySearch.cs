@@ -134,5 +134,58 @@ namespace MinoriBot.Utils.Routers
             }
             return result;
         }
+        public static Dictionary<string, List<string>> FuzzySearchMusic(string[] keywords)
+        {
+            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
+            foreach (string word in keywords)
+            {
+                if (NickName.diffType.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("diffType"))
+                    {
+                        result.Add("diffType", new List<string>());
+                    }
+                    result["diffType"].Add(NickName.diffType[word]);
+                    continue;
+                }
+                if (NickName.groups.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("group"))
+                    {
+                        result.Add("group", new List<string>());
+                    }
+                    result["group"].Add(NickName.groups[word]);
+                    continue;
+                }
+                if (NickName.characters.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("character"))
+                    {
+                        result.Add("character", new List<string>());
+                    }
+                    result["character"].Add(NickName.characters[word].ToString());
+                    continue;
+                }
+                if (word.Contains("lv") || word.Contains("难度") || word.Contains("等级"))
+                {
+                    if (!result.ContainsKey("diffLevel"))
+                    {
+                        result.Add("diffLevel", new List<string>());
+                    }
+                    result["diffLevel"].Add(word.Substring(2));
+                    continue;
+                }
+                else
+                {
+                    if (!result.ContainsKey("musicName"))
+                    {
+                        result.Add("musicName", new List<string>());
+                    }
+                    result["musicName"].Add(word);
+                    continue;
+                }
+            }
+            return result;
+        }
     }
 }

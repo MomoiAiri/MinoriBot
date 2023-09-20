@@ -84,7 +84,7 @@ namespace MinoriBot.Utils.MessageProcessing
             }
             if (rawMessage.ToLower().StartsWith("sk查卡"))
             {
-                string message = rawMessage.Substring(5);
+                string message = rawMessage.Substring(5).ToLower();
                 string file = await SearchCard.SearchCharacter(message);
                 if (file == "error")
                 {
@@ -96,8 +96,20 @@ namespace MinoriBot.Utils.MessageProcessing
             }
             if (rawMessage.ToLower().StartsWith("sk查活动"))
             {
-                string message = rawMessage.Substring(5);
+                string message = rawMessage.Substring(6).ToLower();
                 string file = await SearchEvent.SearchSkEvents(message);
+                if (file == "error")
+                {
+                    return "无有效关键词";
+                }
+                MessageBuilder messageBuilder = new MessageBuilder();
+                string reply = messageBuilder.WithImage(file, 2).ToString();
+                return reply;
+            }
+            if (rawMessage.ToLower().StartsWith("sk查曲"))
+            {
+                string message = rawMessage.Substring(5).ToLower();
+                string file = await SearchMusic.SearchSkMusics(message);
                 if (file == "error")
                 {
                     return "无有效关键词";

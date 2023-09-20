@@ -34,25 +34,7 @@ namespace MinoriBot.Utils.Routers
             {
                 return "error";
             }
-            //打印一下转换后的关键词
-            //StringBuilder matchwords = new StringBuilder();
-            //foreach(var kvp in keys)
-            //{
-            //    matchwords.Append(kvp.Key+":");
-            //    foreach(string s in kvp.Value)
-            //    {
-            //        matchwords.Append(s + " ");
-            //    }
-            //    matchwords.Append("\n");
-            //}
-            //Console.WriteLine(matchwords.ToString());
-
             List<SkEvents> skEvents = await GetMatchingEvents(SkDataBase.skEvents, keys);
-            //StringBuilder sb = new StringBuilder();
-            //foreach(SkEvents e in skEvents)
-            //{
-            //    sb.Append(e.id +":"+ e.name + "\n");
-            //}
             string file = await ImageCreater.DrawEventList(skEvents);
             return file;
         }

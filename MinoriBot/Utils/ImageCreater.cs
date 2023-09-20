@@ -88,7 +88,7 @@ namespace MinoriBot.Utils
                         x = 248;
                         y = y + 180 + 15;
                     }
-                    x = 20;
+                    x = 100;
                 }
                 //水印
                 using (SKPaint mark = new SKPaint())
@@ -477,10 +477,10 @@ namespace MinoriBot.Utils
                 int musicY = y + 60;
                 for(int i =0;i<currentMusics.Count;i++)
                 {
-                    canvas.DrawBitmap(await DrawMusicCard(currentMusics[i]), x, musicY);
+                    canvas.DrawBitmap(await DrawMusicCard(currentMusics[i]), x + 25, musicY);
                     if (i != currentMusics.Count - 1)
                     {
-                        canvas.DrawBitmap(dottedLine, x, musicY + 90 - 7.5f);
+                        canvas.DrawBitmap(DrawDottedLine(750, 5), x + 25, musicY + 90 - 7.5f);
                     }
                     musicY += 90;
                 }
@@ -514,6 +514,36 @@ namespace MinoriBot.Utils
             }
             Console.WriteLine("活动信息图绘制完成");
             return ConvertBitmapToBase64(eventInfo);
+        }
+        public static async Task<string> DrawMusicList(List<SkMusics> skMusics)
+        {
+            int width = 950;
+            int height = 340 + 90 * skMusics.Count;
+            SKBitmap musicList = new SKBitmap(width,height);
+            Console.WriteLine("开始绘制歌曲列表");
+            using(SKCanvas canvas = new SKCanvas(musicList))
+            {
+                DrawBackGroud(musicList,"歌曲");
+                int x = 100;
+                int y = 250;
+                SKBitmap dottedLine = DrawDottedLine(750, 5);
+                for(int i = 0; i < skMusics.Count; i++)
+                {
+                    canvas.DrawBitmap(await DrawMusicCard(skMusics[i]), x, y);
+                    if (i != skMusics.Count - 1)
+                    {
+                        canvas.DrawBitmap(dottedLine, x, y + 90 - 7.5f);
+                    }
+                    y += 90;
+                }
+            }
+            Console.WriteLine("歌曲列表绘制完成");
+            return ConvertBitmapToBase64(musicList);
+        }
+        public static async Task<string> DrawMusicInfo(SkMusics skMusic)
+        {
+
+            return "";
         }
         public static async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
         {
@@ -743,7 +773,7 @@ namespace MinoriBot.Utils
             {
                 paint.IsAntialias = true;
                 paint.FilterQuality = SKFilterQuality.High;
-                canvas.DrawBitmap(eventBanner, 25, 0, paint);
+                canvas.DrawBitmap(eventBanner, new SKRect(25, 0, 25 + 488, 208), paint);
                 SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true };
                 font.TextSize = 40;
                 canvas.DrawText($"类型: {skEvnet.GetEventType()}    ID: {skEvnet.id}", 25, eventBanner.Height + 40, font);
@@ -782,20 +812,20 @@ namespace MinoriBot.Utils
         }
         public static async Task<SKBitmap> DrawMusicCard(SkMusics music)
         {
-            SKBitmap musicCard = new SKBitmap(800, 80);
+            SKBitmap musicCard = new SKBitmap(750, 80);
             using(var canvas = new SKCanvas(musicCard))
             using (SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true,TextSize = 24 ,TextAlign = SKTextAlign.Left})
             using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             {
-                canvas.DrawText(music.id.ToString(), 25, 32, font);
-                canvas.DrawBitmap(await music.GetMusicJacket(), new SKRect(80, 8, 80 + 64, 8 + 64), highQuality);
-                canvas.DrawText(music.title, 150, 32, font);
+                canvas.DrawText(music.id.ToString(), 0, 32, font);
+                canvas.DrawBitmap(await music.GetMusicJacket(), new SKRect(55, 8, 55 + 64, 8 + 64), highQuality);
+                canvas.DrawText(music.title, 125, 32, font);
                 List<int> diff = music.GetDifficulties();
                 List<SKColor> colors = new List<SKColor>() { new SKColor(102, 221, 17), new SKColor(51, 187, 237), new SKColor(255, 170, 1), new SKColor(238, 69, 102), new SKColor(187, 51, 239) };
                 font.TextAlign = SKTextAlign.Center;
                 for(int i = 0; i < diff.Count; i++)
                 {
-                    canvas.DrawBitmap(DrawRoundWithText(diff[i].ToString(), 24, 23, colors[i]), 500+51*i, 17);
+                    canvas.DrawBitmap(DrawRoundWithText(diff[i].ToString(), 24, 23, colors[i]), 500 + 51 * i, 17);
                 }
             }
             return musicCard;
@@ -866,8 +896,11 @@ namespace MinoriBot.Utils
         /// <returns></returns>
         public static SKBitmap DrawDegreeHonor(SKBitmap main,int degree)
         {
-            using(var canvas = new SKCanvas(main))
+            SKBitmap hornor = new SKBitmap(380, 80);
+            using(var canvas = new SKCanvas(hornor))
+            using (SKPaint paint =new SKPaint() { FilterQuality = SKFilterQuality.High })
             {
+                canvas.DrawBitmap(main, new SKRect(0, 0, 380, 80),paint);
                 if (degree <= 1000)
                 {
                     canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/degree_frame3.png"), 0, 0);
@@ -878,7 +911,7 @@ namespace MinoriBot.Utils
                 }
                 canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/degree_top{degree}.png"), 190, 0);
             }
-            return main;
+            return hornor;
         }
         /// <summary>
         /// 添加背景以及指令标题
