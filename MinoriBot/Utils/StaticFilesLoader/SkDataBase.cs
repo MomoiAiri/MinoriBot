@@ -28,6 +28,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
         public static List<SkMusicVocals> skMusicVocals;
         public static List<SkMusicDifficulties> skMusicDifficulties;
         public static List<SkHonorGroups> skHonorGroups;
+        public static List<SkOutsideCharacters> skOutsideCharacters;
         static string cardsUri = "https://sekai-world.github.io/sekai-master-db-diff/cards.json";
         static string cardSkillsUri = "https://sekai-world.github.io/sekai-master-db-diff/skills.json";
         static string eventsUri = "https://sekai-world.github.io/sekai-master-db-diff/events.json";
@@ -40,8 +41,9 @@ namespace MinoriBot.Utils.StaticFilesLoader
         static string musicVocalsUri = "https://sekai-world.github.io/sekai-master-db-diff/musicVocals.json";
         static string musicDifficultiesUri = "https://sekai-world.github.io/sekai-master-db-diff/musicDifficulties.json";
         static string honorGroupsUri = "https://sekai-world.github.io/sekai-master-db-diff/honorGroups.json";
+        static string outsideCharactersUri = "https://sekai-world.github.io/sekai-master-db-diff/outsideCharacters.json";
         static System.Timers.Timer timer;
-
+        //static Dictionary<Type, List<object>> classDic = new Dictionary<Type, List<object>>() { { typeof(SkCard), new List<object> {skCards ,cardsUri ,"cards.json" } } };
         static SkDataBase()
         {
             //检查是否有数据库存放的路径
@@ -489,6 +491,72 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 }
             }
         }
+        static async Task GetOutsideCharactersDB(Mode mode)
+        {
+            bool isExit = false;
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "asset/db/outsideCharacters.json") && mode == Mode.Load)
+            {
+                string json = await File.ReadAllTextAsync("./asset/db/outsideCharacters.json");
+                skOutsideCharacters = JsonConvert.DeserializeObject<List<SkOutsideCharacters>>(json);
+                isExit = true;
+            }
+            else
+            {
+                if (mode == Mode.Update || !isExit)
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            string json = await client.GetStringAsync(outsideCharactersUri);
+                            if (json != null)
+                            {
+                                File.WriteAllText("./asset/db/outsideCharacters.json", json);
+                                skOutsideCharacters = JsonConvert.DeserializeObject<List<SkOutsideCharacters>>(json);
+                                Console.WriteLine("DateBase:获取outsideCharacters.json成功");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("出现异常\n" + ex);
+                        }
+                    }
+                }
+            }
+        }
+        //static async Task GetDB<T>(Mode mode,T type)
+        //{
+        //    bool isExit = false;
+        //    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + $"asset/db/{classDic[typeof(T)][2]}") && mode == Mode.Load)
+        //    {
+        //        string json = await File.ReadAllTextAsync($"./asset/db/{classDic[typeof(T)][2]}");
+        //        classDic[typeof(T)][0] = JsonConvert.DeserializeObject<List<T>>(json);
+        //        isExit = true;
+        //    }
+        //    else
+        //    {
+        //        if (mode == Mode.Update || !isExit)
+        //        {
+        //            using (HttpClient client = new HttpClient())
+        //            {
+        //                try
+        //                {
+        //                    string json = await client.GetStringAsync(classDic[typeof(T)][1].ToString());
+        //                    if (json != null)
+        //                    {
+        //                        File.WriteAllText($"./asset/db/{classDic[typeof(T)][2]}", json);
+        //                        classDic[typeof(T)][0] = JsonConvert.DeserializeObject<List<T>>(json);
+        //                        Console.WriteLine($"DateBase:获取{classDic[typeof(T)][2]}成功");
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Console.WriteLine("出现异常\n" + ex);
+        //                }
+        //            }
+        //        }
+        //    }
+        ////}
         /// <summary>
         /// 定时更新数据
         /// </summary>
@@ -517,6 +585,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
             await GetMusicVocalsDB(mode);
             await GetMusicDifficultiesDB(mode);
             await GetHonorGroupsDB(mode);
+            await GetOutsideCharactersDB(mode);
             stopwatch.Stop();
             Console.WriteLine($"DataBase:更新数据库执行完成，花费时间{stopwatch.ElapsedMilliseconds/1000}秒");
         }
@@ -536,6 +605,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
             await GetMusicVocalsDB(mode);
             await GetMusicDifficultiesDB(mode);
             await GetHonorGroupsDB(mode);
+            await GetOutsideCharactersDB(mode);
             stopwatch.Stop();
             return $"更新数据库执行完成，花费时间{stopwatch.ElapsedMilliseconds / 1000}秒";
         }

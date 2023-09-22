@@ -552,8 +552,86 @@ namespace MinoriBot.Utils
         }
         public static async Task<string> DrawMusicInfo(SkMusics skMusic)
         {
+            int width = 1000;
+            int height = 0;
+            height = 250 + 500 + 130 * 6;
+            SKBitmap musicInfo = new SKBitmap(width, height);
+            using(SKCanvas canvas = new SKCanvas(musicInfo))
+            using(SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
+            using(SKPaint font =new SKPaint() { Typeface = _typeface, TextSize = 40, IsAntialias = true })
+            {
+                int x = 100;
+                int y = 250;
+                DrawBackGroud(musicInfo, "歌曲");
+                canvas.DrawBitmap(await skMusic.GetMusicJacket(), new SKRect(x, y, x + 400, y + 400), highQuality);
+                List<string> musicTitle = SplitString(skMusic.title, 40, 360);
+                for(int i = 0; i < musicTitle.Count; i++)
+                {
+                    canvas.DrawText(musicTitle[i], x + 440, y + 50 + 40 * i, font);
+                }
+                y += 30 + 40 * musicTitle.Count;
+                canvas.DrawBitmap(DrawDottedLine(360, 5), x + 440, y);
+                font.TextSize = 34;
+                y += 15;
+                float textLong = font.MeasureText("Vocals:");
+                canvas.DrawText($"Vocals:", x + 440, y + 34, font);
+                List<List<SkMusicVocals.Characters>> vocals = skMusic.GetVocals();
+                List<SKBitmap> vocalImages = new List<SKBitmap>();
+                for(int i = 0; i < vocals.Count; i++)
+                {
+                    vocalImages.Add(DrawVocals(vocals[i]));
+                }
+                int vocalLong = (int)textLong + 20;
+                int vocalX = 540 + vocalLong;
+                int vocalY = y;
+                for(int i =0;i<vocalImages.Count; i++)
+                {
+                    vocalLong = vocalX - 540 + vocalImages[i].Width;
+                    if(vocalLong > 360)
+                    {
+                        vocalLong = vocalImages[i].Width;
+                        vocalX = 540;
+                        vocalY += 60;
+                    }
+                    canvas.DrawBitmap(vocalImages[i], vocalX, vocalY);
+                    vocalX += vocalImages[i].Width + 10;
+                }
 
-            return "";
+                
+                y = 590;
+                List<int> diffs = skMusic.GetDifficulties();
+                List<SKColor> colors = new List<SKColor>() { new SKColor(102, 221, 17), new SKColor(51, 187, 237), new SKColor(255, 170, 1), new SKColor(238, 69, 102), new SKColor(187, 51, 239) };
+                for (int i = 0; i < diffs.Count; i++)
+                {
+                    canvas.DrawBitmap(DrawRoundWithText(diffs[i].ToString(), 34, 30, colors[i]), x + 440 + 70 * i, y);
+                }
+                y = 700;
+                font.TextSize = 40;
+                SKBitmap dottedLine = DrawDottedLine(800, 5);
+                canvas.DrawBitmap(DrawPillShapeTitle("歌曲名称"), x, y);
+                canvas.DrawText(skMusic.title, x + 25, y + 50 + 40, font);
+                y += 130;
+                canvas.DrawBitmap(dottedLine, x, y - 20);
+                canvas.DrawBitmap(DrawPillShapeTitle("ID"), x, y);
+                canvas.DrawText(skMusic.id.ToString(), x + 25, y + 50 + 40, font);
+                y += 130;
+                canvas.DrawBitmap(dottedLine, x, y - 20);
+                canvas.DrawBitmap(DrawPillShapeTitle("作词"), x, y);
+                canvas.DrawText(skMusic.lyricist, x + 25, y + 50 + 40, font);
+                y += 130;
+                canvas.DrawBitmap(dottedLine, x, y - 20);
+                canvas.DrawBitmap(DrawPillShapeTitle("作曲"), x, y);
+                canvas.DrawText(skMusic.composer, x + 25, y + 50 + 40, font);
+                y += 130;
+                canvas.DrawBitmap(dottedLine, x, y - 20);
+                canvas.DrawBitmap(DrawPillShapeTitle("编曲"), x, y);
+                canvas.DrawText(skMusic.arranger, x + 25, y + 50 + 40, font);
+                y += 130;
+                canvas.DrawBitmap(dottedLine, x, y - 20);
+                canvas.DrawBitmap(DrawPillShapeTitle("开放时间"), x, y);
+                canvas.DrawText(Utils.TimeStampToDateTime(skMusic.publishedAt).ToString(), x + 25, y + 50 + 40, font);
+            }
+            return ConvertBitmapToBase64(musicInfo);
         }
         public static async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
         {
@@ -840,6 +918,7 @@ namespace MinoriBot.Utils
             }
             return musicCard;
         }
+
         /// <summary>
         /// 绘制相关卡池，单张图为800*160
         /// </summary>
@@ -889,7 +968,7 @@ namespace MinoriBot.Utils
                 paint.StrokeWidth = height;
                 paint.Style = SKPaintStyle.Stroke;
                 paint.StrokeCap = SKStrokeCap.Round;
-                float[] intervals = new float[] { 1, 20 };
+                float[] intervals = new float[] { 1f, 20f };
                 SKPath path =new SKPath();
                 path.MoveTo(height/2f, height / 2f);
                 path.LineTo(width, height / 2f);
@@ -897,6 +976,50 @@ namespace MinoriBot.Utils
                 canvas.DrawPath(path, paint);
             }
             return dottedline;
+        }
+        static SKBitmap DrawVocals(List<SkMusicVocals.Characters> vocals)
+        {
+            int width = 20;
+            int height = 50;
+            SKPaint font = new SKPaint() { TextSize = 34, Typeface = _typeface, IsAntialias = true };
+            for (int i = 0; i < vocals.Count; i++)
+            {
+                if (vocals[i].characterType == "game_character")
+                {
+                    width += 55;
+                    if (i == vocals.Count - 1 && i > 0)
+                    {
+                        width -= 5;
+                    }
+                }
+                if (vocals[i].characterType == "outside_character")
+                {
+                    width += (int)font.MeasureText(vocals[i].GetOutsideCharacterName()) + 5;
+                    if (i == vocals.Count - 1 && i > 0)
+                    {
+                        width -= 5;
+                    }
+                }
+            }
+            SKBitmap vocalImage = new SKBitmap(width, height);
+            using (SKCanvas canvas = new SKCanvas(vocalImage))
+            using (SKPaint highQuality = new SKPaint() { FilterQuality = SKFilterQuality.High, IsAntialias = true })
+            {
+                canvas.DrawBitmap(DrawRoundWithText("", 10, 5, SKColors.Gray), 0, 20);
+                for (int i =0;i< vocals.Count;i++)
+                {
+                    if (vocals[i].characterType == "game_character")
+                    {
+                        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{vocals[i].characterId}.png"), new SKRect(20 + 55 * i, 0, 70 + 55 * i, 50), highQuality);
+                    }
+                    if(vocals[i].characterType == "outside_character")
+                    {
+                        canvas.DrawText(vocals[i].GetOutsideCharacterName(), 20, 34, font);
+                    }
+                }
+            }
+            font.Dispose();
+            return vocalImage;
         }
         /// <summary>
         /// 画牌子
@@ -957,7 +1080,7 @@ namespace MinoriBot.Utils
                     paint.Color = SKColors.White;
                     paint.IsAntialias = true;
                     paint.Style = SKPaintStyle.Fill;
-                    canvas.DrawRect(new SKRect(50, 200, image.Width - 50, image.Height - 50), paint);
+                    canvas.DrawRoundRect(new SKRect(50, 200, image.Width - 50, image.Height - 50), 25, 25, paint);
                 }
             }
         }

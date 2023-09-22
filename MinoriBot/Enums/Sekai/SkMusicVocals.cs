@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinoriBot.Utils.StaticFilesLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,8 +24,21 @@ namespace MinoriBot.Enums.Sekai
             public string characterType;
             public int characterId;
             public int seq;
+
+            public string GetOutsideCharacterName()
+            {
+                for(int i =0;i<SkDataBase.skOutsideCharacters.Count;i++)
+                {
+                    if(characterType== "outside_character" && characterId == SkDataBase.skOutsideCharacters[i].id)
+                    {
+                        return SkDataBase.skOutsideCharacters[i].name;
+                    }
+                }
+                return "";
+            }
         }
         public string assetbundleName;
         public long archivePublishedAt;
+
     }
 }

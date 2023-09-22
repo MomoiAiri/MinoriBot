@@ -68,7 +68,7 @@ namespace MinoriBot.Utils.Routers
                         query = query.Where(skMusics => condition.Value.Any(group => skMusics.GetGroups().Contains(group)));
                         break;
                     case "character":
-                        query = query.Where(skMusics => skMusics.GetVocals().Any(vocals => condition.Value.All(vocals.Select(x => x.ToString()).ToList().Contains)));
+                        query = query.Where(skMusics => skMusics.GetVocals().Any(vocal => condition.Value.All(condition=>vocal.Any(chara => chara.characterId.ToString() == condition))));
                         break;
                     case "musicName":
                         query = query.Where(skMusics => condition.Value.Any(name => skMusics.title.ToLower().Contains(name)));

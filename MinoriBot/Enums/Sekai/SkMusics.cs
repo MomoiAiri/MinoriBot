@@ -108,21 +108,13 @@ namespace MinoriBot.Enums.Sekai
         /// 获取演唱者
         /// </summary>
         /// <returns></returns>
-        public List<List<int>> GetVocals()
+        public List<List<SkMusicVocals.Characters>> GetVocals()
         {
             List<SkMusicVocals> musicVocals = SkDataBase.skMusicVocals.Where(vocal => vocal.musicId == id).ToList();
-            List<List<int>> result = new List<List<int>>(); 
+            List<List<SkMusicVocals.Characters>> result = new List<List<SkMusicVocals.Characters>>(); 
             for(int i =0;i<musicVocals.Count;i++)
             {
-                List<int> characters = new List<int>();
-                for(int j = 0; j < musicVocals[i].characters.Count; j++)
-                {
-                    if (musicVocals[i].characters[j].characterType == "game_character")
-                    {
-                        characters.Add(musicVocals[i].characters[j].characterId);
-                    }
-                }
-                result.Add(characters);
+                result.Add(musicVocals[i].characters);
             }
             return result;
         }
@@ -133,61 +125,64 @@ namespace MinoriBot.Enums.Sekai
         public List<string> GetGroups()
         {
             List<string> result = new List<string>();
-            List<List<int>> vocals = GetVocals();
+            List<List<SkMusicVocals.Characters>> vocals = GetVocals();
             if(vocals.Count > 1)
             {
                 for (int i = 0; i < vocals.Count; i++)
                 {
-                    int groupId = -1;
-                    bool isOneGroup = true;
-                    for (int j = 0; j < vocals[i].Count; j++)
+                    if (vocals[i].Any(vocal => vocal.characterType == "game_character"))
                     {
-                        if (groupId == -1)
+                        int groupId = -1;
+                        bool isOneGroup = true;
+                        for (int j = 0; j < vocals[i].Count; j++)
                         {
-                            if (vocals[i][j] < 21 || vocals[i][j] > 26)
+                            if (groupId == -1)
                             {
-                                groupId = (vocals[i][j] - 1) / 4;
-                            }
-                        }
-                        else
-                        {
-                            if (groupId != (vocals[i][j] - 1) / 4)
-                            {
-                                if (vocals[i][j] < 21 || vocals[i][j] > 26)
+                                if (vocals[i][j].characterId < 21 || vocals[i][j].characterId > 26)
                                 {
-                                    result.Add("others");
-                                    isOneGroup = false;
-                                    break;
+                                    groupId = (vocals[i][j].characterId - 1) / 4;
+                                }
+                            }
+                            else
+                            {
+                                if (groupId != (vocals[i][j].characterId - 1) / 4)
+                                {
+                                    if (vocals[i][j].characterId < 21 || vocals[i][j].characterId > 26)
+                                    {
+                                        result.Add("others");
+                                        isOneGroup = false;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (isOneGroup)
-                    {
-                        switch (groupId)
+                        if (isOneGroup)
                         {
-                            case 0:
-                                result.Add("light_sound");
-                                break;
-                            case 1:
-                                result.Add("idol");
-                                break;
-                            case 2:
-                                result.Add("street");
-                                break;
-                            case 3:
-                                result.Add("theme_park");
-                                break;
-                            case 4:
-                                result.Add("school_refusal");
-                                break;
+                            switch (groupId)
+                            {
+                                case 0:
+                                    result.Add("light_sound");
+                                    break;
+                                case 1:
+                                    result.Add("idol");
+                                    break;
+                                case 2:
+                                    result.Add("street");
+                                    break;
+                                case 3:
+                                    result.Add("theme_park");
+                                    break;
+                                case 4:
+                                    result.Add("school_refusal");
+                                    break;
+                            }
                         }
                     }
                 }
             }
             else
             {
-                if (vocals[0].All(item => item >= 21 && item <= 26)) result.Add("piapro");
+                if (vocals[0].All(item => item.characterId >= 21 && item.characterId <= 26)) result.Add("piapro");
             }
             return result;
         }
