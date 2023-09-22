@@ -560,6 +560,7 @@ namespace MinoriBot.Utils
             using(SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             using(SKPaint font =new SKPaint() { Typeface = _typeface, TextSize = 40, IsAntialias = true })
             {
+                Console.WriteLine("正在生成歌曲信息图");
                 int x = 100;
                 int y = 250;
                 DrawBackGroud(musicInfo, "歌曲");
@@ -629,8 +630,9 @@ namespace MinoriBot.Utils
                 y += 130;
                 canvas.DrawBitmap(dottedLine, x, y - 20);
                 canvas.DrawBitmap(DrawPillShapeTitle("开放时间"), x, y);
-                canvas.DrawText(Utils.TimeStampToDateTime(skMusic.publishedAt).ToString(), x + 25, y + 50 + 40, font);
+                canvas.DrawText(Utils.TimeStampToDateTime(skMusic.publishedAt).ToString("yyyy年MM月dd日 HH:mm:ss"), x + 25, y + 50 + 40, font);
             }
+            Console.WriteLine("成歌曲信息图制作完毕");
             return ConvertBitmapToBase64(musicInfo);
         }
         public static async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
