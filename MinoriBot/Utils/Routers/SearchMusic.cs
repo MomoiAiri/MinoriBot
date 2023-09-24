@@ -36,6 +36,10 @@ namespace MinoriBot.Utils.Routers
             }
             List<SkMusics> skMusics = await GetMatchingMusics(SkDataBase.skMusics, keys);
             Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
+            if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
+            {
+                return await ImageCreater.DrawMusicInfo(skMusics[0]);
+            }
             foreach(SkMusics music in skMusics)
             {
                 Console.WriteLine(music.id + " "+ music.title + "    " +music.creator);
