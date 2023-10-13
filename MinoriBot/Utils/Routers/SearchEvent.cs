@@ -1,5 +1,6 @@
 ﻿using MinoriBot.Enums.Sekai;
 using MinoriBot.Utils.StaticFilesLoader;
+using MinoriBot.Utils.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -82,6 +82,16 @@ namespace MinoriBot.Utils.MessageProcessing
                     return messageBuilder.ToString();
                 }
             }
+            if (rawMessage.ToLower().StartsWith("sk查卡池"))
+            {
+                string message = rawMessage.Substring(6).ToLower();
+                string file = await SearchGacha.SearchSkGacha(message);
+                if (file == "error") return "无有效关键词";
+                if (file == "none") return "未查询到相关卡池";
+                MessageBuilder messageBuilder = new MessageBuilder();
+                string reply = messageBuilder.WithImage(file, 2).ToString();
+                return reply;
+            }
             if (rawMessage.ToLower().StartsWith("sk查卡"))
             {
                 string message = rawMessage.Substring(5).ToLower();
@@ -112,6 +122,7 @@ namespace MinoriBot.Utils.MessageProcessing
                 string reply = messageBuilder.WithImage(file, 2).ToString();
                 return reply;
             }
+            
             if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
             {
                 string help = "指令列表：\nsk查卡  查询烧烤卡牌\nsk查活动  查询烧烤活动\n注：词条之间使用空格分开";

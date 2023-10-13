@@ -28,7 +28,7 @@ namespace MinoriBot.Enums.Sekai
         public List<GachaBehaviors> gachaBehaviors;
         public List<GachaPickups> gachaPickups;
         public List<GachaPickupCostumes> gachaPickupCostumes;
-        public GachaInfomation gachaInfomation;
+        public GachaInfomation gachaInformation;
 
         public class GachaCardRarityRates
         {
@@ -73,7 +73,7 @@ namespace MinoriBot.Enums.Sekai
         }
         public class GachaInfomation
         {
-            public int gachId;
+            public int gachaId;
             public string summary;
             public string description;
         }
@@ -129,7 +129,7 @@ namespace MinoriBot.Enums.Sekai
         /// 获取卡池类型（常驻/限定）
         /// </summary>
         /// <returns></returns>
-        public string GetGachaType()
+        public string GetGachaPickUpType()
         {
             int left = 0;
             int right = SkDataBase.skGachaCeilItemscs.Count;
@@ -153,6 +153,41 @@ namespace MinoriBot.Enums.Sekai
                 }
             }
             return "";
+        }
+        /// <summary>
+        /// 获取卡池类型
+        /// </summary>
+        /// <returns></returns>
+        public string GetGachaType()
+        {
+            switch(gachaType)
+            {
+                case "ceil":
+                    return "天井";
+                case "normal":
+                    return "一般";
+                case "gift":
+                    return "礼物";
+                case "beginner":
+                    return "初心者";
+            }
+            return "";
+        }
+        /// <summary>
+        /// 获取卡池分布概率
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string,double> GetGachaRarityRates()
+        {
+            Dictionary<string,double> rarityRates = new Dictionary<string,double>();
+            if (gachaCardRarityRates.Count > 0)
+            {
+                for (int i = 0; i < gachaCardRarityRates.Count; i++)
+                {
+                    rarityRates.Add(gachaCardRarityRates[i].cardRarityType, gachaCardRarityRates[i].rate);
+                }
+            }
+            return rarityRates;
         }
     }
 }

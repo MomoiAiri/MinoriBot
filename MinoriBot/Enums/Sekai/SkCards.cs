@@ -137,6 +137,7 @@ namespace MinoriBot.Enums.Sekai
                         using (FileStream fileStream = new FileStream(filePath1, FileMode.Create))
                         {
                             await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                            sKBitmap.Add(SKBitmap.Decode(filePath1));
                             Console.WriteLine($"保存图片{assetbundleName}_normal成功");
                         }
                     }
@@ -146,7 +147,7 @@ namespace MinoriBot.Enums.Sekai
                         sKBitmap.Add(SKBitmap.Decode("./asset/normal/err.png"));
                     }
                 }
-                sKBitmap.Add(SKBitmap.Decode(filePath1));
+                
             }
             if (GetStarsCount() >= 3)
             {
@@ -165,16 +166,17 @@ namespace MinoriBot.Enums.Sekai
                             using (FileStream fileStream = new FileStream(filePath2, FileMode.Create))
                             {
                                 await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                                sKBitmap.Add(SKBitmap.Decode(filePath2));
                                 Console.WriteLine($"保存图片{assetbundleName}_after_training成功");
                             }
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine("Download Image Failed" + e);
-                            sKBitmap.Add(SKBitmap.Decode(filePath1));
+                            sKBitmap.Add(SKBitmap.Decode("./asset/normal/err.png"));
                         }
                     }
-                    sKBitmap.Add(SKBitmap.Decode(filePath2));
+                    
                 }
             }
             return sKBitmap;
@@ -394,7 +396,7 @@ namespace MinoriBot.Enums.Sekai
             gachas = allGachas.Where(gacha=>gacha.gachaPickups.Any(pickup=>pickup.cardId == id)).ToList();
             if (gachas.Count > 0)
             {
-                cardType = gachas[0].GetGachaType();
+                cardType = gachas[0].GetGachaPickUpType();
             }
             else
             {
