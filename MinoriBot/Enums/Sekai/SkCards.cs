@@ -181,6 +181,45 @@ namespace MinoriBot.Enums.Sekai
             }
             return sKBitmap;
         }
+        public async Task<SKBitmap> GetCardIllustrationImage(bool isTrained)
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string fileDirectory = basePath + $"asset/character/member/{assetbundleName}_rip/";
+            string trainingStat = isTrained && GetStarsCount() > 2 ? "card_after_training.png" : "card_normal.png";
+            string filePath = fileDirectory+ trainingStat;
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            if (File.Exists(filePath))
+            {
+                return SKBitmap.Decode(filePath);
+            }
+            else
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        byte[] imageBytes = await client.GetByteArrayAsync($"https://storage.sekai.best/sekai-assets/character/member/{assetbundleName}_rip/{trainingStat}");
+
+                        using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await fileStream.WriteAsync(imageBytes, 0, imageBytes.Length);
+                            Console.WriteLine($"保存图片{assetbundleName}_normal成功");
+                            return SKBitmap.Decode(filePath);
+                            
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Download Image Failed" + e);
+                        return SKBitmap.Decode("./asset/normal/err.png");
+                    }
+                }
+
+            }
+        }
         /// <summary>
         /// 获取卡牌的星级，0为生日卡
         /// </summary>
@@ -389,7 +428,7 @@ namespace MinoriBot.Enums.Sekai
         /// 获取UP过该卡的卡池
         /// </summary>
         /// <returns></returns>
-        public List<SkGachas> GetGachas(ref string cardType)
+        public List<SkGachas> GetGachas(out string cardType)
         {
             List<SkGachas> gachas = new List<SkGachas>();
             List<SkGachas> allGachas = SkDataBase.skGachas;
@@ -407,7 +446,7 @@ namespace MinoriBot.Enums.Sekai
         public string GetCardLimitType()
         {
             string result = string.Empty;
-            List<SkGachas> gachas = GetGachas(ref result);
+            List<SkGachas> gachas = GetGachas(out result);
             if(gachas.Count > 0)
             {
                 return result;

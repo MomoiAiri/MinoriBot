@@ -23,7 +23,7 @@ namespace MinoriBot.Utils.Routers
                     {
                         isFound = true;
 
-                        return await ImageCreater.DrawCardInfo(SkDataBase.skCards[i]);
+                        return await CardDetail.DrawCardDetail(SkDataBase.skCards[i]);
                     }
                 }
                 if (!isFound)
