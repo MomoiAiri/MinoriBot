@@ -126,6 +126,7 @@ public class WebSocketPositive
         {
             try
             {
+                Console.WriteLine("ws-state: " + _webSocket.State);
                 if (_webSocket.State != WebSocketState.Open)
                 {
                     await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);
@@ -136,6 +137,8 @@ public class WebSocketPositive
             }
             catch (Exception ex)
             {
+                _webSocket.Dispose();
+                _webSocket = new ClientWebSocket();
                 Console.WriteLine($"出现异常断开连接\nError: {ex.Message}");
             }
             await Task.Delay(TimeSpan.FromSeconds(5));
