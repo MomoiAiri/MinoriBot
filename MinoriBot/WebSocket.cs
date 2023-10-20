@@ -126,7 +126,7 @@ public class WebSocketPositive
         {
             try
             {
-                Console.WriteLine("ws-state: " + _webSocket.State);
+                //Console.WriteLine("ws-state: " + _webSocket.State);
                 if (_webSocket.State != WebSocketState.Open)
                 {
                     await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);

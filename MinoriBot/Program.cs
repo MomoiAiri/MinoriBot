@@ -11,16 +11,21 @@ using YamlDotNet.Serialization;
 class Program
 {
     
+    
     static async Task Main(string[] args)
     {
         Console.WriteLine("初始化资源中。。。");
+
+        string yaml = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/config.yaml");
+        IDeserializer deserializer = new DeserializerBuilder().Build();
+        Config config = deserializer.Deserialize<Config>(yaml);
+
+        HttpServer httpServer = new HttpServer(config.httpListenPort);
+
         await Init.Start();
         Console.WriteLine("初始化资源完成");
         try
         {
-            string yaml = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/config.yaml");
-            IDeserializer deserializer = new DeserializerBuilder().Build();
-            Config config = deserializer.Deserialize<Config>(yaml);
             //正向ws连接
             if (config.socketMode == 1 && config.wsAddr != "")
             {
@@ -36,7 +41,6 @@ class Program
             throw (new Exception("配置文件有误，无法启动Socket"));
         }
         catch (Exception ex) { Console.WriteLine("Error: " + ex); }
-       
 
         Console.ReadKey();
     }
