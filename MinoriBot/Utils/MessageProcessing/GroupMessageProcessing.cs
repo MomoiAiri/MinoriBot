@@ -82,52 +82,74 @@ namespace MinoriBot.Utils.MessageProcessing
                     return messageBuilder.ToString();
                 }
             }
-            if (rawMessage.ToLower().StartsWith("sk查卡池"))
+            if (rawMessage.ToLower().StartsWith("sk"))
             {
-                string message = rawMessage.Substring(6).ToLower();
-                string file = await SearchGacha.SearchSkGacha(message);
-                if (file == "error") return "无有效关键词";
-                if (file == "none") return "未查询到相关卡池";
-                MessageBuilder messageBuilder = new MessageBuilder();
-                string reply = messageBuilder.WithImage(file, 2).ToString();
-                return reply;
+                if (rawMessage.ToLower().StartsWith("查卡池"))
+                {
+                    string message = rawMessage.Substring(4).ToLower();
+                    string file = await SearchGacha.SearchSkGacha(message);
+                    if (file == "error") return "无有效关键词";
+                    if (file == "none") return "未查询到相关卡池";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    return reply;
+                }
+                if (rawMessage.ToLower().StartsWith("查卡"))
+                {
+                    string message = rawMessage.Substring(3).ToLower();
+                    string file = await SearchCard.SearchCharacter(message);
+                    if (file == "error") return "无有效关键词";
+                    if (file == "none") return "未查询到相关卡牌";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    return reply;
+                }
+                if (rawMessage.ToLower().StartsWith("查活动"))
+                {
+                    string message = rawMessage.Substring(4).ToLower();
+                    string file = await SearchEvent.SearchSkEvents(message);
+                    if (file == "error") return "无有效关键词";
+                    if (file == "none") return "未查询到相关活动";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    return reply;
+                }
+                if (rawMessage.ToLower().StartsWith("查曲"))
+                {
+                    string message = rawMessage.Substring(3).ToLower();
+                    string file = await SearchMusic.SearchSkMusics(message);
+                    if (file == "error") return "无有效关键词";
+                    if (file == "none") return "未查询到相关歌曲";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    return reply;
+                }
+                if (rawMessage.ToLower().StartsWith("卡面"))
+                {
+                    string message = rawMessage.Substring(3).ToLower();
+                    List<string> files = await SearchCard.GetCardIllustrationImage(message);
+                    if (files == null) return "无有效关键词或未查询到相关歌曲";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = string.Empty;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        messageBuilder.WithImage(files[i], 0);
+                    }
+                    reply = messageBuilder.ToString();
+                    return reply;
+                }
             }
-            if (rawMessage.ToLower().StartsWith("sk查卡"))
-            {
-                string message = rawMessage.Substring(5).ToLower();
-                string file = await SearchCard.SearchCharacter(message);
-                if (file == "error") return "无有效关键词";
-                if (file == "none") return "未查询到相关卡牌";
-                MessageBuilder messageBuilder = new MessageBuilder();
-                string reply = messageBuilder.WithImage(file,2).ToString();
-                return reply;
-            }
-            if (rawMessage.ToLower().StartsWith("sk查活动"))
-            {
-                string message = rawMessage.Substring(6).ToLower();
-                string file = await SearchEvent.SearchSkEvents(message);
-                if (file == "error") return "无有效关键词";
-                if (file == "none") return "未查询到相关活动";
-                MessageBuilder messageBuilder = new MessageBuilder();
-                string reply = messageBuilder.WithImage(file, 2).ToString();
-                return reply;
-            }
-            if (rawMessage.ToLower().StartsWith("sk查曲"))
-            {
-                string message = rawMessage.Substring(5).ToLower();
-                string file = await SearchMusic.SearchSkMusics(message);
-                if (file == "error") return "无有效关键词";
-                if (file == "none") return "未查询到相关歌曲";
-                MessageBuilder messageBuilder = new MessageBuilder();
-                string reply = messageBuilder.WithImage(file, 2).ToString();
-                return reply;
-            }
-            
             if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
             {
                 string help = "指令列表：\nsk查卡  查询烧烤卡牌\nsk查活动  查询烧烤活动\n注：词条之间使用空格分开";
                 MessageBuilder messageBuilder = new MessageBuilder();
                 messageBuilder.WithAt(groupMessageReport.user_id).WithText(help);
+                return messageBuilder.ToString();
+            }
+            if(rawMessage.ToLower() == "pt公式")
+            {
+                MessageBuilder messageBuilder = new MessageBuilder();
+                messageBuilder.WithImage($"{AppDomain.CurrentDomain.BaseDirectory}/ptformula.png", 1);
                 return messageBuilder.ToString();
             }
             if (rawMessage.ToLower().StartsWith("t10"))
