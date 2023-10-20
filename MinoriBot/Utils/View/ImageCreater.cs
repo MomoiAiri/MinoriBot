@@ -10,6 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace MinoriBot.Utils.View
@@ -746,11 +747,47 @@ namespace MinoriBot.Utils.View
             public SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 40 };
         }
         /// <summary>
+        /// 将所有图片拼到一起输出最终图片
+        /// </summary>
+        /// <param name="images"></param>
+        /// <returns></returns>
+        public static SKBitmap DrawALL(List<SKBitmap> images ,int width = 1000)
+        {
+            int height = 100;
+            for(int i = 0; i < images.Count; i++)
+            {
+                height += images[i].Height + 50;
+            }
+            height -= 50;
+            SKBitmap result = new SKBitmap(width, height);
+            using (SKCanvas canvas = new SKCanvas(result))
+            {
+                SKBitmap backGroud = SKBitmap.Decode("./asset/normal/searchBg.png");
+                int bgHeight = (int)((float)width / backGroud.Width * backGroud.Height);
+                for (int i = 0; i < height; i += bgHeight)
+                {
+                    canvas.DrawBitmap(backGroud, new SKRect(0, i, width, i + bgHeight), _highQuality);
+                }
+                int x = 50;
+                int y = 50;
+                if (images[0].Height == 110 && height > 220 && width > 700)//表情包
+                {
+                    canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/Minori01.png"), new SKRect(556, 20, 775, 220), _highQuality);
+                }
+                for(int i = 0; i < images.Count; i++)
+                {
+                    canvas.DrawBitmap(images[i], x, y);
+                    y += images[i].Height + 50;
+                }
+            }
+            return result;
+        }
+        /// <summary>
         /// 将所有信息拼在一起
         /// </summary>
         /// <param name="images"></param>
         /// <returns></returns>
-        public static SKBitmap DrawAllInfo(List<SKBitmap> images)
+        public static SKBitmap DrawInfoBlock(List<SKBitmap> images)
         {
             int width = 900;
             int height = 100;
@@ -1460,6 +1497,33 @@ namespace MinoriBot.Utils.View
                     canvas.DrawRoundRect(new SKRect(50, 200, image.Width - 50, image.Height - 50), 25, 25, paint);
                 }
             }
+        }
+        /// <summary>
+        /// 图片标题
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static SKBitmap DrawImageTitle(string command,string content)
+        {
+            SKBitmap title = new SKBitmap(510, 110);
+            using(SKCanvas canvas = new SKCanvas(title))
+            {
+                canvas.DrawBitmap(DrawPillShapeTitle(70, 510, SKColors.White), 0, 40);
+                canvas.DrawBitmap(DrawPillShapeTitle(50, 450, SKColors.LightBlue), 0, 0);
+                using(SKPaint font = new SKPaint())
+                {
+                    font.Color = SKColors.White;
+                    font.TextSize = 34;
+                    font.Typeface = _typeface;
+                    font.IsAntialias = true;
+                    canvas.DrawText(command, 30, 38, font);
+                    font.TextSize = 40;
+                    font.Color = SKColors.Black;
+                    canvas.DrawText(content, 50, 93, font);
+                }
+            }
+            return title;
         }
         /// <summary>
         /// 将SkBitmap转换成Base64

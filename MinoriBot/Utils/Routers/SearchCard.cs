@@ -48,6 +48,32 @@ namespace MinoriBot.Utils.Routers
             string file = await ImageCreater.DrawCardIconList(cards, true);
             return file;
         }
+        public static async Task<List<string>> GetCardIllustrationImage(string message)
+        {
+            List<string> images = new List<string>();
+            if (int.TryParse(message, out int cardId))
+            {
+                bool isFound = false;
+                for (int i = 0; i < SkDataBase.skCards.Count; i++)
+                {
+                    if (SkDataBase.skCards[i].id == cardId)
+                    {
+                        isFound = true;
+                        SkCard card = SkDataBase.skCards[i];
+                        images.Add($"https://storage.sekai.best/sekai-assets/character/member/{card.assetbundleName}_rip/card_normal.png");
+                        if (card.GetStarsCount() > 2)
+                        {
+                            images.Add($"https://storage.sekai.best/sekai-assets/character/member/{card.assetbundleName}_rip/card_after_training.png");
+                        }
+                    }
+                }
+                if (!isFound)
+                {
+                    return null;
+                }
+            }
+            return images;
+        }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards, Dictionary<string, string> searchConditions)
         {
 
