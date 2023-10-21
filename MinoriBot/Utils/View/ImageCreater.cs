@@ -25,27 +25,12 @@ namespace MinoriBot.Utils.View
         /// <param name="cards"></param>
         /// <param name="isTrained"></param>
         /// <returns></returns>
-        public static async Task<string> DrawCardIconList(List<SkCard> cards, bool isTrained)
+        public static async Task<SKBitmap> DrawCardIconList(Dictionary<int, Dictionary<string, List<SkCard>>> classifiedCards, bool isTrained)
         {
             string fileDirectory = "./asset/normal";
             //string result = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+".png";
-            //根据角色ID与属性进行分类
-            Dictionary<int, Dictionary<string, List<SkCard>>> classifiedCards = new Dictionary<int, Dictionary<string, List<SkCard>>>();
-            foreach (SkCard card in cards)
-            {
-                if (!classifiedCards.ContainsKey(card.characterId))
-                {
-                    classifiedCards[card.characterId] = new Dictionary<string, List<SkCard>>();
-                }
-                if (!classifiedCards[card.characterId].ContainsKey(card.attr))
-                {
-                    classifiedCards[card.characterId][card.attr] = new List<SkCard>();
-                }
-                classifiedCards[card.characterId][card.attr].Add(card);
-            }
             int line = 0;//输出图片的行数
             int maxLineCount = 0;
-            classifiedCards = SortDictionary(classifiedCards);
             foreach (var kvp in classifiedCards)
             {
                 Console.WriteLine($"ID: {kvp.Key}");
@@ -68,20 +53,19 @@ namespace MinoriBot.Utils.View
                 }
             }
             Console.WriteLine($"需要输出{line}行图片，最长的一行有{maxLineCount}张卡");
-            int width = 248 + (156 + 15) * maxLineCount + 100;
-            int height = 100 + (180 + 15) * line - 15 + 250;
+            int width = 148 + (156 + 15) * maxLineCount;
+            int height = (180 + 15) * line - 15;
             Console.WriteLine("开始生成图片");
             SKBitmap cardList = new SKBitmap(width, height);
             using (SKCanvas canvas = new SKCanvas(cardList))
             {
-                int x = 100;
-                int y = 250;
-                DrawBackGroud(cardList, "卡牌");
+                int x = 0;
+                int y = 0;
                 foreach (var kvp in classifiedCards)
                 {
                     //画角色头图
                     canvas.DrawBitmap(SKBitmap.Decode($"{fileDirectory}/{kvp.Key}.png"), new SKRect(x, y, x + 128, y + 128));
-                    x = 248;
+                    x = 148;
                     foreach (var attrKvp in kvp.Value)
                     {
                         foreach (var card in attrKvp.Value)
@@ -92,20 +76,11 @@ namespace MinoriBot.Utils.View
                         x = 248;
                         y = y + 180 + 15;
                     }
-                    x = 100;
+                    x = 0;
                 }
-                //水印
-                using (SKPaint mark = new SKPaint())
-                {
-                    mark.TextAlign = SKTextAlign.Center;
-                    mark.TextSize = 30;
-                    mark.Color = SKColors.Gray;
-                    mark.IsAntialias = true;
-                    mark.Typeface = _typeface;
-                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
-                }
+
             }
-            return ConvertBitmapToBase64(cardList);
+            return cardList;
         }
         public static async Task<string> DrawCardInfo(SkCard card)
         {
@@ -779,6 +754,15 @@ namespace MinoriBot.Utils.View
                     canvas.DrawBitmap(images[i], x, y);
                     y += images[i].Height + 50;
                 }
+                using (SKPaint mark = new SKPaint())
+                {
+                    mark.TextAlign = SKTextAlign.Center;
+                    mark.TextSize = 30;
+                    mark.Color = SKColors.Gray;
+                    mark.IsAntialias = true;
+                    mark.Typeface = _typeface;
+                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+                }
             }
             return result;
         }
@@ -787,9 +771,8 @@ namespace MinoriBot.Utils.View
         /// </summary>
         /// <param name="images"></param>
         /// <returns></returns>
-        public static SKBitmap DrawInfoBlock(List<SKBitmap> images)
+        public static SKBitmap DrawInfoBlock(List<SKBitmap> images, int width = 900)
         {
-            int width = 900;
             int height = 100;
             for(int i = 0; i < images.Count; i++)
             {

@@ -45,7 +45,7 @@ namespace MinoriBot.Utils.Routers
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
             if(cards.Count == 0) return "none";
-            string file = await ImageCreater.DrawCardIconList(cards, true);
+            string file = await CardList.DrawCardListImage(cards, true);
             return file;
         }
         public static async Task<List<string>> GetCardIllustrationImage(string message)
