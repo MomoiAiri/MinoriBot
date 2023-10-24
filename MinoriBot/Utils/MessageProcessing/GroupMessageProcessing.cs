@@ -5,7 +5,9 @@ using MinoriBot.Library.Reports;
 using MinoriBot.Utils.PicFunction;
 using MinoriBot.Utils.Routers;
 using MinoriBot.Utils.StaticFilesLoader;
+using MinoriBot.Utils.View;
 using Newtonsoft.Json;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,9 +86,9 @@ namespace MinoriBot.Utils.MessageProcessing
             }
             if (rawMessage.ToLower().StartsWith("sk"))
             {
-                if (rawMessage.ToLower().StartsWith("查卡池"))
+                if (rawMessage.ToLower().StartsWith("sk查卡池"))
                 {
-                    string message = rawMessage.Substring(4).ToLower();
+                    string message = rawMessage.Substring(6).ToLower();
                     string file = await SearchGacha.SearchSkGacha(message);
                     if (file == "error") return "无有效关键词";
                     if (file == "none") return "未查询到相关卡池";
@@ -94,9 +96,9 @@ namespace MinoriBot.Utils.MessageProcessing
                     string reply = messageBuilder.WithImage(file, 2).ToString();
                     return reply;
                 }
-                if (rawMessage.ToLower().StartsWith("查卡"))
+                if (rawMessage.ToLower().StartsWith("sk查卡"))
                 {
-                    string message = rawMessage.Substring(3).ToLower();
+                    string message = rawMessage.Substring(5).ToLower();
                     string file = await SearchCard.SearchCharacter(message);
                     if (file == "error") return "无有效关键词";
                     if (file == "none") return "未查询到相关卡牌";
@@ -104,9 +106,9 @@ namespace MinoriBot.Utils.MessageProcessing
                     string reply = messageBuilder.WithImage(file, 2).ToString();
                     return reply;
                 }
-                if (rawMessage.ToLower().StartsWith("查活动"))
+                if (rawMessage.ToLower().StartsWith("sk查活动"))
                 {
-                    string message = rawMessage.Substring(4).ToLower();
+                    string message = rawMessage.Substring(6).ToLower();
                     string file = await SearchEvent.SearchSkEvents(message);
                     if (file == "error") return "无有效关键词";
                     if (file == "none") return "未查询到相关活动";
@@ -114,9 +116,9 @@ namespace MinoriBot.Utils.MessageProcessing
                     string reply = messageBuilder.WithImage(file, 2).ToString();
                     return reply;
                 }
-                if (rawMessage.ToLower().StartsWith("查曲"))
+                if (rawMessage.ToLower().StartsWith("sk查曲"))
                 {
-                    string message = rawMessage.Substring(3).ToLower();
+                    string message = rawMessage.Substring(5).ToLower();
                     string file = await SearchMusic.SearchSkMusics(message);
                     if (file == "error") return "无有效关键词";
                     if (file == "none") return "未查询到相关歌曲";
@@ -124,9 +126,9 @@ namespace MinoriBot.Utils.MessageProcessing
                     string reply = messageBuilder.WithImage(file, 2).ToString();
                     return reply;
                 }
-                if (rawMessage.ToLower().StartsWith("卡面"))
+                if (rawMessage.ToLower().StartsWith("sk卡面"))
                 {
-                    string message = rawMessage.Substring(3).ToLower();
+                    string message = rawMessage.Substring(5).ToLower();
                     List<string> files = await SearchCard.GetCardIllustrationImage(message);
                     if (files == null) return "无有效关键词或未查询到相关歌曲";
                     MessageBuilder messageBuilder = new MessageBuilder();
@@ -148,19 +150,24 @@ namespace MinoriBot.Utils.MessageProcessing
             }
             if(rawMessage.ToLower() == "pt公式")
             {
-                MessageBuilder messageBuilder = new MessageBuilder();
-                messageBuilder.WithImage($"{AppDomain.CurrentDomain.BaseDirectory}/ptformula.png", 1);
+                MessageBuilder messageBuilder= new MessageBuilder();
+                string file = $"{AppDomain.CurrentDomain.BaseDirectory}/asset/normal/ptformula.png";
+                messageBuilder.WithImage(ImageCreater.ConvertBitmapToBase64(SKBitmap.Decode(file)),2);
                 return messageBuilder.ToString();
             }
             if (rawMessage.ToLower().StartsWith("t10"))
             {
-                int eventId = 210;
+                int eventId = -1;
                 if (rawMessage.Length > 3)
                 {
                     if(int.TryParse(rawMessage.Substring(4), out int result))
                     {
                         eventId = result;
                     }
+                }
+                else
+                {
+                    return "缺少活动ID";
                 }
                 using (var client = new HttpClient())
                 {

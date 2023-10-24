@@ -34,7 +34,7 @@ namespace MinoriBot.Library.Messages
         /// 
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="fileType">0:网页链接，1:本地链接，3：base64编码</param>
+        /// <param name="fileType">0:网页链接，1:本地链接，2：base64编码</param>
         /// <returns></returns>
         public MessageBuilder WithImage(string file, int fileType)
         {

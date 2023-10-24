@@ -32,47 +32,23 @@ namespace MinoriBot.Enums.Sekai
         /// 获取歌曲的五个难度，索引越大难度越高
         /// </summary>
         /// <returns></returns>
-        public List<int> GetDifficulties()
+        public Dictionary<string ,int> GetDifficulties()
         {
-            List<int> difficulties = new List<int>();
-            int left = 0;
-            int right = SkDataBase.skMusicDifficulties.Count;
-            int mid = 0;
-            while (left <= right)
+            Dictionary<string, int> difficulties = new Dictionary<string, int>();
+            var query = SkDataBase.skMusicDifficulties.AsQueryable();
+            query = query.Where(diff => diff.musicId == id);
+            List<SkMusicDifficulties> diffs = query.ToList();
+            for(int i = 0; i < diffs.Count; i++)
             {
-                mid = (left + right) / 2;
-                if (id > SkDataBase.skMusicDifficulties[mid].musicId)
-                {
-                    left = mid + 1;
-                }
-                else if(id < SkDataBase.skMusicDifficulties[mid].musicId)
-                {
-                    right = mid - 1;
-                }
-                else
-                {
-                    difficulties.Add(SkDataBase.skMusicDifficulties[mid].playLevel);
-                    break;
-                }
+                difficulties.Add(diffs[i].musicDifficulty,diffs[i].playLevel);
             }
-            left = mid - 1;
-            right = mid + 1;
-            while (true)
-            {
-                if (id == SkDataBase.skMusicDifficulties[left].musicId)
-                {
-                    difficulties.Add(SkDataBase.skMusicDifficulties[left].playLevel);
-                    left--;
-                }
-                if (id == SkDataBase.skMusicDifficulties[right].musicId)
-                {
-                    difficulties.Add(SkDataBase.skMusicDifficulties[right].playLevel);
-                    right++;
-                }
-                if (difficulties.Count > 4) break;
-            }
-            difficulties.Sort();
+            SortDictionary(difficulties);
             return difficulties;
+        }
+        void SortDictionary(Dictionary<string, int> input)
+        {
+            List<string> order = new List<string>() {"easy","normal","hard","expert","master","append" };
+            input = input.OrderBy(item => order.IndexOf(item.Key)).ToDictionary(item => item.Key, item => item.Value);
         }
         /// <summary>
         /// 获取特定难度的难度等级
@@ -81,23 +57,10 @@ namespace MinoriBot.Enums.Sekai
         /// <returns></returns>
         public int GetDifficulty(string diffType)
         {
-            List<int> difficulties = GetDifficulties();
+            Dictionary<string, int> difficulties = GetDifficulties();
             if (difficulties.Count > 0)
             {
-                switch (diffType)
-                {
-                    case "easy":
-                        return difficulties[0];
-                    case "normal":
-                        return difficulties[1];
-                    case "hard":
-                        return difficulties[2];
-                    case "expert":
-                        return difficulties[3];
-                    case "master":
-                        return difficulties[4];
-                }
-                return 0;
+                return difficulties[diffType];
             }
             else
             {

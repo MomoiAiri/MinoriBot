@@ -20,7 +20,7 @@ class Program
         IDeserializer deserializer = new DeserializerBuilder().Build();
         Config config = deserializer.Deserialize<Config>(yaml);
 
-        HttpServer httpServer = new HttpServer(config.httpListenPort);
+        //HttpServer httpServer = new HttpServer(config.httpListenPort);
 
         await Init.Start();
         Console.WriteLine("初始化资源完成");

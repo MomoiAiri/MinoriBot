@@ -20,6 +20,7 @@ namespace MinoriBot.Utils.View
             SKBitmap title = ImageCreater.DrawImageTitle("查询", "卡牌");
             all.Add(title);
 
+            //卡牌列表
             SKBitmap cardList = await ImageCreater.DrawCardIconList(classifiedCards, isTrained);
             all.Add(ImageCreater.DrawInfoBlock(new List<SKBitmap>() { cardList }, cardList.Width + 100));
 
@@ -27,6 +28,11 @@ namespace MinoriBot.Utils.View
 
             return ImageCreater.ConvertBitmapToBase64(final);
         }
+        /// <summary>
+        /// 对字典中的内容根据角色，属性进行排序
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <returns></returns>
         public static Dictionary<int, Dictionary<string, List<SkCard>>> SortDictionary(Dictionary<int, Dictionary<string, List<SkCard>>> cards)
         {
             Dictionary<int, Dictionary<string, List<SkCard>>> result = new Dictionary<int, Dictionary<string, List<SkCard>>>();
@@ -45,6 +51,11 @@ namespace MinoriBot.Utils.View
             }
             return result;
         }
+        /// <summary>
+        /// 将卡牌列表转换为 角色：卡牌列表 的字典
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <returns></returns>
         public static Dictionary<int, Dictionary<string, List<SkCard>>> ClassifiedCards(List<SkCard> cards)
         {
             Dictionary<int, Dictionary<string, List<SkCard>>> classifiedCards = new Dictionary<int, Dictionary<string, List<SkCard>>>();

@@ -78,18 +78,25 @@ namespace MinoriBot.Utils.View
             info.Add(line);
 
             //相关活动
-            SKBitmap relatedEvent = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "相关活动", images = new List<SKBitmap> { await ImageCreater.DrawEventLogo(card.GetEvent(), true) } });
-            info.Add(relatedEvent);
-            info.Add(line);
+            SkEvents skEvent = card.GetEvent();
+            if (skEvent != null)
+            {
+                SKBitmap relatedEvent = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "相关活动", images = new List<SKBitmap> { await ImageCreater.DrawEventLogo(skEvent, true) } });
+                info.Add(relatedEvent);
+                info.Add(line);
+            }
 
             //相关卡池
-            List<SKBitmap> gachaBanners = new List<SKBitmap>();
-            for(int i = 0; i < gachas.Count; i++)
+            if (gachas.Count > 0)
             {
-                gachaBanners.Add(await ImageCreater.DrawGachaCard(gachas[i]));
+                List<SKBitmap> gachaBanners = new List<SKBitmap>();
+                for (int i = 0; i < gachas.Count; i++)
+                {
+                    gachaBanners.Add(await ImageCreater.DrawGachaCard(gachas[i]));
+                }
+                SKBitmap cardGachas = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "相关卡池", images = gachaBanners });
+                info.Add(cardGachas);
             }
-            SKBitmap cardGachas = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "相关卡池", images = gachaBanners });
-            info.Add(cardGachas);
 
             //信息块合成
             SKBitmap infoBlock = ImageCreater.DrawInfoBlock(info);

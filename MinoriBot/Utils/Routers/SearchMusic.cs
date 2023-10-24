@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YamlDotNet.Serialization.NodeTypeResolvers;
 
 namespace MinoriBot.Utils.Routers
 {
@@ -20,7 +21,9 @@ namespace MinoriBot.Utils.Routers
                 {
                     if (SkDataBase.skMusics[i].id == musicId)
                     {
-                        return await ImageCreater.DrawMusicInfo(SkDataBase.skMusics[i]);
+                        //SkMusics music = SkDataBase.skMusics[i];
+                        //Console.WriteLine(music.GetDifficulty("master"));
+                        //return await ImageCreater.DrawMusicInfo(SkDataBase.skMusics[i]);
                     }
                 }
                 if (!isFound)
@@ -35,11 +38,20 @@ namespace MinoriBot.Utils.Routers
             {
                 return "error";
             }
-            List<SkMusics> skMusics = await GetMatchingMusics(SkDataBase.skMusics, keys);
+            foreach(KeyValuePair<string,List<string>> k in keys)
+            {
+                Console.WriteLine(k.Key+":");
+                foreach(string s in k.Value)
+                {
+                    Console.Write("  "+s);
+                }
+                Console.WriteLine();
+            }
+            List<SkMusics> skMusics = GetMatchingMusics(SkDataBase.skMusics, keys);
             Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
             if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
             {
-                return await ImageCreater.DrawMusicInfo(skMusics[0]);
+                //return await ImageCreater.DrawMusicInfo(skMusics[0]);
             }
             foreach(SkMusics music in skMusics)
             {
@@ -49,7 +61,11 @@ namespace MinoriBot.Utils.Routers
             string file = await ImageCreater.DrawMusicList(skMusics);
             return file;
         }
-        static async Task<List<SkMusics>> GetMatchingMusics(List<SkMusics> skMusics, Dictionary<string, List<string>> searchConditions)
+        static void SortSearchConditions(Dictionary<string, List<string>> input)
+        {
+
+        }
+        static List<SkMusics> GetMatchingMusics(List<SkMusics> skMusics, Dictionary<string, List<string>> searchConditions)
         {
             var query = skMusics.AsQueryable();
 
@@ -62,12 +78,38 @@ namespace MinoriBot.Utils.Routers
                         {
                             if (searchConditions["diffLevel"].Count == 1)
                             {
-                                query = query.Where(skMusics => skMusics.GetDifficulty(searchConditions["diffType"][0]).ToString() == searchConditions["diffLevel"][0]);
+                                string difficultyType = searchConditions["diffType"][0];
+                                string level = searchConditions["diffLevel"][0];
+                                query = query.Where(skMusics => skMusics.GetDifficulty(difficultyType).ToString() == level);
                             }
+                        }
+                        try
+                        {
+                            List<SkMusics> musics = query.ToList();
+                            foreach (SkMusics m in musics)
+                            {
+                                Console.WriteLine(m.title);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
                         }
                         break;
                     case "diffLevel":
-                        query = query.Where(skMusics => condition.Value.Any(skMusics.GetDifficulties().Select(x=>x.ToString()).ToList().Contains));
+                        query = query.Where(skMusics => condition.Value.Any(skMusics.GetDifficulties().Values.ToList().Select(x => x.ToString()).ToList().Contains));
+                        try
+                        {
+                            List<SkMusics> musics = query.ToList();
+                            foreach(SkMusics m in musics)
+                            {
+                                Console.WriteLine(m.title);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                         break;
                     case "group":
                         query = query.Where(skMusics => condition.Value.Any(group => skMusics.GetGroups().Contains(group)));
