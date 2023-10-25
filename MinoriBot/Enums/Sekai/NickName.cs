@@ -230,7 +230,10 @@ namespace MinoriBot.Enums.Sekai
             {"ex","expert" },
             {"master","master" },
             {"ma","master" },
-            {"大师","master" }
+            {"大师","master" },
+            {"append","append" },
+            {"app","append" },
+            {"apd","append" }
         };
         /// <summary>
         /// 根据昵称查找角色ID
