@@ -42,10 +42,10 @@ namespace MinoriBot.Enums.Sekai
             {
                 difficulties.Add(diffs[i].musicDifficulty,diffs[i].playLevel);
             }
-            SortDictionary(difficulties);
+            SortDictionary(ref difficulties);
             return difficulties;
         }
-        void SortDictionary(Dictionary<string, int> input)
+        void SortDictionary(ref Dictionary<string, int> input)
         {
             List<string> order = new List<string>() {"easy","normal","hard","expert","master","append" };
             input = input.OrderBy(item => order.IndexOf(item.Key)).ToDictionary(item => item.Key, item => item.Value);

@@ -21,9 +21,7 @@ namespace MinoriBot.Utils.Routers
                 {
                     if (SkDataBase.skMusics[i].id == musicId)
                     {
-                        //SkMusics music = SkDataBase.skMusics[i];
-                        //Console.WriteLine(music.GetDifficulty("master"));
-                        //return await ImageCreater.DrawMusicInfo(SkDataBase.skMusics[i]);
+                        return await MusicDetail.DrawMusicDetails(SkDataBase.skMusics[i]);
                     }
                 }
                 if (!isFound)
@@ -34,6 +32,7 @@ namespace MinoriBot.Utils.Routers
             string[] keywords = message.Split(' ');
             //将模糊的关键词转换成唯一的关键词
             Dictionary<string, List<string>> keys = FuzzySearch.FuzzySearchMusic(keywords);
+            SortSearchConditions(ref keys);
             if (keys.Count == 0)
             {
                 return "error";
@@ -48,22 +47,29 @@ namespace MinoriBot.Utils.Routers
                 Console.WriteLine();
             }
             List<SkMusics> skMusics = GetMatchingMusics(SkDataBase.skMusics, keys);
-            Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
-            if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
+            if (skMusics != null)
             {
-                //return await ImageCreater.DrawMusicInfo(skMusics[0]);
+                Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
+                if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
+                {
+                    return await MusicDetail.DrawMusicDetails(skMusics[0]);
+                }
+                foreach (SkMusics music in skMusics)
+                {
+                    Console.WriteLine(music.id + " " + music.title + "    " + music.creator);
+                }
+                string file = await MusicList.DrawMusicList(skMusics);
+                return file;
             }
-            foreach(SkMusics music in skMusics)
+            else
             {
-                Console.WriteLine(music.id + " "+ music.title + "    " +music.creator);
+                return "none";
             }
-            if (skMusics.Count == 0) return "none";
-            string file = await ImageCreater.DrawMusicList(skMusics);
-            return file;
         }
-        static void SortSearchConditions(Dictionary<string, List<string>> input)
+        static void SortSearchConditions(ref Dictionary<string, List<string>> input)
         {
-
+            List<string> order = new List<string>() { "group", "character", "diffLevel", "diffType", "musicName" };
+            input = input.OrderBy(item => order.IndexOf(item.Key)).ToDictionary(item => item.Key, item => item.Value);
         }
         static List<SkMusics> GetMatchingMusics(List<SkMusics> skMusics, Dictionary<string, List<string>> searchConditions)
         {
@@ -83,33 +89,37 @@ namespace MinoriBot.Utils.Routers
                                 query = query.Where(skMusics => skMusics.GetDifficulty(difficultyType).ToString() == level);
                             }
                         }
-                        try
+                        else
                         {
-                            List<SkMusics> musics = query.ToList();
-                            foreach (SkMusics m in musics)
-                            {
-                                Console.WriteLine(m.title);
-                            }
+                            return null;
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        //try
+                        //{
+                        //    List<SkMusics> musics = query.ToList();
+                        //    foreach (SkMusics m in musics)
+                        //    {
+                        //        Console.WriteLine(m.title);
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    Console.WriteLine(ex.Message);
+                        //}
                         break;
                     case "diffLevel":
                         query = query.Where(skMusics => condition.Value.Any(skMusics.GetDifficulties().Values.ToList().Select(x => x.ToString()).ToList().Contains));
-                        try
-                        {
-                            List<SkMusics> musics = query.ToList();
-                            foreach(SkMusics m in musics)
-                            {
-                                Console.WriteLine(m.title);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        //try
+                        //{
+                        //    List<SkMusics> musics = query.ToList();
+                        //    foreach(SkMusics m in musics)
+                        //    {
+                        //        Console.WriteLine(m.title);
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    Console.WriteLine(ex.Message);
+                        //}
                         break;
                     case "group":
                         query = query.Where(skMusics => condition.Value.Any(group => skMusics.GetGroups().Contains(group)));
