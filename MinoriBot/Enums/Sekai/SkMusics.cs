@@ -60,7 +60,14 @@ namespace MinoriBot.Enums.Sekai
             Dictionary<string, int> difficulties = GetDifficulties();
             if (difficulties.Count > 0)
             {
-                return difficulties[diffType];
+                if (difficulties.Count < 6 && diffType == "append")
+                {
+                    return 0;
+                }
+                else
+                {
+                    return difficulties[diffType];
+                }
             }
             else
             {

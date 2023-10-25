@@ -1366,7 +1366,7 @@ namespace MinoriBot.Utils.View
                 {
                     if (i == 5)
                     {
-                        canvas.DrawBitmap(DrawGradientCircleWithText(diffs[5].ToString(), 34, 30, new SKColor(172, 143, 235), new SKColor(255, 121, 225)), x, 17);
+                        canvas.DrawBitmap(DrawGradientCircleWithText(diffs[5].ToString(), 24, 23, new SKColor(172, 143, 235), new SKColor(255, 121, 225)), x, 17);
                         x -= 50;
                     }
                     else
