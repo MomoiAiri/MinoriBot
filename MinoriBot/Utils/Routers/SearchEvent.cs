@@ -38,7 +38,7 @@ namespace MinoriBot.Utils.Routers
             }
             List<SkEvents> skEvents = await GetMatchingEvents(SkDataBase.skEvents, keys);
             if (skEvents.Count == 0) return "none";
-            string file = await ImageCreater.DrawEventList(skEvents);
+            string file = await EventList.DrawEventList(skEvents);
             return file;
         }
         static async Task<List<SkEvents>> GetMatchingEvents(List<SkEvents> skEvents, Dictionary<string, List<string>> searchConditions)

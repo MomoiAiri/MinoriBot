@@ -14,7 +14,7 @@ namespace MinoriBot.Utils.View
         {
             List<SKBitmap> all = new List<SKBitmap>();
             List<SKBitmap> info = new List<SKBitmap>();
-            SKBitmap line = ImageCreater.DrawDottedLine(800, 5);
+            SKBitmap line = ImageCreater.DrawDottedLine(800, 20);
 
             //图片标题
             SKBitmap imageTitle = ImageCreater.DrawImageTitle("查询", "活动");
