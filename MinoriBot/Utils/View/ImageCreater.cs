@@ -82,460 +82,451 @@ namespace MinoriBot.Utils.View
             }
             return cardList;
         }
-        public static async Task<string> DrawCardInfo(SkCard card)
-        {
-            int width = 1000;
-            int height = 0;
-            int cardIllustrationImageCount = 0;
-            Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
-            string assetDir = "./asset/normal";
-            string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
-            string cardFrameDir = string.Empty;
-            string cardType = string.Empty;
-            int starCount = card.GetStarsCount();
-            if (starCount > 0)
-            {
-                cardFrameDir = assetDir + $"/cardFrame_{starCount}.png";
-            }
-            else
-            {
-                cardFrameDir = assetDir + "/cardFrame_bd.png";
-            }
-            cardIllustrationImageCount = starCount > 2 ? 2 : 1;
-            //计算卡面信息所需要的图片高度
-            string skillDescription = card.GetSkillDescription().Replace("\n", "");
-            List<string> skillDescriptionList = SplitString(skillDescription, 30, 750);
-            SkEvents skEvent = card.GetEvent();
-            int hasEvent = skEvent == null ? 0 : 1;
-            List<SkGachas> gachas = card.GetGachas(out cardType);
-            int gachaHight = (gachas.Count / 2 + gachas.Count % 2) * 200;
-            int hasGacha = gachas.Count > 0 ? 1 : 0;
-            //200标题,450一张插图与空隙，150编号，360综合力，140+30*技能描述行数,130招募语，130发布日期，256缩略图，360*hasEvent是否有活动图
-            height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 140 + 30 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 60 * hasGacha + gachaHight + 70 + 250;
-            SKBitmap cardInfo = new SKBitmap(width, height);
-            using (SKCanvas canvas = new SKCanvas(cardInfo))
-            using (SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true })
-            using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
-            {
-                DrawBackGroud(cardInfo, "卡牌");
-                //x,y为当前所操作区块的左上角坐标
-                int x = 100;
-                int y = 250;
-                //标题背景颜色填充
-                using (SKPaint paint = new SKPaint())
-                {
-                    paint.Color = new SKColor(235, 235, 235);
-                    paint.IsAntialias = true;
-                    paint.Style = SKPaintStyle.Fill;
-                    canvas.DrawRect(new SKRect(x, y, x + 800, y + 130), paint);
-                }
+        //public static async Task<string> DrawCardInfo(SkCard card)
+        //{
+        //    int width = 1000;
+        //    int height = 0;
+        //    int cardIllustrationImageCount = 0;
+        //    Console.WriteLine($"正在生成卡面ID为{card.id}的图片");
+        //    string assetDir = "./asset/normal";
+        //    string logoDir = assetDir + $"/logo_{card.GetGroupNameById()}.png";
+        //    string cardFrameDir = string.Empty;
+        //    string cardType = string.Empty;
+        //    int starCount = card.GetStarsCount();
+        //    if (starCount > 0)
+        //    {
+        //        cardFrameDir = assetDir + $"/cardFrame_{starCount}.png";
+        //    }
+        //    else
+        //    {
+        //        cardFrameDir = assetDir + "/cardFrame_bd.png";
+        //    }
+        //    cardIllustrationImageCount = starCount > 2 ? 2 : 1;
+        //    //计算卡面信息所需要的图片高度
+        //    string skillDescription = card.GetSkillDescription().Replace("\n", "");
+        //    List<string> skillDescriptionList = SplitString(skillDescription, 30, 750);
+        //    SkEvents skEvent = card.GetEvent();
+        //    int hasEvent = skEvent == null ? 0 : 1;
+        //    List<SkGachas> gachas = card.GetGachas(out cardType);
+        //    int gachaHight = (gachas.Count / 2 + gachas.Count % 2) * 200;
+        //    int hasGacha = gachas.Count > 0 ? 1 : 0;
+        //    //200标题,450一张插图与空隙，150编号，360综合力，140+30*技能描述行数,130招募语，130发布日期，256缩略图，360*hasEvent是否有活动图
+        //    height = 200 + 450 * cardIllustrationImageCount + 150 + 360 + 140 + 30 * skillDescriptionList.Count + 130 + 130 + 266 + 360 * hasEvent + 60 * hasGacha + gachaHight + 70 + 250;
+        //    SKBitmap cardInfo = new SKBitmap(width, height);
+        //    using (SKCanvas canvas = new SKCanvas(cardInfo))
+        //    using (SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true })
+        //    using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
+        //    {
+        //        DrawBackGroud(cardInfo, "卡牌");
+        //        //x,y为当前所操作区块的左上角坐标
+        //        int x = 100;
+        //        int y = 250;
+        //        //标题背景颜色填充
+        //        using (SKPaint paint = new SKPaint())
+        //        {
+        //            paint.Color = new SKColor(235, 235, 235);
+        //            paint.IsAntialias = true;
+        //            paint.Style = SKPaintStyle.Fill;
+        //            canvas.DrawRect(new SKRect(x, y, x + 800, y + 130), paint);
+        //        }
 
-                //团体logo
-                SKBitmap dottedLine = DrawDottedLine(800, 5);
-                SKBitmap logoImage = SKBitmap.Decode(logoDir);
-                float logoWidth = 100f / logoImage.Height * logoImage.Width;
-                canvas.DrawBitmap(logoImage, new SKRect(x + 70, y + 15, x + 70 + logoWidth, y + 115), highQuality);
+        //        //团体logo
+        //        SKBitmap dottedLine = DrawDottedLine(800, 5);
+        //        SKBitmap logoImage = SKBitmap.Decode(logoDir);
+        //        float logoWidth = 100f / logoImage.Height * logoImage.Width;
+        //        canvas.DrawBitmap(logoImage, new SKRect(x + 70, y + 15, x + 70 + logoWidth, y + 115), highQuality);
 
-                //卡牌名与角色名
-                font.TextSize = 30;
-                font.Color = SKColors.Black;
-                font.TextAlign = SKTextAlign.Left;
-                string text = card.prefix;
-                canvas.DrawText(text, x + 350, y + 50, font);
-                text = NickName.idToName[card.characterId];
-                font.TextSize = 40;
-                canvas.DrawText(text, x + 350, y + 100, font);
+        //        //卡牌名与角色名
+        //        font.TextSize = 30;
+        //        font.Color = SKColors.Black;
+        //        font.TextAlign = SKTextAlign.Left;
+        //        string text = card.prefix;
+        //        canvas.DrawText(text, x + 350, y + 50, font);
+        //        text = NickName.idToName[card.characterId];
+        //        font.TextSize = 40;
+        //        canvas.DrawText(text, x + 350, y + 100, font);
 
-                //画卡面插图 卡面大小800*450 星星大小40*39
-                y = 400;
-                List<SKBitmap> cardIllustrationImage = await card.GetCardIllustrationImage();
-                List<SKBitmap> cardIllustrationImage_afterCropping = new List<SKBitmap>();
-                for (int i = 0; i < cardIllustrationImage.Count; i++)
-                {
-                    cardIllustrationImage_afterCropping.Add(CropCardIllustrationImage(cardIllustrationImage[i]));
-                }
-                canvas.DrawBitmap(cardIllustrationImage_afterCropping[0], new SKRect(x, y, x + 800, y + 450), highQuality);
-                canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
-                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
-                SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
-                //生日卡单独处理
-                if (starCount == 0)
-                {
-                    canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 393, x + 18 + 40, y + 393 + 39), highQuality);
-                    y = y + 450 + 20;
-                }
-                else
-                {
-                    for (int i = 0; i < starCount; i++)
-                    {
-                        canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
-                    }
-                    y = y + 450 + 20;
-                    //如果有特训后
-                    if (cardIllustrationImage.Count > 1)
-                    {
-                        y = 400 + 450 + 20;
-                        SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
-                        canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 800, y + 450), highQuality);
-                        canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
-                        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
-                        for (int i = 0; i < starCount; i++)
-                        {
-                            canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
-                        }
-                        y = 400 + 450 * 2 + 20 * 2;
-                    }
-                }
-                //卡面编号
-                canvas.DrawBitmap(DrawPillShapeTitle("编号"), x, y);
-                font.TextSize = 40;
-                canvas.DrawText(card.id.ToString(), x + 25, y + 40 + 50, font);
-                //类型
-                canvas.DrawBitmap(DrawPillShapeTitle("类型"), x + 400, y);
-                canvas.DrawText(cardType, x + 25 + 400, y + 40 + 50, font);
-                //综合力
-                y += 100 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("综合力"), x, y);
-                font.TextSize = 45;
-                int[] power = card.GetPower();
-                canvas.DrawText($"综合力: {power[0] + power[1] + power[2]}  +  ({power[3] * 3 * 5})", x + 25, y + 50 + 45, font);
-                font.TextSize = 30;
-                using (SKPaint bar = new SKPaint())
-                {
-                    bar.IsAntialias = true;
-                    bar.Color = new SKColor(144, 238, 144);
-                    canvas.DrawText($"表现力: {power[0]} + ({power[3] * 5})", x + 25, y + 95 + 30 + 10, font);
-                    canvas.DrawRoundRect(new SKRect(x + 25, y + 135 + 10, x + 25 + power[0] / 15000f * 750f, y + 145 + 30), 10, 10, bar);
-                    bar.Color = new SKColor(100, 149, 237);
-                    canvas.DrawText($"技术力: {power[1]} + ({power[3] * 5})", x + 25, y + 175 + 30, font);
-                    canvas.DrawRoundRect(new SKRect(x + 25, y + 205 + 10, x + 25 + power[1] / 15000f * 750f, y + 215 + 30), 10, 10, bar);
-                    bar.Color = new SKColor(147, 112, 219);
-                    canvas.DrawText($"活力: {power[2]} + ({power[3] * 5})", x + 25, y + 245 + 30, font);
-                    canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 750f, y + 285 + 30), 10, 10, bar);
-                }
-                y += 315 + 40;
-                //技能
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
-                font.TextSize = 40;
-                canvas.DrawText(card.cardSkillname, x + 25, y + 50 + 40, font);
-                y = y + 100;
-                using (SKPaint paint = new SKPaint())
-                {
-                    paint.Color = new SKColor(221, 221, 221);
-                    paint.IsAntialias = true;
-                    paint.Style = SKPaintStyle.Fill;
-                    canvas.DrawRect(new SKRect(x + 15, y + 5, x + 750 + 30, y + skillDescriptionList.Count * 30 + 10), paint);
-                }
-                font.TextSize = 30;
-                for (int i = 0; i < skillDescriptionList.Count; i++)
-                {
-                    canvas.DrawText(skillDescriptionList[i], x + 25, y + 30, font);
-                    y += 30;
-                }
-                font.TextSize = 40;
-                y += 40;
-                //招募语
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("招募语"), x, y);
-                canvas.DrawText(card.gachaPhrase, x + 25, y + 50 + 40, font);
-                y += 130;
-                //发布日期
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("发布日期"), x, y);
-                DateTime releaseTime = DateTimeOffset.FromUnixTimeMilliseconds(card.releaseAt).LocalDateTime;
-                canvas.DrawText(releaseTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
-                y += 130;
-                //缩略图
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                //canvas.DrawBitmap(DrawPillShapeTitle("缩略图"), x, y);
-                //canvas.DrawBitmap(await DrawCardIcon(card, false, false), x + 25, y + 40 + 20);
-                //if (starCount > 2)
-                //{
-                //    canvas.DrawBitmap(await DrawCardIcon(card, true, false), x + 20 + 156 + 20, y + 40 + 20);
-                //}
-                List<SKBitmap> cardIcons = new List<SKBitmap>();
-                cardIcons.Add(await DrawCardIcon(card, false, false));
-                if (starCount > 2)
-                {
-                    cardIcons.Add(await DrawCardIcon(card, true, false));
-                }
-                SKBitmap suoluetu = DrawTitleWithImage(new ListConfig() { title="缩略图", images = cardIcons });
-                canvas.DrawBitmap(suoluetu, x, y);
-                //附属团
-                if (card.supportUnit != "none")
-                {
-                    canvas.DrawBitmap(DrawPillShapeTitle("附属团"), x + 400, y);
-                    SKBitmap supportUnitLogo = SKBitmap.Decode($"./asset/normal/logo_{card.supportUnit}.png");
-                    float supportUnitLogoWith = 100f / supportUnitLogo.Height * supportUnitLogo.Width;
-                    canvas.DrawBitmap(supportUnitLogo, new SKRect(x + 400 + 25, y + 60, x + 400 + 25 + logoWidth, y + 160), highQuality);
-                }
-                y += 60 + 156 + 40;
-                //相关活动
-                if (skEvent != null)
-                {
-                    canvas.DrawBitmap(dottedLine, x, y - 20);
-                    canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
-                    canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 60);
-                    y += 360;
-                }
-                //相关卡池
-                if (gachaHight > 0)
-                {
-                    canvas.DrawBitmap(dottedLine, x, y - 20);
-                    canvas.DrawBitmap(DrawPillShapeTitle("相关卡池"), x, y);
-                    for (int i = 0; i < gachas.Count; i++)
-                    {
-                        if (i % 2 == 0)
-                        {
-                            canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25, y + 60);
-                        }
-                        else
-                        {
-                            canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25 + 25 + 350, y + 60);
-                            y += 200;
-                        }
-                    }
-                }
-                using (SKPaint mark = new SKPaint())
-                {
-                    mark.TextAlign = SKTextAlign.Center;
-                    mark.TextSize = 25;
-                    mark.Color = SKColors.Gray;
-                    mark.IsAntialias = true;
-                    mark.Typeface = _typeface;
-                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
-                }
-                dottedLine.Dispose();
-            }
-            Console.WriteLine("生成卡面信息图片成功");
-            return ConvertBitmapToBase64(cardInfo);
-        }
+        //        //画卡面插图 卡面大小800*450 星星大小40*39
+        //        y = 400;
+        //        List<SKBitmap> cardIllustrationImage = await card.GetCardIllustrationImage();
+        //        List<SKBitmap> cardIllustrationImage_afterCropping = new List<SKBitmap>();
+        //        for (int i = 0; i < cardIllustrationImage.Count; i++)
+        //        {
+        //            cardIllustrationImage_afterCropping.Add(CropCardIllustrationImage(cardIllustrationImage[i]));
+        //        }
+        //        canvas.DrawBitmap(cardIllustrationImage_afterCropping[0], new SKRect(x, y, x + 800, y + 450), highQuality);
+        //        canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
+        //        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
+        //        SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
+        //        //生日卡单独处理
+        //        if (starCount == 0)
+        //        {
+        //            canvas.DrawBitmap(SKBitmap.Decode("./asset/normal/birthday_star.png"), new SKRect(x + 18, y + 393, x + 18 + 40, y + 393 + 39), highQuality);
+        //            y = y + 450 + 20;
+        //        }
+        //        else
+        //        {
+        //            for (int i = 0; i < starCount; i++)
+        //            {
+        //                canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
+        //            }
+        //            y = y + 450 + 20;
+        //            //如果有特训后
+        //            if (cardIllustrationImage.Count > 1)
+        //            {
+        //                y = 400 + 450 + 20;
+        //                SKBitmap afterTrainingStar = SKBitmap.Decode("./asset/normal/after_training_star.png");
+        //                canvas.DrawBitmap(cardIllustrationImage_afterCropping[1], new SKRect(x, y, x + 800, y + 450), highQuality);
+        //                canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), highQuality);
+        //                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), highQuality);
+        //                for (int i = 0; i < starCount; i++)
+        //                {
+        //                    canvas.DrawBitmap(afterTrainingStar, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), highQuality);
+        //                }
+        //                y = 400 + 450 * 2 + 20 * 2;
+        //            }
+        //        }
+        //        //卡面编号
+        //        canvas.DrawBitmap(DrawPillShapeTitle("编号"), x, y);
+        //        font.TextSize = 40;
+        //        canvas.DrawText(card.id.ToString(), x + 25, y + 40 + 50, font);
+        //        //类型
+        //        canvas.DrawBitmap(DrawPillShapeTitle("类型"), x + 400, y);
+        //        canvas.DrawText(cardType, x + 25 + 400, y + 40 + 50, font);
+        //        //综合力
+        //        y += 100 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("综合力"), x, y);
+        //        font.TextSize = 45;
+        //        int[] power = card.GetPower();
+        //        canvas.DrawText($"综合力: {power[0] + power[1] + power[2]}  +  ({power[3] * 3 * 5})", x + 25, y + 50 + 45, font);
+        //        font.TextSize = 30;
+        //        using (SKPaint bar = new SKPaint())
+        //        {
+        //            bar.IsAntialias = true;
+        //            bar.Color = new SKColor(144, 238, 144);
+        //            canvas.DrawText($"表现力: {power[0]} + ({power[3] * 5})", x + 25, y + 95 + 30 + 10, font);
+        //            canvas.DrawRoundRect(new SKRect(x + 25, y + 135 + 10, x + 25 + power[0] / 15000f * 750f, y + 145 + 30), 10, 10, bar);
+        //            bar.Color = new SKColor(100, 149, 237);
+        //            canvas.DrawText($"技术力: {power[1]} + ({power[3] * 5})", x + 25, y + 175 + 30, font);
+        //            canvas.DrawRoundRect(new SKRect(x + 25, y + 205 + 10, x + 25 + power[1] / 15000f * 750f, y + 215 + 30), 10, 10, bar);
+        //            bar.Color = new SKColor(147, 112, 219);
+        //            canvas.DrawText($"活力: {power[2]} + ({power[3] * 5})", x + 25, y + 245 + 30, font);
+        //            canvas.DrawRoundRect(new SKRect(x + 25, y + 275 + 10, x + 25 + power[2] / 15000f * 750f, y + 285 + 30), 10, 10, bar);
+        //        }
+        //        y += 315 + 40;
+        //        //技能
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("技能"), x, y);
+        //        font.TextSize = 40;
+        //        canvas.DrawText(card.cardSkillname, x + 25, y + 50 + 40, font);
+        //        y = y + 100;
+        //        using (SKPaint paint = new SKPaint())
+        //        {
+        //            paint.Color = new SKColor(221, 221, 221);
+        //            paint.IsAntialias = true;
+        //            paint.Style = SKPaintStyle.Fill;
+        //            canvas.DrawRect(new SKRect(x + 15, y + 5, x + 750 + 30, y + skillDescriptionList.Count * 30 + 10), paint);
+        //        }
+        //        font.TextSize = 30;
+        //        for (int i = 0; i < skillDescriptionList.Count; i++)
+        //        {
+        //            canvas.DrawText(skillDescriptionList[i], x + 25, y + 30, font);
+        //            y += 30;
+        //        }
+        //        font.TextSize = 40;
+        //        y += 40;
+        //        //招募语
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("招募语"), x, y);
+        //        canvas.DrawText(card.gachaPhrase, x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        //发布日期
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("发布日期"), x, y);
+        //        DateTime releaseTime = DateTimeOffset.FromUnixTimeMilliseconds(card.releaseAt).LocalDateTime;
+        //        canvas.DrawText(releaseTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        //缩略图
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        //canvas.DrawBitmap(DrawPillShapeTitle("缩略图"), x, y);
+        //        //canvas.DrawBitmap(await DrawCardIcon(card, false, false), x + 25, y + 40 + 20);
+        //        //if (starCount > 2)
+        //        //{
+        //        //    canvas.DrawBitmap(await DrawCardIcon(card, true, false), x + 20 + 156 + 20, y + 40 + 20);
+        //        //}
+        //        List<SKBitmap> cardIcons = new List<SKBitmap>();
+        //        cardIcons.Add(await DrawCardIcon(card, false, false));
+        //        if (starCount > 2)
+        //        {
+        //            cardIcons.Add(await DrawCardIcon(card, true, false));
+        //        }
+        //        SKBitmap suoluetu = DrawTitleWithImage(new ListConfig() { title="缩略图", images = cardIcons });
+        //        canvas.DrawBitmap(suoluetu, x, y);
+        //        //附属团
+        //        if (card.supportUnit != "none")
+        //        {
+        //            canvas.DrawBitmap(DrawPillShapeTitle("附属团"), x + 400, y);
+        //            SKBitmap supportUnitLogo = SKBitmap.Decode($"./asset/normal/logo_{card.supportUnit}.png");
+        //            float supportUnitLogoWith = 100f / supportUnitLogo.Height * supportUnitLogo.Width;
+        //            canvas.DrawBitmap(supportUnitLogo, new SKRect(x + 400 + 25, y + 60, x + 400 + 25 + logoWidth, y + 160), highQuality);
+        //        }
+        //        y += 60 + 156 + 40;
+        //        //相关活动
+        //        if (skEvent != null)
+        //        {
+        //            canvas.DrawBitmap(dottedLine, x, y - 20);
+        //            canvas.DrawBitmap(DrawPillShapeTitle("相关活动"), x, y);
+        //            canvas.DrawBitmap(await DrawEventLogo(skEvent, true), x, y + 60);
+        //            y += 360;
+        //        }
+        //        //相关卡池
+        //        if (gachaHight > 0)
+        //        {
+        //            canvas.DrawBitmap(dottedLine, x, y - 20);
+        //            canvas.DrawBitmap(DrawPillShapeTitle("相关卡池"), x, y);
+        //            for (int i = 0; i < gachas.Count; i++)
+        //            {
+        //                if (i % 2 == 0)
+        //                {
+        //                    canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25, y + 60);
+        //                }
+        //                else
+        //                {
+        //                    canvas.DrawBitmap(await DrawGachaCard(gachas[i]), x + 25 + 25 + 350, y + 60);
+        //                    y += 200;
+        //                }
+        //            }
+        //        }
+        //        using (SKPaint mark = new SKPaint())
+        //        {
+        //            mark.TextAlign = SKTextAlign.Center;
+        //            mark.TextSize = 25;
+        //            mark.Color = SKColors.Gray;
+        //            mark.IsAntialias = true;
+        //            mark.Typeface = _typeface;
+        //            canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+        //        }
+        //        dottedLine.Dispose();
+        //    }
+        //    Console.WriteLine("生成卡面信息图片成功");
+        //    return ConvertBitmapToBase64(cardInfo);
+        //}
         /// <summary>
         /// 活动列表
         /// </summary>
         /// <param name="skEvents"></param>
         /// <returns></returns>
-        public static async Task<string> DrawEventList(List<SkEvents> skEvents)
-        {
-            int width = 1000;
-            int height = 280;
-            List<SKBitmap> eventImages = new List<SKBitmap>();
-            for (int i = 0; i < skEvents.Count; i++)
-            {
-                eventImages.Add(await DrawSimpleEventImage(skEvents[i]));
-                height += 30 + eventImages[i].Height;
-            }
-            SKBitmap eventList = new SKBitmap(width, height);
-            using (var canvas = new SKCanvas(eventList))
-            {
-                DrawBackGroud(eventList, "活动");
-                int x = 100;
-                int y = 250;
-                SKBitmap dottedLine = DrawDottedLine(800, 5);
-                SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
-                for (int i = 0; i < eventImages.Count; i++)
-                {
-                    canvas.DrawBitmap(eventImages[i], x, y, highQuality);
-                    canvas.DrawBitmap(dottedLine, x, y + eventImages[i].Height + 10);
-                    y += eventImages[i].Height + 30;
-                }
-                using (SKPaint mark = new SKPaint())
-                {
-                    mark.TextAlign = SKTextAlign.Center;
-                    mark.TextSize = 25;
-                    mark.Color = SKColors.Gray;
-                    mark.IsAntialias = true;
-                    mark.Typeface = _typeface;
-                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
-                }
-            }
-            Console.WriteLine("活动列表绘制完毕");
-            return ConvertBitmapToBase64(eventList);
-        }
+        //public static async Task<string> DrawEventList(List<SkEvents> skEvents)
+        //{
+        //    int width = 1000;
+        //    int height = 280;
+        //    List<SKBitmap> eventImages = new List<SKBitmap>();
+        //    for (int i = 0; i < skEvents.Count; i++)
+        //    {
+        //        eventImages.Add(await DrawSimpleEventImage(skEvents[i]));
+        //        height += 30 + eventImages[i].Height;
+        //    }
+        //    SKBitmap eventList = new SKBitmap(width, height);
+        //    using (var canvas = new SKCanvas(eventList))
+        //    {
+        //        DrawBackGroud(eventList, "活动");
+        //        int x = 100;
+        //        int y = 250;
+        //        SKBitmap dottedLine = DrawDottedLine(800, 5);
+        //        SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
+        //        for (int i = 0; i < eventImages.Count; i++)
+        //        {
+        //            canvas.DrawBitmap(eventImages[i], x, y, highQuality);
+        //            canvas.DrawBitmap(dottedLine, x, y + eventImages[i].Height + 10);
+        //            y += eventImages[i].Height + 30;
+        //        }
+        //        using (SKPaint mark = new SKPaint())
+        //        {
+        //            mark.TextAlign = SKTextAlign.Center;
+        //            mark.TextSize = 25;
+        //            mark.Color = SKColors.Gray;
+        //            mark.IsAntialias = true;
+        //            mark.Typeface = _typeface;
+        //            canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+        //        }
+        //    }
+        //    Console.WriteLine("活动列表绘制完毕");
+        //    return ConvertBitmapToBase64(eventList);
+        //}
         /// <summary>
         /// 活动信息
         /// </summary>
         /// <param name="skEvent"></param>
         /// <returns></returns>
-        public static async Task<string> DrawEventInfo(SkEvents skEvent)
+        //public static async Task<string> DrawEventInfo(SkEvents skEvent)
+        //{
+        //    int width = 1000;
+        //    int height = 0;
+        //    List<SkMusics> currentMusics = skEvent.GetEventMusics();
+        //    List<SkGachas> gachas = skEvent.GetGachasInEvent();
+        //    List<SKBitmap> gachaImages = new List<SKBitmap>();
+        //    int gachaHeight = (int)Math.Ceiling(gachas.Count / 2f) * 200;
+        //    for (int i = 0; i < gachas.Count; i++)
+        //    {
+        //        gachaImages.Add(await DrawGachaCard(gachas[i]));
+        //    }
+
+        //    //430大图,130单行文字+标题，280卡牌，100+90n相关歌曲,50+gachaHeight相关卡池，50底部留白,250背景留空
+        //    height = 430 + 130 + 130 + 130 + 130 + 130 + 130 + 220 + 280 + 280 + 100 + currentMusics.Count * 90 + 50 + gachaHeight + 50 + 250;
+        //    SKBitmap eventInfo = new SKBitmap(width, height);
+        //    using (var canvas = new SKCanvas(eventInfo))
+        //    {
+        //        DrawBackGroud(eventInfo, "活动");
+        //        SKBitmap dottedLine = DrawDottedLine(800, 5);
+        //        SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
+        //        SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 40 };
+        //        int x = 100;
+        //        int y = 250;
+        //        canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(x, y, x + 800, y + 341), highQuality);
+        //        y = y + 340 + 40;
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动名称"), x, y);
+        //        canvas.DrawText(skEvent.name, x + 25, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("类型"), x, y);
+        //        canvas.DrawText(skEvent.GetEventType(), x + 25, y + 50 + 40, font);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("ID"), x + 400, y);
+        //        canvas.DrawText(skEvent.id.ToString(), x + 400 + 25, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        DateTime startTime = Utils.TimeStampToDateTime(skEvent.startAt);
+        //        DateTime endTime = Utils.TimeStampToDateTime(skEvent.aggregateAt);
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("开始时间"), x, y);
+        //        canvas.DrawText(startTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("结束时间"), x, y);
+        //        canvas.DrawText(endTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动属性加成"), x, y);
+        //        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(x + 25, y + 50 + 10, x + 25 + 40, y + 50 + 10 + 40), highQuality);
+        //        canvas.DrawText($"+{skEvent.GetBunusAttRate().ToString("F0")}%", x + 80, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动角色加成"), x, y);
+        //        List<int> bonusCharacters = skEvent.GetBunusCharacters();
+        //        for (int i = 0; i < bonusCharacters.Count; i++)
+        //        {
+        //            canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusCharacters[i]}.png"), new SKRect(x + 25 + i * 45, y + 50 + 10, x + 25 + 40 + i * 45, y + 50 + 10 + 40), highQuality);
+        //        }
+        //        canvas.DrawText($"+{skEvent.GetBunusCharacterRate().ToString("F0")}%", x + 25 + bonusCharacters.Count * 45 + 20, y + 50 + 40, font);
+        //        y += 90 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动奖励"), x, y);
+        //        List<int> degrees = new List<int>() { 1, 2, 3, 10, 100, 1000 };
+        //        int tempX = x + 25;
+        //        int tempY = y + 40 + 20;
+        //        for (int i = 0; i < 6; i++)
+        //        {
+        //            if (i % 3 == 0 && i != 0)
+        //            {
+        //                tempY += 70;
+        //                tempX = x + 25;
+        //            }
+        //            canvas.DrawBitmap(DrawDegreeHonor(await skEvent.GetEventDegreeMain(), degrees[i]), new SKRect(tempX, tempY, tempX + 230, tempY + 48), highQuality);
+        //            tempX += 250;
+        //        }
+        //        y += 40 + 20 + 70 + 50 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("奖励卡牌"), x, y);
+        //        List<SkCard> cards = skEvent.GetCurrentCards();
+        //        int tempI = 0;
+        //        for (int i = 0; i < cards.Count; i++)
+        //        {
+        //            if (cards[i].GetStarsCount() < 4)
+        //            {
+        //                canvas.DrawBitmap(await DrawCardIcon(cards[i], true, true), x + 25 + 165 * tempI, y + 60);
+        //                tempI++;
+        //            }
+        //        }
+        //        y += 60 + 180 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动期间卡池卡牌"), x, y);
+        //        tempI = 0;
+        //        for (int i = 0; i < cards.Count; i++)
+        //        {
+        //            if (cards[i].GetStarsCount() == 4)
+        //            {
+        //                canvas.DrawBitmap(await DrawCardIcon(cards[i], true, true), x + 25 + 165 * tempI, y + 60);
+        //                tempI++;
+        //            }
+        //        }
+        //        y += 60 + 180 + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动相关歌曲"), x, y);
+        //        int musicY = y + 60;
+        //        for (int i = 0; i < currentMusics.Count; i++)
+        //        {
+        //            canvas.DrawBitmap(await DrawMusicCard(currentMusics[i]), x + 25, musicY);
+        //            if (i != currentMusics.Count - 1)
+        //            {
+        //                canvas.DrawBitmap(DrawDottedLine(750, 5), x + 25, musicY + 90 - 7.5f);
+        //            }
+        //            musicY += 90;
+        //        }
+        //        y += 60 + 90 * currentMusics.Count + 40;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("活动相关卡池"), x, y);
+        //        int gachaY = y + 60;
+        //        for (int i = 0; i < gachaImages.Count; i++)
+        //        {
+        //            if (i % 2 == 0)
+        //            {
+        //                canvas.DrawBitmap(gachaImages[i], x + 25, gachaY);
+        //            }
+        //            if (i % 2 == 1)
+        //            {
+        //                canvas.DrawBitmap(gachaImages[i], x + 25 + 350 + 25, gachaY);
+        //                gachaY += gachaImages[i].Height + 10;
+        //            }
+        //        }
+
+        //        //水印
+        //        using (SKPaint mark = new SKPaint())
+        //        {
+        //            mark.TextAlign = SKTextAlign.Center;
+        //            mark.TextSize = 30;
+        //            mark.Color = SKColors.Gray;
+        //            mark.IsAntialias = true;
+        //            mark.Typeface = font.Typeface;
+        //            canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+        //        }
+        //    }
+        //    Console.WriteLine("活动信息图绘制完成");
+        //    return ConvertBitmapToBase64(eventInfo);
+        //}
+        public static async Task<SKBitmap> DrawMusicList(List<SkMusics> skMusics)
         {
-            int width = 1000;
+            int width = 750;
             int height = 0;
-            List<SkMusics> currentMusics = skEvent.GetEventMusics();
-            List<SkGachas> gachas = skEvent.GetGachasInEvent();
-            List<SKBitmap> gachaImages = new List<SKBitmap>();
-            int gachaHeight = (int)Math.Ceiling(gachas.Count / 2f) * 200;
-            for (int i = 0; i < gachas.Count; i++)
+            List<SKBitmap> musicLines = new List<SKBitmap>();
+            for(int i = 0; i < skMusics.Count; i++)
             {
-                gachaImages.Add(await DrawGachaCard(gachas[i]));
+                musicLines.Add(await DrawMusicLine(skMusics[i]));
+                height += musicLines[i].Height + 10;
             }
-
-            //430大图,130单行文字+标题，280卡牌，100+90n相关歌曲,50+gachaHeight相关卡池，50底部留白,250背景留空
-            height = 430 + 130 + 130 + 130 + 130 + 130 + 130 + 220 + 280 + 280 + 100 + currentMusics.Count * 90 + 50 + gachaHeight + 50 + 250;
-            SKBitmap eventInfo = new SKBitmap(width, height);
-            using (var canvas = new SKCanvas(eventInfo))
+            height -= 10;
+            SKBitmap dottline = DrawDottedLine(800, 10);
+            SKBitmap musicList = new SKBitmap(width,height);
+            using(SKCanvas canvas = new SKCanvas(musicList))
             {
-                DrawBackGroud(eventInfo, "活动");
-                SKBitmap dottedLine = DrawDottedLine(800, 5);
-                SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High };
-                SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 40 };
-                int x = 100;
-                int y = 250;
-                canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(x, y, x + 800, y + 341), highQuality);
-                y = y + 340 + 40;
-                canvas.DrawBitmap(DrawPillShapeTitle("活动名称"), x, y);
-                canvas.DrawText(skEvent.name, x + 25, y + 50 + 40, font);
-                y += 90 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("类型"), x, y);
-                canvas.DrawText(skEvent.GetEventType(), x + 25, y + 50 + 40, font);
-                canvas.DrawBitmap(DrawPillShapeTitle("ID"), x + 400, y);
-                canvas.DrawText(skEvent.id.ToString(), x + 400 + 25, y + 50 + 40, font);
-                y += 90 + 40;
-                DateTime startTime = Utils.TimeStampToDateTime(skEvent.startAt);
-                DateTime endTime = Utils.TimeStampToDateTime(skEvent.aggregateAt);
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("开始时间"), x, y);
-                canvas.DrawText(startTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
-                y += 90 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("结束时间"), x, y);
-                canvas.DrawText(endTime.ToString("yyyy年MM月dd日 HH:mm"), x + 25, y + 50 + 40, font);
-                y += 90 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动属性加成"), x, y);
-                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(x + 25, y + 50 + 10, x + 25 + 40, y + 50 + 10 + 40), highQuality);
-                canvas.DrawText($"+{skEvent.GetBunusAttRate().ToString("F0")}%", x + 80, y + 50 + 40, font);
-                y += 90 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动角色加成"), x, y);
-                List<int> bonusCharacters = skEvent.GetBunusCharacters();
-                for (int i = 0; i < bonusCharacters.Count; i++)
+                int x = 0;
+                int y = 0;
+                for(int i = 0; i < musicLines.Count; i++)
                 {
-                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusCharacters[i]}.png"), new SKRect(x + 25 + i * 45, y + 50 + 10, x + 25 + 40 + i * 45, y + 50 + 10 + 40), highQuality);
-                }
-                canvas.DrawText($"+{skEvent.GetBunusCharacterRate().ToString("F0")}%", x + 25 + bonusCharacters.Count * 45 + 20, y + 50 + 40, font);
-                y += 90 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动奖励"), x, y);
-                List<int> degrees = new List<int>() { 1, 2, 3, 10, 100, 1000 };
-                int tempX = x + 25;
-                int tempY = y + 40 + 20;
-                for (int i = 0; i < 6; i++)
-                {
-                    if (i % 3 == 0 && i != 0)
-                    {
-                        tempY += 70;
-                        tempX = x + 25;
-                    }
-                    canvas.DrawBitmap(DrawDegreeHonor(await skEvent.GetEventDegreeMain(), degrees[i]), new SKRect(tempX, tempY, tempX + 230, tempY + 48), highQuality);
-                    tempX += 250;
-                }
-                y += 40 + 20 + 70 + 50 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("奖励卡牌"), x, y);
-                List<SkCard> cards = skEvent.GetCurrentCards();
-                int tempI = 0;
-                for (int i = 0; i < cards.Count; i++)
-                {
-                    if (cards[i].GetStarsCount() < 4)
-                    {
-                        canvas.DrawBitmap(await DrawCardIcon(cards[i], true, true), x + 25 + 165 * tempI, y + 60);
-                        tempI++;
-                    }
-                }
-                y += 60 + 180 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动期间卡池卡牌"), x, y);
-                tempI = 0;
-                for (int i = 0; i < cards.Count; i++)
-                {
-                    if (cards[i].GetStarsCount() == 4)
-                    {
-                        canvas.DrawBitmap(await DrawCardIcon(cards[i], true, true), x + 25 + 165 * tempI, y + 60);
-                        tempI++;
-                    }
-                }
-                y += 60 + 180 + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动相关歌曲"), x, y);
-                int musicY = y + 60;
-                for (int i = 0; i < currentMusics.Count; i++)
-                {
-                    canvas.DrawBitmap(await DrawMusicCard(currentMusics[i]), x + 25, musicY);
-                    if (i != currentMusics.Count - 1)
-                    {
-                        canvas.DrawBitmap(DrawDottedLine(750, 5), x + 25, musicY + 90 - 7.5f);
-                    }
-                    musicY += 90;
-                }
-                y += 60 + 90 * currentMusics.Count + 40;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("活动相关卡池"), x, y);
-                int gachaY = y + 60;
-                for (int i = 0; i < gachaImages.Count; i++)
-                {
-                    if (i % 2 == 0)
-                    {
-                        canvas.DrawBitmap(gachaImages[i], x + 25, gachaY);
-                    }
-                    if (i % 2 == 1)
-                    {
-                        canvas.DrawBitmap(gachaImages[i], x + 25 + 350 + 25, gachaY);
-                        gachaY += gachaImages[i].Height + 10;
-                    }
-                }
-
-                //水印
-                using (SKPaint mark = new SKPaint())
-                {
-                    mark.TextAlign = SKTextAlign.Center;
-                    mark.TextSize = 30;
-                    mark.Color = SKColors.Gray;
-                    mark.IsAntialias = true;
-                    mark.Typeface = font.Typeface;
-                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
+                    canvas.DrawBitmap(musicLines[i], x, y);
+                    canvas.DrawBitmap(dottline, x, y + musicLines[i].Height);
+                    y += musicLines[i].Height + 10;
                 }
             }
-            Console.WriteLine("活动信息图绘制完成");
-            return ConvertBitmapToBase64(eventInfo);
-        }
-        public static async Task<string> DrawMusicList(List<SkMusics> skMusics)
-        {
-            int width = 950;
-            int height = 340 + 90 * skMusics.Count;
-            SKBitmap musicList = new SKBitmap(width, height);
-            Console.WriteLine("开始绘制歌曲列表");
-            using (SKCanvas canvas = new SKCanvas(musicList))
-            {
-                DrawBackGroud(musicList, "歌曲");
-                int x = 100;
-                int y = 250;
-                SKBitmap dottedLine = DrawDottedLine(750, 5);
-                for (int i = 0; i < skMusics.Count; i++)
-                {
-                    canvas.DrawBitmap(await DrawMusicCard(skMusics[i]), x, y);
-                    if (i != skMusics.Count - 1)
-                    {
-                        canvas.DrawBitmap(dottedLine, x, y + 90 - 7.5f);
-                    }
-                    y += 90;
-                }
-                //水印
-                using (SKPaint mark = new SKPaint())
-                {
-                    mark.TextAlign = SKTextAlign.Center;
-                    mark.TextSize = 30;
-                    mark.Color = SKColors.Gray;
-                    mark.IsAntialias = true;
-                    mark.Typeface = _typeface;
-                    canvas.DrawText("Created By MinoriBot @GitHub", width / 2, height - 15, mark);
-                }
-            }
-            Console.WriteLine("歌曲列表绘制完成");
-            return ConvertBitmapToBase64(musicList);
+            return musicList;
         }
         public static async Task<SKBitmap> DrawMusicFace(SkMusics music)
         {
@@ -600,91 +591,91 @@ namespace MinoriBot.Utils.View
             }
             return musicFace;
         }
-        public static async Task<string> DrawMusicInfo(SkMusics skMusic)
-        {
-            int width = 1000;
-            int height = 0;
-            height = 250 + 500 + 130 * 6;
-            SKBitmap musicInfo = new SKBitmap(width, height);
-            using (SKCanvas canvas = new SKCanvas(musicInfo))
-            using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
-            using (SKPaint font = new SKPaint() { Typeface = _typeface, TextSize = 40, IsAntialias = true })
-            {
-                Console.WriteLine("正在生成歌曲信息图");
-                int x = 100;
-                int y = 250;
-                DrawBackGroud(musicInfo, "歌曲");
-                canvas.DrawBitmap(await skMusic.GetMusicJacket(), new SKRect(x, y, x + 400, y + 400), highQuality);
-                List<string> musicTitle = SplitString(skMusic.title, 40, 360);
-                for (int i = 0; i < musicTitle.Count; i++)
-                {
-                    canvas.DrawText(musicTitle[i], x + 440, y + 50 + 40 * i, font);
-                }
-                y += 30 + 40 * musicTitle.Count;
-                canvas.DrawBitmap(DrawDottedLine(360, 5), x + 440, y);
-                font.TextSize = 34;
-                y += 15;
-                float textLong = font.MeasureText("Vocals:");
-                canvas.DrawText($"Vocals:", x + 440, y + 34, font);
-                List<List<SkMusicVocals.Characters>> vocals = skMusic.GetVocals();
-                List<SKBitmap> vocalImages = new List<SKBitmap>();
-                for (int i = 0; i < vocals.Count; i++)
-                {
-                    vocalImages.Add(DrawVocals(vocals[i]));
-                }
-                int vocalLong = (int)textLong + 20;
-                int vocalX = 540 + vocalLong;
-                int vocalY = y;
-                for (int i = 0; i < vocalImages.Count; i++)
-                {
-                    vocalLong = vocalX - 540 + vocalImages[i].Width;
-                    if (vocalLong > 360)
-                    {
-                        vocalLong = vocalImages[i].Width;
-                        vocalX = 540;
-                        vocalY += 60;
-                    }
-                    canvas.DrawBitmap(vocalImages[i], vocalX, vocalY);
-                    vocalX += vocalImages[i].Width + 10;
-                }
+        //public static async Task<string> DrawMusicInfo(SkMusics skMusic)
+        //{
+        //    int width = 1000;
+        //    int height = 0;
+        //    height = 250 + 500 + 130 * 6;
+        //    SKBitmap musicInfo = new SKBitmap(width, height);
+        //    using (SKCanvas canvas = new SKCanvas(musicInfo))
+        //    using (SKPaint highQuality = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.High })
+        //    using (SKPaint font = new SKPaint() { Typeface = _typeface, TextSize = 40, IsAntialias = true })
+        //    {
+        //        Console.WriteLine("正在生成歌曲信息图");
+        //        int x = 100;
+        //        int y = 250;
+        //        DrawBackGroud(musicInfo, "歌曲");
+        //        canvas.DrawBitmap(await skMusic.GetMusicJacket(), new SKRect(x, y, x + 400, y + 400), highQuality);
+        //        List<string> musicTitle = SplitString(skMusic.title, 40, 360);
+        //        for (int i = 0; i < musicTitle.Count; i++)
+        //        {
+        //            canvas.DrawText(musicTitle[i], x + 440, y + 50 + 40 * i, font);
+        //        }
+        //        y += 30 + 40 * musicTitle.Count;
+        //        canvas.DrawBitmap(DrawDottedLine(360, 5), x + 440, y);
+        //        font.TextSize = 34;
+        //        y += 15;
+        //        float textLong = font.MeasureText("Vocals:");
+        //        canvas.DrawText($"Vocals:", x + 440, y + 34, font);
+        //        List<List<SkMusicVocals.Characters>> vocals = skMusic.GetVocals();
+        //        List<SKBitmap> vocalImages = new List<SKBitmap>();
+        //        for (int i = 0; i < vocals.Count; i++)
+        //        {
+        //            vocalImages.Add(DrawVocals(vocals[i]));
+        //        }
+        //        int vocalLong = (int)textLong + 20;
+        //        int vocalX = 540 + vocalLong;
+        //        int vocalY = y;
+        //        for (int i = 0; i < vocalImages.Count; i++)
+        //        {
+        //            vocalLong = vocalX - 540 + vocalImages[i].Width;
+        //            if (vocalLong > 360)
+        //            {
+        //                vocalLong = vocalImages[i].Width;
+        //                vocalX = 540;
+        //                vocalY += 60;
+        //            }
+        //            canvas.DrawBitmap(vocalImages[i], vocalX, vocalY);
+        //            vocalX += vocalImages[i].Width + 10;
+        //        }
 
 
-                y = 590;
-                List<int> diffs = skMusic.GetDifficulties().Values.ToList();
-                List<SKColor> colors = new List<SKColor>() { new SKColor(102, 221, 17), new SKColor(51, 187, 237), new SKColor(255, 170, 1), new SKColor(238, 69, 102), new SKColor(187, 51, 239) };
-                for (int i = 0; i < diffs.Count; i++)
-                {
-                    canvas.DrawBitmap(DrawRoundWithText(diffs[i].ToString(), 34, 30, colors[i]), x + 440 + 70 * i, y);
-                }
-                y = 700;
-                font.TextSize = 40;
-                SKBitmap dottedLine = DrawDottedLine(800, 5);
-                canvas.DrawBitmap(DrawPillShapeTitle("歌曲名称"), x, y);
-                canvas.DrawText(skMusic.title, x + 25, y + 50 + 40, font);
-                y += 130;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("ID"), x, y);
-                canvas.DrawText(skMusic.id.ToString(), x + 25, y + 50 + 40, font);
-                y += 130;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("作词"), x, y);
-                canvas.DrawText(skMusic.lyricist, x + 25, y + 50 + 40, font);
-                y += 130;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("作曲"), x, y);
-                canvas.DrawText(skMusic.composer, x + 25, y + 50 + 40, font);
-                y += 130;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("编曲"), x, y);
-                canvas.DrawText(skMusic.arranger, x + 25, y + 50 + 40, font);
-                y += 130;
-                canvas.DrawBitmap(dottedLine, x, y - 20);
-                canvas.DrawBitmap(DrawPillShapeTitle("开放时间"), x, y);
-                canvas.DrawText(Utils.TimeStampToDateTime(skMusic.publishedAt).ToString("yyyy年MM月dd日 HH:mm:ss"), x + 25, y + 50 + 40, font);
-            }
-            Console.WriteLine("成歌曲信息图制作完毕");
-            return ConvertBitmapToBase64(musicInfo);
-        }
+        //        y = 590;
+        //        List<int> diffs = skMusic.GetDifficulties().Values.ToList();
+        //        List<SKColor> colors = new List<SKColor>() { new SKColor(102, 221, 17), new SKColor(51, 187, 237), new SKColor(255, 170, 1), new SKColor(238, 69, 102), new SKColor(187, 51, 239) };
+        //        for (int i = 0; i < diffs.Count; i++)
+        //        {
+        //            canvas.DrawBitmap(DrawRoundWithText(diffs[i].ToString(), 34, 30, colors[i]), x + 440 + 70 * i, y);
+        //        }
+        //        y = 700;
+        //        font.TextSize = 40;
+        //        SKBitmap dottedLine = DrawDottedLine(800, 5);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("歌曲名称"), x, y);
+        //        canvas.DrawText(skMusic.title, x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("ID"), x, y);
+        //        canvas.DrawText(skMusic.id.ToString(), x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("作词"), x, y);
+        //        canvas.DrawText(skMusic.lyricist, x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("作曲"), x, y);
+        //        canvas.DrawText(skMusic.composer, x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("编曲"), x, y);
+        //        canvas.DrawText(skMusic.arranger, x + 25, y + 50 + 40, font);
+        //        y += 130;
+        //        canvas.DrawBitmap(dottedLine, x, y - 20);
+        //        canvas.DrawBitmap(DrawPillShapeTitle("开放时间"), x, y);
+        //        canvas.DrawText(Utils.TimeStampToDateTime(skMusic.publishedAt).ToString("yyyy年MM月dd日 HH:mm:ss"), x + 25, y + 50 + 40, font);
+        //    }
+        //    Console.WriteLine("成歌曲信息图制作完毕");
+        //    return ConvertBitmapToBase64(musicInfo);
+        //}
         public static async Task<string> DrawGachaInfo(SkGachas gacha)
         {
             int width = 1000;
@@ -725,7 +716,20 @@ namespace MinoriBot.Utils.View
             }
             return ConvertBitmapToBase64(gachaInfo);
         }
-
+        /// <summary>
+        /// 调整banner的大小
+        /// </summary>
+        /// <param name="skEvent"></param>
+        /// <returns></returns>
+        public static async Task<SKBitmap> DrawEventBanner(SkEvents skEvent)
+        {
+            SKBitmap banner = new SKBitmap(800,341);
+            using(SKCanvas canvas = new SKCanvas(banner))
+            {
+                canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(0, 0, 800, 341), _highQuality);
+            }
+            return banner;
+        }
         public static async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
         {
             int width = 800;
@@ -942,6 +946,32 @@ namespace MinoriBot.Utils.View
                 }
             }
             return output;
+        }
+        /// <summary>
+        /// 画加成图 属性/角色图标+文字
+        /// </summary>
+        /// <returns></returns>
+        public static SKBitmap DrawBunusImage(string? attr,List<int>? characters,double rate)
+        {
+            SKBitmap bunus = new SKBitmap(500, 40);
+            using(SKCanvas canvas = new SKCanvas(bunus))
+            using(SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 36 })
+            {
+                if (attr != null && characters == null)
+                {
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{attr}.png"), new SKRect(0, 0, 40, 40), _highQuality);
+                    canvas.DrawText($"+{rate.ToString("F0")}%", 60, 32, font);
+                }
+                if (characters != null && attr == null)
+                {
+                    for (int i = 0; i < characters.Count; i++)
+                    {
+                        canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{characters[i]}.png"), new SKRect(i * 45, 0, 40 + i * 45, 40), _highQuality);
+                    }
+                    canvas.DrawText($"+{rate.ToString("F0")}%", characters.Count * 45 + 20, 32, font);
+                }
+            }
+            return bunus;
         }
         public static SKBitmap FixTwoTitleInOneLine(SKBitmap image1,SKBitmap image2)
         {
@@ -1327,6 +1357,7 @@ namespace MinoriBot.Utils.View
             eventBanner.Dispose();
             return eventlogo;
         }
+        
         public static async Task<SKBitmap> DrawMusicCard(SkMusics music)
         {
             SKBitmap musicCard = new SKBitmap(750, 80);
@@ -1349,6 +1380,11 @@ namespace MinoriBot.Utils.View
             }
             return musicCard;
         }
+        /// <summary>
+        /// 音乐简条
+        /// </summary>
+        /// <param name="music"></param>
+        /// <returns></returns>
         public static async Task<SKBitmap> DrawMusicLine(SkMusics music)
         {
             SKBitmap musicImage = new SKBitmap(750,80);
@@ -1481,6 +1517,32 @@ namespace MinoriBot.Utils.View
                 canvas.DrawPath(path, paint);
             }
             return dottedline;
+        }
+        public static SKBitmap FixImageSize(SKBitmap image,int? fixWidth,int? fixHeight)
+        {
+            int width = 0;
+            int height = 0;
+            if(fixWidth!=null && fixHeight == null)
+            {
+                width = fixWidth.Value;
+                height = (int)(width / (float)image.Width * image.Height);
+            }
+            if (fixWidth == null && fixHeight != null)
+            {
+                height = fixHeight.Value;
+                width= (int)(height / (float)image.Height * image.Width);
+            }
+            if (fixWidth != null && fixHeight != null)
+            {
+                width = fixWidth.Value;
+                height =fixHeight.Value;
+            }
+            SKBitmap fix = new SKBitmap(width,height);
+            using(SKCanvas canvas = new SKCanvas(fix))
+            {
+                canvas.DrawBitmap(image,new SKRect(0, 0, width, height), _highQuality);
+            }
+            return fix;
         }
         static SKBitmap DrawVocals(List<SkMusicVocals.Characters> vocals)
         {

@@ -20,7 +20,8 @@ namespace MinoriBot.Utils.Routers
                 {
                     if (SkDataBase.skEvents[i].id == eventId)
                     {
-                        return await ImageCreater.DrawEventInfo(SkDataBase.skEvents[i]);
+                        //return await ImageCreater.DrawEventInfo(SkDataBase.skEvents[i]);
+                        return await EventDetail.DrawEventDetail(SkDataBase.skEvents[i]);
                     }
                 }
                 if (!isFound)
