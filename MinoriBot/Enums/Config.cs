@@ -13,5 +13,8 @@ namespace MinoriBot.Enums
         public string wsAddr;
         public int socketMode;
         public int httpListenPort;
+        public bool proxy;
+        public string githubproxy;
+        public string sdcvproxy;
     }
 }
