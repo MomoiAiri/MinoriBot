@@ -12,6 +12,7 @@ namespace MinoriBot.Utils.View
     {
         public static async Task<string> DrawEventList(List<SkEvents> skEvents)
         {
+            Console.WriteLine($"正在生成活动列表");
             List<SKBitmap> all = new List<SKBitmap>();
             List<SKBitmap> info = new List<SKBitmap>();
             SKBitmap line = ImageCreater.DrawDottedLine(800, 20);
@@ -34,6 +35,7 @@ namespace MinoriBot.Utils.View
 
             //最终图片
             SKBitmap final = ImageCreater.DrawALL(all);
+            Console.WriteLine("活动列表生成完毕");
 
             return ImageCreater.ConvertBitmapToBase64(final);
         }

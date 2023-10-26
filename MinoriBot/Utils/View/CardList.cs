@@ -12,6 +12,7 @@ namespace MinoriBot.Utils.View
     {
         public static async Task<string> DrawCardListImage(List<SkCard> cards,bool isTrained)
         {
+            Console.WriteLine($"正在生成卡面列表");
             Dictionary<int, Dictionary<string, List<SkCard>>> classifiedCards = SortDictionary(ClassifiedCards(cards));
 
             List<SKBitmap> all = new List<SKBitmap>();
@@ -25,6 +26,7 @@ namespace MinoriBot.Utils.View
             all.Add(ImageCreater.DrawInfoBlock(new List<SKBitmap>() { cardList }, cardList.Width + 100));
 
             SKBitmap final = ImageCreater.DrawALL(all,cardList.Width + 200);
+            Console.WriteLine("卡面列表生成完毕");
 
             return ImageCreater.ConvertBitmapToBase64(final);
         }
