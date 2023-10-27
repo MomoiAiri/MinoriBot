@@ -21,6 +21,7 @@ namespace MinoriBot.Utils.Routers
                 {
                     if (SkDataBase.skMusics[i].id == musicId)
                     {
+                        isFound = true;
                         return await MusicDetail.DrawMusicDetails(SkDataBase.skMusics[i]);
                     }
                 }
