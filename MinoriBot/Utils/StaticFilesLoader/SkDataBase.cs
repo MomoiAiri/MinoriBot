@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.IO;
+using MinoriBot.Enums;
 
 namespace MinoriBot.Utils.StaticFilesLoader
 {
@@ -29,19 +30,20 @@ namespace MinoriBot.Utils.StaticFilesLoader
         public static List<SkMusicDifficulties> skMusicDifficulties;
         public static List<SkHonorGroups> skHonorGroups;
         public static List<SkOutsideCharacters> skOutsideCharacters;
-        static string cardsUri = "https://sekai-world.github.io/sekai-master-db-diff/cards.json";
-        static string cardSkillsUri = "https://sekai-world.github.io/sekai-master-db-diff/skills.json";
-        static string eventsUri = "https://sekai-world.github.io/sekai-master-db-diff/events.json";
-        static string eventCardsUri = "https://sekai-world.github.io/sekai-master-db-diff/eventCards.json";
-        static string eventDeckBonusesUri = "https://sekai-world.github.io/sekai-master-db-diff/eventDeckBonuses.json";
-        static string gameCharacterUnitsUri = "https://sekai-world.github.io/sekai-master-db-diff/gameCharacterUnits.json";
-        static string gachasUri = "https://sekai-world.github.io/sekai-master-db-diff/gachas.json";
-        static string gachaCeilItemsUri = "https://sekai-world.github.io/sekai-master-db-diff/gachaCeilItems.json";
-        static string musicsUri = "https://sekai-world.github.io/sekai-master-db-diff/musics.json";
-        static string musicVocalsUri = "https://sekai-world.github.io/sekai-master-db-diff/musicVocals.json";
-        static string musicDifficultiesUri = "https://sekai-world.github.io/sekai-master-db-diff/musicDifficulties.json";
-        static string honorGroupsUri = "https://sekai-world.github.io/sekai-master-db-diff/honorGroups.json";
-        static string outsideCharactersUri = "https://sekai-world.github.io/sekai-master-db-diff/outsideCharacters.json";
+        static string datebaseUri = (Config.Instance().proxy && Config.Instance().githubproxy != "") ? Config.Instance().githubproxy : "https://sekai-world.github.io";
+        static string cardsUri = $"{datebaseUri}/sekai-master-db-diff/cards.json";
+        static string cardSkillsUri = $"{datebaseUri}/sekai-master-db-diff/skills.json";
+        static string eventsUri = $"{datebaseUri}/sekai-master-db-diff/events.json";
+        static string eventCardsUri = $"{datebaseUri}/sekai-master-db-diff/eventCards.json";
+        static string eventDeckBonusesUri = $"{datebaseUri}/sekai-master-db-diff/eventDeckBonuses.json";
+        static string gameCharacterUnitsUri = $"{datebaseUri}/sekai-master-db-diff/gameCharacterUnits.json";
+        static string gachasUri = $"{datebaseUri}/sekai-master-db-diff/gachas.json";
+        static string gachaCeilItemsUri = $"{datebaseUri}/sekai-master-db-diff/gachaCeilItems.json";
+        static string musicsUri = $"{datebaseUri}/sekai-master-db-diff/musics.json";
+        static string musicVocalsUri = $"{datebaseUri}/sekai-master-db-diff/musicVocals.json";
+        static string musicDifficultiesUri = $"{datebaseUri}/sekai-master-db-diff/musicDifficulties.json";
+        static string honorGroupsUri = $"{datebaseUri}/sekai-master-db-diff/honorGroups.json";
+        static string outsideCharactersUri = $"{datebaseUri}/sekai-master-db-diff/outsideCharacters.json";
         static System.Timers.Timer timer;
         //static Dictionary<Type, List<object>> classDic = new Dictionary<Type, List<object>>() { { typeof(SkCard), new List<object> {skCards ,cardsUri ,"cards.json" } } };
         static SkDataBase()
