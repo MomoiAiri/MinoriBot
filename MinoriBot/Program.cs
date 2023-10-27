@@ -15,13 +15,13 @@ class Program
     static async Task Main(string[] args)
     {
         Console.WriteLine("初始化资源中。。。");
-
-        HttpServer httpServer = new HttpServer(Config.Instance().httpListenPort);
-
         await Init.Start();
         Console.WriteLine("初始化资源完成");
         try
         {
+            //Http服务
+            HttpServer httpServer = new HttpServer(Config.Instance().httpListenPort);
+
             //正向ws连接
             if (Config.Instance().socketMode == 1 && Config.Instance().wsAddr != "")
             {
