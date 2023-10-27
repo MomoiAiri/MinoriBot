@@ -872,9 +872,11 @@ namespace MinoriBot.Utils.View
         public static SKBitmap DrawTitleWithText(ListConfig config)
         {
             int width = 800;
-            int height = 40 + 15;
+            int height = 40 + 10;
+            int textSize = (int)config.font.TextSize;
+            int lineHeight = (int)(textSize * 4f / 3f);
             List<string> texts = SplitString(config.text, 40, width - 40);
-            height += texts.Count * 40;
+            height += texts.Count * lineHeight;
             SKBitmap output = new SKBitmap(width, height);
             using (SKCanvas canvas = new SKCanvas(output))
             using (SKPaint font = config.font)
@@ -883,11 +885,11 @@ namespace MinoriBot.Utils.View
                 int y = 0;
                 canvas.DrawBitmap(DrawPillShapeTitle(config.title), x, y);
                 x += 20;
-                y += 40 + 15;
+                y += 40 +10;
                 for (int i = 0; i < texts.Count; i++)
                 {
-                    canvas.DrawText(texts[i], x, y + 35, font);
-                    y += 40;
+                    canvas.DrawText(texts[i], x, y + lineHeight / 2 + textSize / 3, font);
+                    y += lineHeight;
                 }
             }
             return output;

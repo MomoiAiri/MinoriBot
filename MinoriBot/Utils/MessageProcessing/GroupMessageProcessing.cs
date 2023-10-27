@@ -140,6 +140,18 @@ namespace MinoriBot.Utils.MessageProcessing
                     reply = messageBuilder.ToString();
                     return reply;
                 }
+                if (rawMessage.ToLower().StartsWith("sk查谱面"))
+                {
+                    string message = rawMessage.Substring(6).ToLower();
+                    string file = await SearchChart.SearchSkMusicChart(message);
+                    if (file == "error") return "无有效关键词";
+                    if (file == "none") return "未查询到相关谱面";
+                    if (file == "lack") return "缺少关键词(例:sk查谱面 213 master)";
+                    if (file == "内部错误") return "内部错误";
+                    MessageBuilder messageBuilder = new MessageBuilder();
+                    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    return reply;
+                }
             }
             if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
             {
