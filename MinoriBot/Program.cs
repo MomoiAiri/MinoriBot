@@ -16,26 +16,22 @@ class Program
     {
         Console.WriteLine("初始化资源中。。。");
 
-        string yaml = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/config.yaml");
-        IDeserializer deserializer = new DeserializerBuilder().Build();
-        Config config = deserializer.Deserialize<Config>(yaml);
-
-        //HttpServer httpServer = new HttpServer(config.httpListenPort);
+        HttpServer httpServer = new HttpServer(Config.Instance().httpListenPort);
 
         await Init.Start();
         Console.WriteLine("初始化资源完成");
         try
         {
             //正向ws连接
-            if (config.socketMode == 1 && config.wsAddr != "")
+            if (Config.Instance().socketMode == 1 && Config.Instance().wsAddr != "")
             {
-                WebSocketPositive ws = new WebSocketPositive(config.wsAddr);
+                WebSocketPositive ws = new WebSocketPositive(Config.Instance().wsAddr);
                 ws.Start().Wait();
             }
             //反向ws监听
-            if (config.socketMode == 2 && config.listenPort!= 0)
+            if (Config.Instance().socketMode == 2 && Config.Instance().listenPort!= 0)
             {
-                WebSocketReverse ws = new WebSocketReverse(config.listenPort);
+                WebSocketReverse ws = new WebSocketReverse(Config.Instance().listenPort);
                 ws.Start().Wait();
             }
             throw (new Exception("配置文件有误，无法启动Socket"));
