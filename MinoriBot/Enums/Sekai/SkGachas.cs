@@ -152,7 +152,7 @@ namespace MinoriBot.Enums.Sekai
                     if (SkDataBase.skGachaCeilItemscs[mid].assetbundleName == "ceil_item_birthday") return "生日";
                 }
             }
-            return "";
+            return "none";
         }
         /// <summary>
         /// 获取卡池类型

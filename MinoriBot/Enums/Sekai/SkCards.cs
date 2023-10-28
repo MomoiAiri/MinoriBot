@@ -433,13 +433,17 @@ namespace MinoriBot.Enums.Sekai
             List<SkGachas> gachas = new List<SkGachas>();
             List<SkGachas> allGachas = SkDataBase.skGachas;
             gachas = allGachas.Where(gacha=>gacha.gachaPickups.Any(pickup=>pickup.cardId == id)).ToList();
+            cardType = "常驻";
             if (gachas.Count > 0)
             {
-                cardType = gachas[0].GetGachaPickUpType();
-            }
-            else
-            {
-                cardType = "常驻";
+                for (int i = 0; i < gachas.Count; i++)
+                {
+                    if (gachas[i].GetGachaPickUpType() != "none")
+                    {
+                        cardType = gachas[i].GetGachaPickUpType();
+                    }
+                }
+                
             }
             return gachas;
         }
