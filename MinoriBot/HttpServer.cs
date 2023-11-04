@@ -2,7 +2,9 @@
 
 using MinoriBot.Enums;
 using MinoriBot.Utils.Routers;
+using MinoriBot.Utils.View;
 using Newtonsoft.Json;
+using System.Drawing;
 using System.Net;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -18,6 +20,7 @@ public class HttpServer
         {
             $"http://*:{port}/test/",
             $"http://*:{port}/card/",
+            $"http://*:{port}/cardIll/",
             $"http://*:{port}/event/",
             $"http://*:{port}/music/",
             $"http://*:{port}/chart/",
@@ -46,6 +49,10 @@ public class HttpServer
                 if (requestPath.StartsWith("/test"))
                 {
                     await SendResponse(request, response, "This is a test message");
+                }
+                else if (requestPath.StartsWith("/cardIll"))
+                {
+                    await SendResponse(request, response, async (input) => await SearchCard.GetCardIllustrationImage(input));
                 }
                 else if (requestPath.StartsWith("/card"))
                 {
@@ -79,7 +86,7 @@ public class HttpServer
             }
         }
     }
-    private async Task SendResponse(HttpListenerRequest request,HttpListenerResponse response,Func<string,Task<string>> func)
+    private async Task SendResponse(HttpListenerRequest request,HttpListenerResponse response, Func<string, Task<string>> func)
     {
         using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
         {
@@ -89,13 +96,57 @@ public class HttpServer
             HttpMessage message = JsonConvert.DeserializeObject<HttpMessage>(requestBody);
             if (message != null)
             {
-                string file = await func(message.context);
+                string file = await func(message.context[0].content);
                 string msgType = "image";
                 if (file == "内部错误" || file=="none" || file=="error")
                 {
-                    msgType = "text";
+                    msgType = "string";
                 }
-                HttpMessage backRespone = new HttpMessage() { type = msgType,context = file ,from ="minori"}; 
+                List<HttpMessage.Context> context = new List<HttpMessage.Context>() { new HttpMessage.Context {type = msgType ,content = file } };
+
+                HttpMessage backRespone = new HttpMessage() { context = context ,from ="minori"}; 
+                string responseString = JsonConvert.SerializeObject(backRespone);
+                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+
+                response.ContentLength64 = buffer.Length;
+                response.ContentType = "text/plain";
+
+                Stream output = response.OutputStream;
+                await output.WriteAsync(buffer, 0, buffer.Length);
+
+                output.Close();
+            }
+        }
+    }
+    private async Task SendResponse(HttpListenerRequest request, HttpListenerResponse response, Func<string, Task<List<MessageObj>>> func)
+    {
+        using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
+        {
+            string requestBody = reader.ReadToEnd();
+            Console.WriteLine("Received request: " + requestBody);
+
+            ReceivedMessage message = JsonConvert.DeserializeObject<ReceivedMessage>(requestBody);
+            if (message != null)
+            {
+                List<MessageObj> files = await func(message.context);
+                List<HttpMessage.Context> contexts = new List<HttpMessage.Context>();
+                if (files.Count == 0 || files == null)
+                {
+                    HttpMessage.Context context = new HttpMessage.Context() { type = "string", content = "内部错误" };
+                    contexts.Add(context);
+                }
+                else 
+                {
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        HttpMessage.Context context = new HttpMessage.Context();
+                        context.type = files[i].type;
+                        context.content = files[i].content; 
+                        contexts.Add(context);
+                    }
+                }
+
+                HttpMessage backRespone = new HttpMessage() { context = contexts, from = "minori" };
                 string responseString = JsonConvert.SerializeObject(backRespone);
                 byte[] buffer = Encoding.UTF8.GetBytes(responseString);
 
@@ -122,6 +173,16 @@ public class HttpServer
         output.Close();
     }
     private class HttpMessage
+    {
+        public List<Context> context;
+        public string from;
+        public class Context
+        {
+            public string type;
+            public string content;
+        }
+    }
+    private class ReceivedMessage
     {
         public string type;
         public string context;

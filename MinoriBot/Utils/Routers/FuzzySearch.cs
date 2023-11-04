@@ -87,6 +87,15 @@ namespace MinoriBot.Utils.Routers
                     result["type"].Add(NickName.cardType[word]);
                     continue;
                 }
+                if (NickName.trainingState.ContainsKey(word))
+                {
+                    if (!result.ContainsKey("train"))
+                    {
+                        result.Add("train", new List<string>());
+                    }
+                    result["train"].Add(NickName.trainingState[word].ToString());
+                    continue;
+                }
             }
             return result;
         }

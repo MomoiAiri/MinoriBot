@@ -12,8 +12,9 @@ namespace MinoriBot.Utils.Routers
 {
     public static class SearchMusic
     {
-        public static async Task<string> SearchSkMusics(string message)
+        public static async Task<List<MessageObj>> SearchSkMusics(string message)
         {
+            List<MessageObj> result = new List<MessageObj>();
             if (int.TryParse(message, out int musicId))
             {
                 bool isFound = false;
@@ -22,12 +23,14 @@ namespace MinoriBot.Utils.Routers
                     if (SkDataBase.skMusics[i].id == musicId)
                     {
                         isFound = true;
-                        return await MusicDetail.DrawMusicDetails(SkDataBase.skMusics[i]);
+                        result.Add(await MusicDetail.DrawMusicDetails(SkDataBase.skMusics[i]));
+                        return result;
                     }
                 }
                 if (!isFound)
                 {
-                    return "error";
+                    result.Add(new MessageObj() { type = "string", content = "没有查找到该ID的歌曲" });
+                    return result;
                 }
             }
             string[] keywords = message.Split(' ');
@@ -36,7 +39,8 @@ namespace MinoriBot.Utils.Routers
             SortSearchConditions(ref keys);
             if (keys.Count == 0)
             {
-                return "error";
+                result.Add(new MessageObj() { type = "string", content = "关键词有误" });
+                return result;
             }
             foreach(KeyValuePair<string,List<string>> k in keys)
             {
@@ -53,18 +57,20 @@ namespace MinoriBot.Utils.Routers
                 Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
                 if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
                 {
-                    return await MusicDetail.DrawMusicDetails(skMusics[0]);
+                    result.Add(await MusicDetail.DrawMusicDetails(skMusics[0]));
+                    return result;
                 }
                 foreach (SkMusics music in skMusics)
                 {
                     Console.WriteLine(music.id + " " + music.title + "    " + music.creator);
                 }
-                string file = await MusicList.DrawMusicList(skMusics);
-                return file;
+                result.Add(await MusicList.DrawMusicList(skMusics));
+                return result;
             }
             else
             {
-                return "none";
+                result.Add(new MessageObj() { type = "string", content = "没有查找到相关歌曲" });
+                return result;
             }
         }
         static void SortSearchConditions(ref Dictionary<string, List<string>> input)

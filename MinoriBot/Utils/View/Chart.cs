@@ -14,12 +14,12 @@ namespace MinoriBot.Utils.View
     {
         static Dictionary<string, string> convertDiff = new Dictionary<string, string>() { { "expert", "exp" }, { "master", "mst" }, { "append", "apd" } };
         static string chartUri = (Config.Instance().proxy && Config.Instance().sdcvproxy != "") ? Config.Instance().sdcvproxy : "https://sdvx.in";
-        public static async Task<string> DrawChart(SkMusics musics, string diffType)
+        public static async Task<MessageObj> DrawChart(SkMusics musics, string diffType)
         {
             Console.WriteLine($"开始绘制{musics.title}-{diffType}的谱面,资源地址{chartUri}");
             if (!convertDiff.ContainsKey(diffType))
             {
-                return "";
+                return new MessageObj {type="string",content = "没有该难度的谱面" };
             }
             string html = string.Empty;
             using (HttpClient client = new HttpClient())
@@ -37,7 +37,7 @@ namespace MinoriBot.Utils.View
             }
             else
             {
-                return "none";
+                return new MessageObj { type = "string", content = "没有查找到该歌曲的谱面" };
             }
             SKBitmap bg = new SKBitmap();
             SKBitmap chart = new SKBitmap();
@@ -58,7 +58,7 @@ namespace MinoriBot.Utils.View
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    return "内部错误";
+                    return new MessageObj { type = "string", content = "内部错误" };
                 }
             }
             if (bg.Width != 0 & chart.Width != 0 && bar.Width != 0)
@@ -79,10 +79,13 @@ namespace MinoriBot.Utils.View
                     canvas.DrawBitmap(chart, 0, 0);
                 }
                 Console.WriteLine("谱面绘制完毕");
-                return ImageCreater.ConvertBitmapToBase64(final);
+
+                MessageObj ml = new MessageObj() { type = "image", content = ImageCreater.ConvertBitmapToBase64(final) };
+
+                return ml;
             }
 
-            return "error";
+            return new MessageObj { type = "string", content = "内部错误" }; ;
         }
     }
 }

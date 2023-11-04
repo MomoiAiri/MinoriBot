@@ -10,7 +10,7 @@ namespace MinoriBot.Utils.View
 {
     public static class CardDetail
     {
-        public static async Task<string> DrawCardDetail(SkCard card)
+        public static async Task<MessageObj> DrawCardDetail(SkCard card)
         {
             Console.WriteLine($"正在生成卡面ID为{card.id}的信息");
             List<SKBitmap> all = new List<SKBitmap>();
@@ -108,7 +108,9 @@ namespace MinoriBot.Utils.View
 
             Console.WriteLine("卡面信息生成完毕");
 
-            return ImageCreater.ConvertBitmapToBase64(final);
+            MessageObj ml = new MessageObj() {type = "image",content = ImageCreater.ConvertBitmapToBase64(final) };
+
+            return ml;
         }
     }
 }

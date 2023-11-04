@@ -10,7 +10,7 @@ namespace MinoriBot.Utils.View
 {
     public static class CardList
     {
-        public static async Task<string> DrawCardListImage(List<SkCard> cards,bool isTrained)
+        public static async Task<MessageObj> DrawCardListImage(List<SkCard> cards,bool isTrained)
         {
             Console.WriteLine($"正在生成卡面列表");
             Dictionary<int, Dictionary<string, List<SkCard>>> classifiedCards = SortDictionary(ClassifiedCards(cards));
@@ -28,7 +28,9 @@ namespace MinoriBot.Utils.View
             SKBitmap final = ImageCreater.DrawALL(all,cardList.Width + 200);
             Console.WriteLine("卡面列表生成完毕");
 
-            return ImageCreater.ConvertBitmapToBase64(final);
+            MessageObj ml = new MessageObj() { type = "image", content = ImageCreater.ConvertBitmapToBase64(final) };
+
+            return ml;
         }
         /// <summary>
         /// 对字典中的内容根据角色，属性进行排序

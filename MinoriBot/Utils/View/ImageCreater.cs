@@ -955,7 +955,7 @@ namespace MinoriBot.Utils.View
         /// <returns></returns>
         public static SKBitmap DrawBunusImage(string? attr,List<int>? characters,double rate)
         {
-            SKBitmap bunus = new SKBitmap(500, 40);
+            SKBitmap bunus = new SKBitmap(800, 40);
             using(SKCanvas canvas = new SKCanvas(bunus))
             using(SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 36 })
             {
@@ -1050,7 +1050,11 @@ namespace MinoriBot.Utils.View
                 canvas.DrawBitmap(cardIllustrationImage_afterCropping, new SKRect(x, y, x + 800, y + 450), _highQuality);
                 canvas.DrawBitmap(SKBitmap.Decode(cardFrameDir), new SKRect(x, y, x + 800, y + 450), _highQuality);
                 canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{card.attr}.png"), new SKRect(x + 740, y, x + 800, y + 60), _highQuality);
-                SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
+                SKBitmap star = SKBitmap.Decode("./asset/normal/normal_star.png");
+                if (starCount > 2 && isTrained == true)
+                {
+                    star = SKBitmap.Decode("./asset/normal/after_training_star.png");
+                }
                 //星星
                 if (starCount == 0)//生日卡
                 {
@@ -1060,7 +1064,7 @@ namespace MinoriBot.Utils.View
                 {
                     for (int i = 0; i < starCount; i++)
                     {
-                        canvas.DrawBitmap(normal_star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), _highQuality);
+                        canvas.DrawBitmap(star, new SKRect(x + 18, y + 393 - 39 * i, x + 18 + 40, y + 393 + 39 - 39 * i), _highQuality);
                     }
                 }
             }

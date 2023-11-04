@@ -235,6 +235,15 @@ namespace MinoriBot.Enums.Sekai
             {"app","append" },
             {"apd","append" }
         };
+        public static Dictionary<string, bool> trainingState = new Dictionary<string, bool>()
+        {
+            {"特训前",false },
+            {"花前",false },
+            {"false",false },
+            {"特训后",true },
+            {"花后",true },
+            {"true",true }
+        };
         /// <summary>
         /// 根据昵称查找角色ID
         /// </summary>

@@ -10,7 +10,7 @@ namespace MinoriBot.Utils.View
 {
     public static class MusicList
     {
-        public static async Task<string> DrawMusicList(List<SkMusics> musics)
+        public static async Task<MessageObj> DrawMusicList(List<SkMusics> musics)
         {
             Console.WriteLine($"正在生成歌曲列表");
             List<SKBitmap> all = new List<SKBitmap>();
@@ -37,7 +37,9 @@ namespace MinoriBot.Utils.View
             SKBitmap final = ImageCreater.DrawALL(all, 950);
             Console.WriteLine("歌曲列表生成完毕");
 
-            return ImageCreater.ConvertBitmapToBase64(final);
+            MessageObj ml = new MessageObj() { type = "image", content = ImageCreater.ConvertBitmapToBase64(final) };
+
+            return ml;
         }
     }
 }

@@ -13,8 +13,9 @@ namespace MinoriBot.Utils.Routers
 {
     public static class SearchChart
     {
-        public static async Task<string> SearchSkMusicChart(string message)
+        public static async Task<List<MessageObj>> SearchSkMusicChart(string message)
         {
+            List<MessageObj> result = new List<MessageObj>();
             string[] key = message.Split(' ');
             if (key.Length == 2)
             {
@@ -27,20 +28,24 @@ namespace MinoriBot.Utils.Routers
                         if (SkDataBase.skMusics[i].id == musicId)
                         {
                             isFound = true;
-                            return await Chart.DrawChart(SkDataBase.skMusics[i], NickName.diffType[diffType]);
+                            result.Add(await Chart.DrawChart(SkDataBase.skMusics[i], NickName.diffType[diffType]));
+                            return result;
                         }
                     }
                     if (!isFound)
                     {
-                        return "none";
+                        result.Add(new MessageObj() { type = "string", content = "没有查找到该ID的谱面" });
+                        return result;
                     }
                 }
             }
             else
             {
-                return "lack";
+                result.Add(new MessageObj() { type = "string", content = "缺少关键词" });
+                return result;
             }
-            return "error";
+            result.Add(new MessageObj() { type = "string", content = "内部错误" });
+            return result;  
         }
     }
 }

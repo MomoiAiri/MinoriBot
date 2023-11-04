@@ -10,7 +10,7 @@ namespace MinoriBot.Utils.View
 {
     public static class EventDetail
     {
-        public static async Task<string> DrawEventDetail(SkEvents skEvent)
+        public static async Task<MessageObj> DrawEventDetail(SkEvents skEvent)
         {
             Console.WriteLine($"正在生成活动ID为{skEvent.id}的信息");
             List<SKBitmap> all = new List<SKBitmap>();
@@ -129,7 +129,9 @@ namespace MinoriBot.Utils.View
             SKBitmap final = ImageCreater.DrawALL(all);
             Console.WriteLine("活动信息生成完毕");
 
-            return ImageCreater.ConvertBitmapToBase64(final);
+            MessageObj ml = new MessageObj() { type = "image", content = ImageCreater.ConvertBitmapToBase64(final) };
+
+            return ml;
         }
     }
 }

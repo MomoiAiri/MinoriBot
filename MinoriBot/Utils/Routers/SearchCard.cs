@@ -1,6 +1,7 @@
 ﻿using MinoriBot.Enums.Sekai;
 using MinoriBot.Utils.StaticFilesLoader;
 using MinoriBot.Utils.View;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,9 @@ namespace MinoriBot.Utils.Routers
 {
     internal static class SearchCard
     {
-        public static async Task<string> SearchCharacter(string message)
+        public static async Task<List<MessageObj>> SearchCharacter(string message)
         {
+            List<MessageObj> result = new List<MessageObj>();
             if (int.TryParse(message, out int cardId))
             {
                 bool isFound = false;
@@ -22,13 +24,14 @@ namespace MinoriBot.Utils.Routers
                     if (SkDataBase.skCards[i].id == cardId)
                     {
                         isFound = true;
-
-                        return await CardDetail.DrawCardDetail(SkDataBase.skCards[i]);
+                        result.Add(await CardDetail.DrawCardDetail(SkDataBase.skCards[i]));
+                        return result;
                     }
                 }
                 if (!isFound)
                 {
-                    return "error";
+                    result.Add(new MessageObj() { type = "string", content = "没有查找到该ID的卡牌" });
+                    return result;
                 }
             }
             string[] keywords = message.Split(' ');
@@ -36,21 +39,31 @@ namespace MinoriBot.Utils.Routers
             Dictionary<string, List<string>> keys = FuzzySearch.FuzzySearchCharacter(keywords);
             if (keys.Count == 0)
             {
-                return "error";
+                result.Add(new MessageObj() { type = "string", content = "关键词有误" });
+                return result;
             }
-            //foreach (KeyValuePair<string, string> dic in keys)
-            //{
-            //    Console.WriteLine($"{dic.Key}:{dic.Value}");
-            //}
             List<SkCard> cards = await FindMatchingCards(SkDataBase.skCards, keys);
             Console.WriteLine($"查询到{cards.Count}个结果");
-            if(cards.Count == 0) return "none";
-            string file = await CardList.DrawCardListImage(cards, true);
-            return file;
+            if (cards.Count == 0)
+            {
+                result.Add(new MessageObj() { type = "string", content = "没有查找到相关卡牌" });
+                return result;
+            }
+            bool trainingState = true;
+            if (keys.ContainsKey("train")&& keys["train"].Count==1)
+            {
+                if (keys["train"][0] == "False")
+                {
+                    trainingState = false;
+                }
+            }
+            MessageObj file = await CardList.DrawCardListImage(cards, trainingState);
+            result.Add(file);
+            return result;
         }
-        public static async Task<List<string>> GetCardIllustrationImage(string message)
+        public static async Task<List<MessageObj>> GetCardIllustrationImage(string message)
         {
-            List<string> images = new List<string>();
+            List<MessageObj> result = new List<MessageObj>();
             if (int.TryParse(message, out int cardId))
             {
                 bool isFound = false;
@@ -60,10 +73,10 @@ namespace MinoriBot.Utils.Routers
                     {
                         isFound = true;
                         SkCard card = SkDataBase.skCards[i];
-                        images.Add($"https://storage.sekai.best/sekai-assets/character/member/{card.assetbundleName}_rip/card_normal.png");
+                        result.Add(new MessageObj { type = "image", content = ImageCreater.ConvertBitmapToBase64(await card.GetCardIllustrationImage(false)) });
                         if (card.GetStarsCount() > 2)
                         {
-                            images.Add($"https://storage.sekai.best/sekai-assets/character/member/{card.assetbundleName}_rip/card_after_training.png");
+                            result.Add(new MessageObj { type = "image", content = ImageCreater.ConvertBitmapToBase64(await card.GetCardIllustrationImage(true)) });
                         }
                     }
                 }
@@ -72,7 +85,7 @@ namespace MinoriBot.Utils.Routers
                     return null;
                 }
             }
-            return images;
+            return result;
         }
         private static async Task<List<SkCard>> FindMatchingCards(List<SkCard> cards, Dictionary<string, string> searchConditions)
         {
