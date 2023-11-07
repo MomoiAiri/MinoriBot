@@ -83,93 +83,93 @@ namespace MinoriBot.Utils.MessageProcessing
                     }
                     return messageBuilder.ToString();
                 }
-            }
-            if (rawMessage.ToLower().StartsWith("sk"))
-            {
-                if (rawMessage.ToLower().StartsWith("sk查卡池"))
+                if (command.ToLower().StartsWith("sk"))
                 {
-                    string message = rawMessage.Substring(6).ToLower();
-                    string file = await SearchGacha.SearchSkGacha(message);
-                    if (file == "error") return "无有效关键词";
-                    if (file == "none") return "未查询到相关卡池";
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    string reply = messageBuilder.WithImage(file, 2).ToString();
-                    return reply;
-                }
-                if (rawMessage.ToLower().StartsWith("sk卡面"))
-                {
-                    string message = rawMessage.Substring(5).ToLower();
-                    List<MessageObj> files = await SearchCard.GetCardIllustrationImage(message);
-                    if (files == null) return "无有效关键词或未查询到相关卡面";
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    string reply = string.Empty;
-                    for (int i = 0; i < files.Count; i++)
+                    if (command.ToLower().StartsWith("sk查卡池"))
                     {
-                        messageBuilder.WithImage(files[i].content, 2);
+                        string message = command.Substring(6).ToLower();
+                        string file = await SearchGacha.SearchSkGacha(message);
+                        if (file == "error") return "无有效关键词";
+                        if (file == "none") return "未查询到相关卡池";
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        string reply = messageBuilder.WithImage(file, 2).ToString();
+                        return reply;
                     }
-                    reply = messageBuilder.ToString();
-                    return reply;
-                }
-                if (rawMessage.ToLower().StartsWith("sk查卡"))
-                {
-                    string message = rawMessage.Substring(5).ToLower();
-                    MessageObj msg = (await SearchCard.SearchCharacter(message))[0];
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    if (msg.type == "image")
+                    if (command.ToLower().StartsWith("sk卡面"))
                     {
-                        messageBuilder.WithImage(msg.content, 2);
+                        string message = command.Substring(5).ToLower();
+                        List<MessageObj> files = await SearchCard.GetCardIllustrationImage(message);
+                        if (files == null) return "无有效关键词或未查询到相关卡面";
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        string reply = string.Empty;
+                        for (int i = 0; i < files.Count; i++)
+                        {
+                            messageBuilder.WithImage(files[i].content, 2);
+                        }
+                        reply = messageBuilder.ToString();
+                        return reply;
                     }
-                    else
+                    if (command.ToLower().StartsWith("sk查卡"))
                     {
-                        messageBuilder.WithText(msg.content);
+                        string message = command.Substring(5).ToLower();
+                        MessageObj msg = (await SearchCard.SearchCharacter(message))[0];
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        if (msg.type == "image")
+                        {
+                            messageBuilder.WithImage(msg.content, 2);
+                        }
+                        else
+                        {
+                            messageBuilder.WithText(msg.content);
+                        }
+                        return messageBuilder.ToString();
                     }
-                    return messageBuilder.ToString();
-                }
-                if (rawMessage.ToLower().StartsWith("sk查活动"))
-                {
-                    string message = rawMessage.Substring(6).ToLower();
-                    MessageObj msg = (await SearchEvent.SearchSkEvents(message))[0];
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    if (msg.type == "image")
+                    if (command.ToLower().StartsWith("sk查活动"))
                     {
-                        messageBuilder.WithImage(msg.content, 2);
+                        string message = command.Substring(6).ToLower();
+                        MessageObj msg = (await SearchEvent.SearchSkEvents(message))[0];
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        if (msg.type == "image")
+                        {
+                            messageBuilder.WithImage(msg.content, 2);
+                        }
+                        else
+                        {
+                            messageBuilder.WithText(msg.content);
+                        }
+                        return messageBuilder.ToString();
                     }
-                    else
+                    if (command.ToLower().StartsWith("sk查曲"))
                     {
-                        messageBuilder.WithText(msg.content);
+                        string message = command.Substring(5).ToLower();
+                        MessageObj msg = (await SearchMusic.SearchSkMusics(message))[0];
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        if (msg.type == "image")
+                        {
+                            messageBuilder.WithImage(msg.content, 2);
+                        }
+                        else
+                        {
+                            messageBuilder.WithText(msg.content);
+                        }
+                        return messageBuilder.ToString();
                     }
-                    return messageBuilder.ToString();
-                }
-                if (rawMessage.ToLower().StartsWith("sk查曲"))
-                {
-                    string message = rawMessage.Substring(5).ToLower();
-                    MessageObj msg = (await SearchMusic.SearchSkMusics(message))[0];
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    if (msg.type == "image")
+
+                    if (command.ToLower().StartsWith("sk查谱面"))
                     {
-                        messageBuilder.WithImage(msg.content, 2);
+                        string message = command.Substring(6).ToLower();
+                        MessageObj msg = (await SearchChart.SearchSkMusicChart(message))[0];
+                        MessageBuilder messageBuilder = new MessageBuilder();
+                        if (msg.type == "image")
+                        {
+                            messageBuilder.WithImage(msg.content, 2);
+                        }
+                        else
+                        {
+                            messageBuilder.WithText(msg.content);
+                        }
+                        return messageBuilder.ToString();
                     }
-                    else
-                    {
-                        messageBuilder.WithText(msg.content);
-                    }
-                    return messageBuilder.ToString();
-                }
-                
-                if (rawMessage.ToLower().StartsWith("sk查谱面"))
-                {
-                    string message = rawMessage.Substring(6).ToLower();
-                    MessageObj msg = (await SearchChart.SearchSkMusicChart(message))[0];
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    if (msg.type == "image")
-                    {
-                        messageBuilder.WithImage(msg.content, 2);
-                    }
-                    else
-                    {
-                        messageBuilder.WithText(msg.content);
-                    }
-                    return messageBuilder.ToString();
                 }
             }
             if (rawMessage.ToLower() == "help" || rawMessage == "帮助")
