@@ -34,7 +34,7 @@ class Program
                 WebSocketReverse ws = new WebSocketReverse(Config.Instance().listenPort);
                 ws.Start().Wait();
             }
-            throw (new Exception("配置文件有误，无法启动Socket"));
+            //throw (new Exception("配置文件有误，无法启动Socket"));
         }
         catch (Exception ex) { Console.WriteLine("Error: " + ex); }
 

@@ -36,7 +36,7 @@ public class HttpServer
     public async Task Start()
     {
         listener.Start();
-        Console.WriteLine("Http服务已启用");
+        Console.WriteLine($"Http服务已启用,监听端口:{Config.Instance().httpListenPort}");
         while (true)
         {
             HttpListenerContext context = await listener.GetContextAsync();
@@ -94,7 +94,7 @@ public class HttpServer
             Console.WriteLine("Received request: " + requestBody);
 
             HttpMessage message = JsonConvert.DeserializeObject<HttpMessage>(requestBody);
-            if (message != null)
+            if (message != null && message.context!=null)
             {
                 string file = await func(message.context[0].content);
                 string msgType = "image";
@@ -123,26 +123,34 @@ public class HttpServer
         using (StreamReader reader = new StreamReader(request.InputStream, request.ContentEncoding))
         {
             string requestBody = reader.ReadToEnd();
-            Console.WriteLine("Received request: " + requestBody);
+            Console.WriteLine($"Received request: {request.Url.AbsolutePath}  " + requestBody);
 
             ReceivedMessage message = JsonConvert.DeserializeObject<ReceivedMessage>(requestBody);
             if (message != null)
             {
-                List<MessageObj> files = await func(message.context);
                 List<HttpMessage.Context> contexts = new List<HttpMessage.Context>();
-                if (files.Count == 0 || files == null)
+                if (message.context == null)
                 {
-                    HttpMessage.Context context = new HttpMessage.Context() { type = "string", content = "内部错误" };
-                    contexts.Add(context);
+                    contexts.Add(new HttpMessage.Context { type = "string", content = "" });
                 }
-                else 
+                else
                 {
-                    for (int i = 0; i < files.Count; i++)
+                    List<MessageObj> files = await func(message.context);
+                    
+                    if (files.Count == 0 || files == null)
                     {
-                        HttpMessage.Context context = new HttpMessage.Context();
-                        context.type = files[i].type;
-                        context.content = files[i].content; 
+                        HttpMessage.Context context = new HttpMessage.Context() { type = "string", content = "内部错误" };
                         contexts.Add(context);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < files.Count; i++)
+                        {
+                            HttpMessage.Context context = new HttpMessage.Context();
+                            context.type = files[i].type;
+                            context.content = files[i].content;
+                            contexts.Add(context);
+                        }
                     }
                 }
 
