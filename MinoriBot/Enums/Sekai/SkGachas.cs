@@ -132,7 +132,7 @@ namespace MinoriBot.Enums.Sekai
         public string GetGachaPickUpType()
         {
             int left = 0;
-            int right = SkDataBase.skGachaCeilItemscs.Count;
+            int right = SkDataBase.skGachaCeilItemscs.Count - 1;
             int mid;
             while (left <= right)
             {
