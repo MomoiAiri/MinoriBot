@@ -54,6 +54,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 Directory.CreateDirectory(datebasePath);
             }
+            Console.WriteLine("资源地址"+datebaseUri);
         }
         /// <summary>
         /// 启用SkDataBase
