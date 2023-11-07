@@ -955,7 +955,7 @@ namespace MinoriBot.Utils.View
         /// <returns></returns>
         public static SKBitmap DrawBunusImage(string? attr,List<int>? characters,double rate)
         {
-            SKBitmap bunus = new SKBitmap(800, 40);
+            SKBitmap bunus = new SKBitmap(750, 40);
             using(SKCanvas canvas = new SKCanvas(bunus))
             using(SKPaint font = new SKPaint() { Typeface = _typeface, IsAntialias = true, TextSize = 36 })
             {
