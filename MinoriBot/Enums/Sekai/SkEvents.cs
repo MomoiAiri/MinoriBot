@@ -251,7 +251,17 @@ namespace MinoriBot.Enums.Sekai
         /// <returns></returns>
         public string GetEventType()
         {
-            return eventType=="marathon"?"协力":"5v5";
+            switch (eventType)
+            {
+                case "marathon":
+                    return "协力";
+                case "cheerful_carnival":
+                    return "5v5";
+                case "world_bloom":
+                    return "world link";
+                default:
+                    return "none";
+            }
         }
         /// <summary>
         /// 获取当期追加的歌曲

@@ -48,10 +48,13 @@ namespace MinoriBot.Utils.View
             info.Add(line);
 
             //活动属性加成
-            SKBitmap eventAttr = ImageCreater.DrawBunusImage(skEvent.GetBunusAttr(), null, skEvent.GetBunusAttRate());
-            SKBitmap bunusAttr = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title= "活动属性加成", images=new List<SKBitmap>() { eventAttr} });
-            info.Add(bunusAttr);
-            info.Add(line);
+            if (skEvent.eventType != "world_bloom")
+            {
+                SKBitmap eventAttr = ImageCreater.DrawBunusImage(skEvent.GetBunusAttr(), null, skEvent.GetBunusAttRate());
+                SKBitmap bunusAttr = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "活动属性加成", images = new List<SKBitmap>() { eventAttr } });
+                info.Add(bunusAttr);
+                info.Add(line);
+            }
 
             //活动角色加成
             SKBitmap eventCharacters = ImageCreater.DrawBunusImage(null, skEvent.GetBunusCharacters(), skEvent.GetBunusCharacterRate());

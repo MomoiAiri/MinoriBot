@@ -213,7 +213,9 @@ namespace MinoriBot.Enums.Sekai
         {
             {"协力","marathon" },
             {"5v5","cheerful_carnival" },
-            {"5V5","cheerful_carnival" }
+            {"5V5","cheerful_carnival" },
+            {"wl","world_bloom" },
+            {"worldlink","world_bloom" }
         };
         public static Dictionary<string, string> diffType = new Dictionary<string, string>()
         {

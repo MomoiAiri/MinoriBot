@@ -748,11 +748,16 @@ namespace MinoriBot.Utils.View
                 DateTime endTime = Utils.TimeStampToDateTime(skEvent.aggregateAt);
                 canvas.DrawText("开始时间: " + startTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 50, font);
                 canvas.DrawText("结束时间: " + endTime.ToString("yyyy年MM月dd日 HH:mm"), 350 + 20, 75, font);
-                canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(350 + 20, 80, 350 + 20 + 30, 110), highQuality);
-                canvas.DrawText("+" + skEvent.GetBunusAttRate().ToString("F0") + "%", 420, 103, font);
+                int y1 = 80;
+                if (skEvent.eventType != "world_bloom")
+                {
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{skEvent.GetBunusAttr()}.png"), new SKRect(350 + 20, y1, 350 + 20 + 30, y1 + 30), highQuality);
+                    canvas.DrawText("+" + skEvent.GetBunusAttRate().ToString("F0") + "%", 420, y1 + 23, font);
+                    y1 += 35;
+                }
                 for (int i = 0; i < bonusChara.Count; i++)
                 {
-                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusChara[i]}.png"), new SKRect(370 + i * 35, 115, 400 + i * 35, 145), highQuality);
+                    canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusChara[i]}.png"), new SKRect(370 + i * 35, y1, 400 + i * 35, y1+30), highQuality);
                 }
                 canvas.DrawText("+" + skEvent.GetBunusCharacterRate().ToString("F0") + "%", 370 + 35 * bonusChara.Count + 20, 138, font);
                 int x = 0;
