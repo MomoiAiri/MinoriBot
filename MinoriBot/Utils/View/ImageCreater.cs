@@ -759,7 +759,7 @@ namespace MinoriBot.Utils.View
                 {
                     canvas.DrawBitmap(SKBitmap.Decode($"./asset/normal/{bonusChara[i]}.png"), new SKRect(370 + i * 35, y1, 400 + i * 35, y1+30), highQuality);
                 }
-                canvas.DrawText("+" + skEvent.GetBunusCharacterRate().ToString("F0") + "%", 370 + 35 * bonusChara.Count + 20, 138, font);
+                canvas.DrawText("+" + skEvent.GetBunusCharacterRate().ToString("F0") + "%", 370 + 35 * bonusChara.Count + 20, y1+23, font);
                 int x = 0;
                 int y = 160;
                 for (int i = 0; i < currentCards.Count; i++)
