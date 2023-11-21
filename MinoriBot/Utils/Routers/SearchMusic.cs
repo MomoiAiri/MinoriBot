@@ -52,7 +52,7 @@ namespace MinoriBot.Utils.Routers
                 Console.WriteLine();
             }
             List<SkMusics> skMusics = GetMatchingMusics(SkDataBase.skMusics, keys);
-            if (skMusics != null)
+            if (skMusics != null && skMusics.Count>0)
             {
                 Console.WriteLine("一共查找到" + skMusics.Count + "首歌");
                 if (skMusics.Count == 1 && keys.ContainsKey("musicName"))
