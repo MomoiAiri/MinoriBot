@@ -2,6 +2,7 @@
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace MinoriBot.Utils.View
     {
         public static async Task<MessageObj> DrawCardDetail(SkCard card)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             Console.WriteLine($"正在生成卡面ID为{card.id}的信息");
             List<SKBitmap> all = new List<SKBitmap>();
             List<SKBitmap> info = new List<SKBitmap>(); 
@@ -107,6 +110,8 @@ namespace MinoriBot.Utils.View
             SKBitmap final = ImageCreater.DrawALL(all);
 
             Console.WriteLine("卡面信息生成完毕");
+            stopwatch.Stop();
+            Console.WriteLine($"绘制完成，花费时间{stopwatch.ElapsedMilliseconds}ms");
 
             MessageObj ml = new MessageObj() {type = "image",content = ImageCreater.ConvertBitmapToBase64(final) };
 

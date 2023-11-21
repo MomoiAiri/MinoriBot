@@ -1337,11 +1337,16 @@ namespace MinoriBot.Utils.View
                 canvas.DrawText($"类型: {skEvnet.GetEventType()}    ID: {skEvnet.id}", 0, 208 + 40, font);
                 if (needBonus)
                 {
-                    SKBitmap attr = SKBitmap.Decode($"./asset/normal/{skEvnet.GetBunusAttr()}.png");
-                    canvas.DrawBitmap(attr, new SKRect(488 + 25, 0, 488 + 75, 50), paint);
-                    canvas.DrawText($"+{(int)skEvnet.GetBunusAttRate()}%", 75 + 488 + 25, 36, font);
+                    int charaIconY = 0;
+                    if (skEvnet.GetEventType() != "world link")
+                    {
+                        SKBitmap attr = SKBitmap.Decode($"./asset/normal/{skEvnet.GetBunusAttr()}.png");
+                        canvas.DrawBitmap(attr, new SKRect(488 + 25, 0, 488 + 75, 50), paint);
+                        canvas.DrawText($"+{(int)skEvnet.GetBunusAttRate()}%", 75 + 488 + 25, 36, font);
+                        charaIconY += 50;
+                    }
                     List<int> characterIds = skEvnet.GetBunusCharacters();
-                    int charaIconY = 50;
+                    
                     int charaIconLeftX = 488 + 25;
                     for (int i = 0; i < characterIds.Count; i++)
                     {
