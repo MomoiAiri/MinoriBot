@@ -45,36 +45,43 @@ public class HttpServer
 
             if (request.HttpMethod == "POST")
             {
-                string requestPath = request.Url.AbsolutePath;
-                if (requestPath.StartsWith("/test"))
+                try
                 {
-                    await SendResponse(request, response, "This is a test message");
-                }
-                else if (requestPath.StartsWith("/cardIll"))
-                {
-                    await SendResponse(request, response, async (input) => await SearchCard.GetCardIllustrationImage(input));
-                }
-                else if (requestPath.StartsWith("/card"))
-                {
-                    await SendResponse(request, response, async(input) => await SearchCard.SearchCharacter(input));
-                }
-                else if (requestPath.StartsWith("/event"))
-                {
-                    await SendResponse(request, response, async (input) => await SearchEvent.SearchSkEvents(input));
-                }
-                else if (requestPath.StartsWith("/music"))
-                {
-                    await SendResponse(request, response, async (input) => await SearchMusic.SearchSkMusics(input));
-                }
-                else if (requestPath.StartsWith("/chart"))
-                {
-                    await SendResponse(request, response, async (input) => await SearchChart.SearchSkMusicChart(input));
-                }
-                else if (requestPath.StartsWith("/gacha"))
-                {
+                    string requestPath = request.Url.AbsolutePath;
+                    if (requestPath.StartsWith("/test"))
+                    {
+                        await SendResponse(request, response, "This is a test message");
+                    }
+                    else if (requestPath.StartsWith("/cardIll"))
+                    {
+                        await SendResponse(request, response, async (input) => await SearchCard.GetCardIllustrationImage(input));
+                    }
+                    else if (requestPath.StartsWith("/card"))
+                    {
+                        await SendResponse(request, response, async (input) => await SearchCard.SearchCharacter(input));
+                    }
+                    else if (requestPath.StartsWith("/event"))
+                    {
+                        await SendResponse(request, response, async (input) => await SearchEvent.SearchSkEvents(input));
+                    }
+                    else if (requestPath.StartsWith("/music"))
+                    {
+                        await SendResponse(request, response, async (input) => await SearchMusic.SearchSkMusics(input));
+                    }
+                    else if (requestPath.StartsWith("/chart"))
+                    {
+                        await SendResponse(request, response, async (input) => await SearchChart.SearchSkMusicChart(input));
+                    }
+                    else if (requestPath.StartsWith("/gacha"))
+                    {
 
+                    }
+                    else
+                    {
+
+                    }
                 }
-                else
+                catch
                 {
 
                 }
@@ -162,7 +169,14 @@ public class HttpServer
                 response.ContentType = "text/plain";
 
                 Stream output = response.OutputStream;
-                await output.WriteAsync(buffer, 0, buffer.Length);
+                try
+                {
+                    await output.WriteAsync(buffer, 0, buffer.Length);
+                }
+                catch
+                {
+                    Console.WriteLine("发送失败");
+                }
 
                 output.Close();
             }
