@@ -60,6 +60,62 @@ namespace MinoriBot.Utils.Routers
                     result["group"].Add(NickName.groups[word]);
                     continue;
                 }
+                if (word.Contains(":")||word.Contains("："))
+                {
+                    string[] items = word.Split(':','：');
+                    
+                    if(items.All(i => i != "")&&items.Length==2)
+                    {
+                        if (NickName.groups.ContainsKey(items[0]) && NickName.groups[items[0]]!= "piapro")
+                        {
+                            if (NickName.groups.ContainsKey(items[1]) && NickName.groups[items[1]] == "piapro")
+                            {
+                                if (!result.ContainsKey("group:group"))
+                                {
+                                    result.Add("group:group", new List<string>());
+                                }
+                                result["group:group"].Add($"{NickName.groups[items[0]]}:{NickName.groups[items[1]]}");
+                            }
+                            else if (NickName.characters.ContainsKey(items[1]) && NickName.characters[items[1]] > 20 && NickName.characters[items[1]] < 27)
+                            {
+                                if (!result.ContainsKey("group:character"))
+                                {
+                                    result.Add("group:character", new List<string>());
+                                }
+                                result["group:character"].Add($"{NickName.groups[items[0]]}:{NickName.characters[items[1]]}");
+                            }
+                        }
+                    }
+                    continue;
+                }
+                if (word.Contains("+"))
+                {
+                    string[] items = word.Split('+');
+
+                    if (items.All(i => i != "") && items.Length == 2)
+                    {
+                        if (NickName.groups.ContainsKey(items[0]) && NickName.groups[items[0]] != "piapro")
+                        {
+                            if (NickName.groups.ContainsKey(items[1]) && NickName.groups[items[1]] == "piapro")
+                            {
+                                if (!result.ContainsKey("group+group"))
+                                {
+                                    result.Add("group+group", new List<string>());
+                                }
+                                result["group+group"].Add($"{NickName.groups[items[0]]}:{NickName.groups[items[1]]}");
+                            }
+                            else if (NickName.characters.ContainsKey(items[1]) && NickName.characters[items[1]] > 20 && NickName.characters[items[1]] < 27)
+                            {
+                                if (!result.ContainsKey("group+character"))
+                                {
+                                    result.Add("group+character", new List<string>());
+                                }
+                                result["group+character"].Add($"{NickName.groups[items[0]]}:{NickName.characters[items[1]]}");
+                            }
+                        }
+                    }
+                    continue;
+                }
                 if ( NickName.characters.ContainsKey(word))
                 {
                     if (!result.ContainsKey("character"))
