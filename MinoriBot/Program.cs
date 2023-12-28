@@ -10,8 +10,9 @@ using YamlDotNet.Serialization;
 
 class Program
 {
-    
-    
+    static HttpServer httpServer;
+    static WebSocketReverse ws;
+
     static async Task Main(string[] args)
     {
         Console.WriteLine("初始化资源中。。。");
@@ -19,22 +20,29 @@ class Program
         Console.WriteLine("初始化资源完成");
         try
         {
-            //Http服务
-            HttpServer httpServer = new HttpServer(Config.Instance().httpListenPort);
-
-            //正向ws连接
-            if (Config.Instance().socketMode == 1 && Config.Instance().wsAddr != "")
+            //Http服务(Koishi)
+            if (Config.Instance().useKoishi)
             {
-                WebSocketPositive ws = new WebSocketPositive(Config.Instance().wsAddr);
-                ws.Start().Wait();
+                httpServer = new HttpServer(Config.Instance().httpListenPort);
             }
-            //反向ws监听
-            if (Config.Instance().socketMode == 2 && Config.Instance().listenPort!= 0)
+            //ws服务(gocq)
+            if (Config.Instance().useGocq)
             {
-                WebSocketReverse ws = new WebSocketReverse(Config.Instance().listenPort);
-                ws.Start().Wait();
+                //正向ws连接
+                if (Config.Instance().socketMode == 1 && Config.Instance().wsAddr != "")
+                {
+                    WebSocketPositive ws = new WebSocketPositive(Config.Instance().wsAddr);
+                    ws.Start().Wait();
+                }
+                //反向ws监听
+                if (Config.Instance().socketMode == 2 && Config.Instance().listenPort != 0)
+                {
+                    WebSocketReverse ws = new WebSocketReverse(Config.Instance().listenPort);
+                    ws.Start().Wait();
+                    throw (new Exception("配置文件有误，无法启动Socket"));
+                }
             }
-            //throw (new Exception("配置文件有误，无法启动Socket"));
+            
         }
         catch (Exception ex) { Console.WriteLine("Error: " + ex); }
 

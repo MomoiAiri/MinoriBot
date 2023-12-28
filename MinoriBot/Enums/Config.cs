@@ -18,6 +18,8 @@ namespace MinoriBot.Enums
         public bool proxy;
         public string githubproxy;
         public string sdcvproxy;
+        public bool useGocq;
+        public bool useKoishi;
 
         private Config()
         {
@@ -43,6 +45,8 @@ namespace MinoriBot.Enums
         public bool proxy;
         public string githubproxy;
         public string sdcvproxy;
+        public bool useGocq;
+        public bool useKoishi;
 
         public void Init()
         {
