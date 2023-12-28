@@ -20,7 +20,7 @@
 - [x] 查曲
 - [ ] 查卡池
 - [x] 查谱面  
-- 由于不可抗力因素，正在适配Koishi框架
+- [x] 适配Koishi
 
 ## 支持
 
@@ -40,17 +40,23 @@
 sk查卡 <角色名> <团队名> <属性> <星级> [是否限定] [ID]  
 sk查活动 <角色名> <团队名> <属性> [活动类型] [ID]  
 sk查曲 <角色名> <团队名> [难度类型] [难度等级] [歌名部分内容] [ID]
+sk查谱面 [ID] [难度类型]
 
 ## 部署方式
 
+### gocq方式
 下载[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)并登录QQ账号(因为tx原因目前登录需要一些技巧，暂时需要自行查找)  
 更改Bot文件中的config.yaml来配置连接gocq的方式
 
-### Windows
+### Koishi方式
+部署[Koishi](https://koishi.chat/zh-CN/)，在插件市场中搜索"minoribot"安装，填写相关设置后启用插件即可
+
+### 后端部署相关
+#### Windows
 
 从Release中下载windows-x64版本，解压后双击exe即可
 
-### Linux
+#### Linux
 
 安装.NET运行时(以Ubuntu为例，若已安装过运行时或SDK则无视这一步)
 ```
