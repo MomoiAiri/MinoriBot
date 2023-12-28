@@ -1694,6 +1694,23 @@ namespace MinoriBot.Utils.View
             }
             return title;
         }
+        public static SKBitmap ReSizeImage(SKBitmap image,int width,int height)
+        {
+            if (width == 0)
+            {
+                width = (int)(image.Width * ((float)height / image.Height));
+            }
+            else if (height == 0)
+            {
+                height = (int)(image.Height * ((float)width / image.Width));
+            }
+            SKBitmap reuslt = new SKBitmap(width,height);
+            using(SKCanvas canvas = new SKCanvas(reuslt))
+            {
+                canvas.DrawBitmap(image,new SKRect(0,0,width,height),_highQuality);
+            }
+            return reuslt;
+        }
         /// <summary>
         /// 将SkBitmap转换成Base64
         /// </summary>

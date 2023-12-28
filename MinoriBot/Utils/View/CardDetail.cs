@@ -69,7 +69,7 @@ namespace MinoriBot.Utils.View
             info.Add(releaseTime);
             info.Add(line);
 
-            //缩略图
+            //缩略图 + (附属团)
             List<SKBitmap> icons = new List<SKBitmap>();
             icons.Add(await ImageCreater.DrawCardIcon(card, false, false));
             if (starCount > 2)
@@ -77,8 +77,20 @@ namespace MinoriBot.Utils.View
                 icons.Add(await ImageCreater.DrawCardIcon(card, true, false));
             }
             SKBitmap cardIcons = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "缩略图", images = icons });
-            info.Add(cardIcons);
-            info.Add(line);
+            if (card.supportUnit != "none")
+            {
+                SKBitmap tempLogo = SKBitmap.Decode($"./asset/normal/logo_{card.supportUnit}.png");
+                SKBitmap supportUnitLogo = ImageCreater.ReSizeImage(tempLogo,300,0);
+                SKBitmap supportUnit = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "附属团", images = new List<SKBitmap> { supportUnitLogo } });
+                SKBitmap tempimage = ImageCreater.FixTwoTitleInOneLine(cardIcons, supportUnit);
+                info.Add(tempimage);
+                info.Add(line);
+            }
+            else
+            {
+                info.Add(cardIcons);
+                info.Add(line);
+            }
 
             //相关活动
             SkEvents skEvent = card.GetEvent();
