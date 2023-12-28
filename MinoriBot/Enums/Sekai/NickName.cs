@@ -57,6 +57,7 @@ namespace MinoriBot.Enums.Sekai
             {"hnm",3 },
             {"日野森志步",4 },
             {"志步",4 },
+            {"吸酱",4 },
             {"honomorishiho",4 },
             {"shiho",4 },
             {"sh",4 },
