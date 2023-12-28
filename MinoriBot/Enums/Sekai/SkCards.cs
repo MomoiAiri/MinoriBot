@@ -436,14 +436,18 @@ namespace MinoriBot.Enums.Sekai
             cardType = "常驻";
             if (gachas.Count > 0)
             {
-                for (int i = 0; i < gachas.Count; i++)
+                if (gachas[0].name.Contains("カラフルフェスティバルガチャ"))
                 {
-                    if (gachas[i].GetGachaPickUpType() != "none")
+                    cardType = "限定";
+                }
+                else
+                {
+                    string type = gachas[0].GetGachaPickUpType();
+                    if ( type != "none")
                     {
-                        cardType = gachas[i].GetGachaPickUpType();
+                        cardType = type;
                     }
                 }
-                
             }
             return gachas;
         }
