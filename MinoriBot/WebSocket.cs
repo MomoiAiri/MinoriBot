@@ -6,6 +6,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using MinoriBot.Utils;
+using MinoriBot.Enums;
+using MinoriBot.Library.Messages;
+using MinoriBot.Library.Reports;
+using Newtonsoft.Json;
+using MinoriBot;
 
 public  class WebSocketReverse
 {
@@ -62,6 +67,8 @@ public  class WebSocketReverse
             Console.WriteLine("WebSocket connection established.");
             //把确认的WebSocket连接 放在List里面
             webSockets.Add(webSocketContext.WebSocket);
+            MessageSender.webSocket = webSocketContext.WebSocket;
+            //Init.LoadWsService();
             await HandleWebSocketRequest(webSocketContext.WebSocket);
         }
         catch (WebSocketException ex)
@@ -95,7 +102,7 @@ public  class WebSocketReverse
                 // 在这里处理从客户端接收到的消息
 
                 // 将消息发送回客户端
-                _praseMessage.ProcessingMessage(message,webSocket);
+                await _praseMessage.ProcessingMessage(message,webSocket);
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
@@ -131,6 +138,8 @@ public class WebSocketPositive
                 {
                     await _webSocket.ConnectAsync(new Uri(_wsAddr), CancellationToken.None);
                     Console.WriteLine($"已连接到gocq服务{_wsAddr}");
+                    MessageSender.webSocket = _webSocket;
+                    //Init.LoadWsService();
                 }
                 await ReceiveMessages();
                 Console.WriteLine("连接出现异常已断开，尝试重新连接");
@@ -156,7 +165,7 @@ public class WebSocketPositive
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                     //Console.WriteLine(message);
-                    _praseMessage.ProcessingMessage(message, _webSocket);
+                    await _praseMessage.ProcessingMessage(message, _webSocket);
                 }
             }
         }
@@ -169,14 +178,31 @@ public class WebSocketPositive
 
 public static class MessageSender
 {
-    public static async Task SendMessage(string message,WebSocket ws)
+    public static WebSocket webSocket;
+    public static async Task SendMessage(string message,WebSocket? ws)
     {
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
-        await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        if (ws != null)
+        {
+            await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+        else
+        {
+            await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
     }
     //public static async Task SendMessage(string message,ClientWebSocket ws)
     //{
     //    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
     //    await ws.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
     //}
+    public static async Task SendPrivateMessage(string msg,WebSocket? ws,long userId)
+    {
+        if (msg != "")
+        {
+            PrivateMessage privateMessage = new PrivateMessage() { user_id = userId, message = msg };
+            ReportBack<PrivateMessage> reportBack = new ReportBack<PrivateMessage>(privateMessage) { action = ActionTypes.send_private_msg.ToString() };
+            await SendMessage(JsonConvert.SerializeObject(reportBack), ws);
+        }
+    }
 }

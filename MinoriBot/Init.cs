@@ -1,4 +1,5 @@
 ﻿using MinoriBot.Enums;
+using MinoriBot.Utils.Assistant;
 using MinoriBot.Utils.StaticFilesLoader;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,17 @@ namespace MinoriBot
 {
     internal static class Init
     {
+        //static VirtualConcert vc;
         public static async Task Start()
         {
             CreatConfigYaml();
             LoadConfig();
             await SekaiImageDownload.InitNormalImage();
             await SkDataBase.Start();
+        }
+        public static void LoadWsService()
+        {
+            //vc = new VirtualConcert();
         }
         public static void CreatConfigYaml()
         {
