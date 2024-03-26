@@ -30,7 +30,7 @@ namespace MinoriBot
             string fileName = path + "config.yaml";
             if (!File.Exists(fileName))
             {
-                string configtxt = "#连接方式 1.正向ws  2.反向ws\r\nsocketMode: 1\r\n#监听端口，使用反向ws时填写\r\nlistenPort: 12001\r\n#ws地址，使用正向ws时填写 格式例子: \"ws://kohane.com:11451\"\r\nwsAddr: \"httpListenPort: 18080\r\n#是否启用代理域名\r\nproxy: true\r\ngithubproxy: \"\"\r\nsdcvproxy: \"\"\r\n#使用gocq连接\r\nuseGocq: false\r\n#使用Koishi连接\r\nuseKoishi: true";
+                string configtxt = "#连接方式 1.正向ws  2.反向ws\r\nsocketMode: 1\r\n#监听端口，使用反向ws时填写\r\nlistenPort: 12001\r\n#ws地址，使用正向ws时填写 格式例子: \"ws://kohane.com:11451\"\r\nwsAddr: \"httpListenPort: 18080\r\n#是否启用代理域名\r\nproxy: true\r\nproxy:\"http://127.0.0.1:7890\"\r\n#使用gocq连接\r\nuseGocq: false\r\n#使用Koishi连接\r\nuseKoishi: true";
                 File.WriteAllText(fileName, configtxt);
             }
         }

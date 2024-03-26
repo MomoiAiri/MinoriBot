@@ -30,7 +30,7 @@ namespace MinoriBot.Utils.StaticFilesLoader
         public static List<SkMusicDifficulties> skMusicDifficulties;
         public static List<SkHonorGroups> skHonorGroups;
         public static List<SkOutsideCharacters> skOutsideCharacters;
-        static string datebaseUri = (Config.Instance().proxy && Config.Instance().githubproxy != "") ? Config.Instance().githubproxy : "https://sekai-world.github.io";
+        static string datebaseUri = "https://sekai-world.github.io";
         static string cardsUri = $"{datebaseUri}/sekai-master-db-diff/cards.json";
         static string cardSkillsUri = $"{datebaseUri}/sekai-master-db-diff/skills.json";
         static string eventsUri = $"{datebaseUri}/sekai-master-db-diff/events.json";

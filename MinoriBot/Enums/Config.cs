@@ -16,8 +16,7 @@ namespace MinoriBot.Enums
         public int socketMode;
         public int httpListenPort;
         public bool proxy;
-        public string githubproxy;
-        public string sdcvproxy;
+        public string proxyaddr;
         public bool useGocq;
         public bool useKoishi;
 
@@ -43,8 +42,7 @@ namespace MinoriBot.Enums
         public int socketMode;
         public int httpListenPort;
         public bool proxy;
-        public string githubproxy;
-        public string sdcvproxy;
+        public string proxyaddr;
         public bool useGocq;
         public bool useKoishi;
 
@@ -55,8 +53,9 @@ namespace MinoriBot.Enums
             Config.Instance().socketMode = socketMode;
             Config.Instance().httpListenPort = httpListenPort;
             Config.Instance().proxy = proxy;
-            Config.Instance().githubproxy = githubproxy;
-            Config.Instance().sdcvproxy = sdcvproxy;
+            Config.Instance().proxyaddr = proxyaddr;
+            Config.Instance().useGocq = useGocq;
+            Config.Instance().useKoishi = useKoishi;
             Console.WriteLine("配置加载完成");
         }
     }

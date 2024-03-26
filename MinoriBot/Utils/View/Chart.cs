@@ -4,6 +4,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,7 +14,8 @@ namespace MinoriBot.Utils.View
     public static class Chart
     {
         static Dictionary<string, string> convertDiff = new Dictionary<string, string>() { { "expert", "exp" }, { "master", "mst" }, { "append", "apd" } };
-        static string chartUri = (Config.Instance().proxy && Config.Instance().sdcvproxy != "") ? Config.Instance().sdcvproxy : "https://sdvx.in";
+        static string chartUri = "https://sdvx.in";
+
         public static async Task<MessageObj> DrawChart(SkMusics musics, string diffType)
         {
             Console.WriteLine($"开始绘制{musics.title}-{diffType}的谱面,资源地址{chartUri}");
@@ -22,11 +24,18 @@ namespace MinoriBot.Utils.View
                 return new MessageObj {type="string",content = "没有该难度的谱面" };
             }
             string html = string.Empty;
-            using (HttpClient client = new HttpClient())
+            HttpClient httpClient;
+            if(Config.Instance().proxy && Config.Instance().proxyaddr != "")
             {
-                html = await client.GetStringAsync("https://sdvx.in/prsk.html");
-                //Console.WriteLine(html);
+                HttpClientHandler hch = new HttpClientHandler();
+                hch.Proxy = new WebProxy(Config.Instance().proxyaddr);
+                httpClient = new HttpClient(hch);
             }
+            else
+            {
+                httpClient= new HttpClient();
+            }
+            html = await httpClient.GetStringAsync("https://sdvx.in/prsk.html");
             string pattern = @$"<script\s+src=""/prsk/js/(\d+)sort\.js"">.*</script><!--{musics.title}-->";
             Match match = Regex.Match(html, pattern);
             string chartId = string.Empty;
@@ -42,25 +51,23 @@ namespace MinoriBot.Utils.View
             SKBitmap bg = new SKBitmap();
             SKBitmap chart = new SKBitmap();
             SKBitmap bar = new SKBitmap();
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
-                {
-                    byte[] bbg = await client.GetByteArrayAsync($"{chartUri}/prsk/bg/{chartId}bg.png");
-                    bg = SKBitmap.Decode(new SKMemoryStream(bbg));
+                byte[] bbg = await httpClient.GetByteArrayAsync($"{chartUri}/prsk/bg/{chartId}bg.png");
+                bg = SKBitmap.Decode(new SKMemoryStream(bbg));
 
-                    byte[] bchart = await client.GetByteArrayAsync($"{chartUri}/prsk/obj/data{chartId}{convertDiff[diffType]}.png");
-                    chart = SKBitmap.Decode(new SKMemoryStream(bchart));
+                byte[] bchart = await httpClient.GetByteArrayAsync($"{chartUri}/prsk/obj/data{chartId}{convertDiff[diffType]}.png");
+                chart = SKBitmap.Decode(new SKMemoryStream(bchart));
 
-                    byte[] bbar = await client.GetByteArrayAsync($"{chartUri}/prsk/bg/{chartId}bar.png");
-                    bar = SKBitmap.Decode(new SKMemoryStream(bbar));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return new MessageObj { type = "string", content = "内部错误" };
-                }
+                byte[] bbar = await httpClient.GetByteArrayAsync($"{chartUri}/prsk/bg/{chartId}bar.png");
+                bar = SKBitmap.Decode(new SKMemoryStream(bbar));
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new MessageObj { type = "string", content = "内部错误" };
+            }
+            httpClient.Dispose();
             if (bg.Width != 0 & chart.Width != 0 && bar.Width != 0)
             {
                 int width = chart.Width;
