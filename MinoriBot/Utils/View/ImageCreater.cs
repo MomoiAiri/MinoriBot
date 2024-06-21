@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text;
@@ -729,6 +730,38 @@ namespace MinoriBot.Utils.View
                 canvas.DrawBitmap(await skEvent.GetEventBanner(), new SKRect(0, 0, 800, 341), _highQuality);
             }
             return banner;
+        }
+        public static SKBitmap ResizeImage(SKBitmap old,int width=0,int height = 0)
+        {
+            if (old == null)
+            {
+                return null;
+            }
+            if (width <= 0 && height <= 0)
+            {
+                return old; // 不需要缩放
+            }
+            float scale = 0;
+            if(width> 0 && height == 0)
+            {
+                scale = (float)width / old.Width;
+            }
+            else if(width == 0 && height > 0)
+            {
+                scale = (float)height / old.Height;
+            }
+            else
+            {
+                return old;
+            }
+            int newWidth = (int)(old.Width * scale);
+            int newHeight = (int)(old.Height * scale);
+            SKBitmap newBitmap = new SKBitmap(newWidth, newHeight);
+            using (SKCanvas canvas = new SKCanvas(newBitmap))
+            {
+                canvas.DrawBitmap(old, new SKRect(0, 0, newWidth, newHeight), _highQuality);
+            }
+            return newBitmap;
         }
         public static async Task<SKBitmap> DrawSimpleEventImage(SkEvents skEvent)
         {
@@ -1694,22 +1727,90 @@ namespace MinoriBot.Utils.View
             }
             return title;
         }
-        public static SKBitmap ReSizeImage(SKBitmap image,int width,int height)
+        public static SKBitmap DrawImageWithText(SKBitmap image, string text, int fontSize)
         {
-            if (width == 0)
+            List<string> printText = SplitString(text, fontSize, 750 - image.Width);
+            int height = 0;
+            if(printText.Count * fontSize > image.Height)
             {
-                width = (int)(image.Width * ((float)height / image.Height));
+                height = fontSize;
             }
-            else if (height == 0)
+            else if(printText.Count *fontSize < image.Height)
             {
-                height = (int)(image.Height * ((float)width / image.Width));
+                height = image.Height;
             }
-            SKBitmap reuslt = new SKBitmap(width,height);
-            using(SKCanvas canvas = new SKCanvas(reuslt))
+            int x = image.Width + 20;
+            int y = 0;
+            SKBitmap output = new SKBitmap(800, height);
+            using(SKCanvas canvas = new SKCanvas(output))
             {
-                canvas.DrawBitmap(image,new SKRect(0,0,width,height),_highQuality);
+                canvas.DrawBitmap(image, 0, y);
+                using (SKPaint font = new SKPaint())
+                {
+                    font.Color = SKColors.Black;
+                    font.TextSize = fontSize;
+                    font.Typeface = _typeface;
+                    font.IsAntialias = true;
+                    for (int i = 0; i < printText.Count; i++)
+                    {
+                        canvas.DrawText(printText[i], x, y + fontSize, font);
+                        y += fontSize;
+                    }
+                }
             }
-            return reuslt;
+            return output;
+        }
+        public static SKBitmap DrawGachaRarityRate(string cardRarityType,string rate)
+        {
+            SKBitmap output = new SKBitmap(750, 50);
+            using (SKCanvas canvas = new SKCanvas(output))
+            using (SKPaint font = new SKPaint())
+            {
+                font.Color = SKColors.Black;
+                font.TextSize = 40;
+                font.Typeface = _typeface;
+                font.IsAntialias = true;
+                switch (cardRarityType)
+                {
+                    case "rarity_2":
+                        int x = 0;
+                        for(int i = 0; i < 2; i++)
+                        {
+                            SKBitmap normal_star = SKBitmap.Decode("./asset/normal/normal_star.png");
+                            canvas.DrawBitmap(normal_star, new SKRect(x, 0, x+40, 40));
+                            x += 40;
+                        }
+                        canvas.DrawText(rate, x + 20, 35, font);
+                        break;
+                    case "rarity_3":
+                        int y = 0;
+                        for (int i = 0; i < 3; i++)
+                        {
+                            SKBitmap after_training_star = SKBitmap.Decode("./asset/normal/after_training_star.png");
+                            canvas.DrawBitmap(after_training_star, new SKRect(y, 0, y + 40, 40));
+                            y += 40;
+                        }
+                        canvas.DrawText(rate, y + 20, 35, font);
+                        break;
+                    case "rarity_4":
+                        int z = 0;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            SKBitmap after_training_star = SKBitmap.Decode("./asset/normal/after_training_star.png");
+                            canvas.DrawBitmap(after_training_star, new SKRect(z, 0, z + 40, 40));
+                            z += 40;
+                        }
+                        canvas.DrawText(rate, z + 20, 35, font);
+                        break;
+                    case "rarity_birthday":
+                        SKBitmap birthday_star = SKBitmap.Decode("./asset/normal/birthday_star.png");
+                        canvas.DrawBitmap(birthday_star, new SKRect(0, 0, 40, 40));
+                        canvas.DrawText(rate, 60, 35, font);
+                        break;
+                    default: break;
+                }
+            }
+            return output;
         }
         /// <summary>
         /// 将SkBitmap转换成Base64

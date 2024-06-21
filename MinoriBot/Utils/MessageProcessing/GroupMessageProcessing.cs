@@ -56,16 +56,16 @@ namespace MinoriBot.Utils.MessageProcessing
                 }
                 if (command.ToLower().StartsWith("sk"))
                 {
-                    if (command.ToLower().StartsWith("sk查卡池"))
-                    {
-                        string message = command.Substring(6).ToLower();
-                        string file = await SearchGacha.SearchSkGacha(message);
-                        if (file == "error") return "无有效关键词";
-                        if (file == "none") return "未查询到相关卡池";
-                        MessageBuilder messageBuilder = new MessageBuilder();
-                        string reply = messageBuilder.WithImage(file, 2).ToString();
-                        return reply;
-                    }
+                    //if (command.ToLower().StartsWith("sk查卡池"))
+                    //{
+                    //    string message = command.Substring(6).ToLower();
+                    //    string file = await SearchGacha.SearchSkGacha(message);
+                    //    if (file == "error") return "无有效关键词";
+                    //    if (file == "none") return "未查询到相关卡池";
+                    //    MessageBuilder messageBuilder = new MessageBuilder();
+                    //    string reply = messageBuilder.WithImage(file, 2).ToString();
+                    //    return reply;
+                    //}
                     if (command.ToLower().StartsWith("sk卡面"))
                     {
                         string message = command.Substring(5).ToLower();

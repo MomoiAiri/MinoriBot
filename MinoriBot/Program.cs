@@ -45,7 +45,15 @@ class Program
             
         }
         catch (Exception ex) { Console.WriteLine("Error: " + ex); }
-
-        Console.ReadKey();
+        bool run = true;
+        while (run)
+        {
+            string cmd = Console.ReadLine();
+            if(cmd == "exit")
+            {
+                run = false;
+            }
+        }
+        
     }
 }

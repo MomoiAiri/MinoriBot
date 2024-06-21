@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.IO;
 using MinoriBot.Enums;
+using System.Net;
 
 namespace MinoriBot.Utils.StaticFilesLoader
 {
@@ -45,8 +46,10 @@ namespace MinoriBot.Utils.StaticFilesLoader
         static string honorGroupsUri = $"{datebaseUri}/sekai-master-db-diff/honorGroups.json";
         static string outsideCharactersUri = $"{datebaseUri}/sekai-master-db-diff/outsideCharacters.json";
         static System.Timers.Timer timer;
-        //static Dictionary<Type, List<object>> classDic = new Dictionary<Type, List<object>>() { { typeof(SkCard), new List<object> {skCards ,cardsUri ,"cards.json" } } };
-        static SkDataBase()
+        static HttpClient httpClient;
+            
+    //static Dictionary<Type, List<object>> classDic = new Dictionary<Type, List<object>>() { { typeof(SkCard), new List<object> {skCards ,cardsUri ,"cards.json" } } };
+    static SkDataBase()
         {
             //检查是否有数据库存放的路径
             string datebasePath = AppDomain.CurrentDomain.BaseDirectory + "asset/db";
@@ -55,6 +58,12 @@ namespace MinoriBot.Utils.StaticFilesLoader
                 Directory.CreateDirectory(datebasePath);
             }
             Console.WriteLine("资源地址"+datebaseUri);
+            if (Config.Instance().proxy && Config.Instance().proxyaddr != "")
+            {
+                HttpClientHandler hch = new HttpClientHandler();
+                hch.Proxy = new WebProxy(Config.Instance().proxyaddr);
+                httpClient = new HttpClient(hch);
+            }
         }
         /// <summary>
         /// 启用SkDataBase
@@ -82,22 +91,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(cardsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(cardsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/cards.json", json);
-                                skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
-                                Console.WriteLine("DateBase:获取cards.json成功");
-                            }
+                            File.WriteAllText("./asset/db/cards.json", json);
+                            skCards = JsonConvert.DeserializeObject<List<SkCard>>(json);
+                            Console.WriteLine("DateBase:获取cards.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -119,22 +125,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(cardSkillsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(cardSkillsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/skills.json", json);
-                                skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
-                                Console.WriteLine("DateBase:获取skill.json成功");
-                            }
+                            File.WriteAllText("./asset/db/skills.json", json);
+                            skSkills = JsonConvert.DeserializeObject<List<SkSkills>>(json);
+                            Console.WriteLine("DateBase:获取skill.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -156,22 +159,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(eventsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(eventsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/events.json", json);
-                                skEvents = JsonConvert.DeserializeObject<List<SkEvents>>(json);
-                                Console.WriteLine("DateBase:获取event.json成功");
-                            }
+                            File.WriteAllText("./asset/db/events.json", json);
+                            skEvents = JsonConvert.DeserializeObject<List<SkEvents>>(json);
+                            Console.WriteLine("DateBase:获取event.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -193,22 +193,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(eventCardsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(eventCardsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/eventCards.json", json);
-                                skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
-                                Console.WriteLine("DateBase:获取eventCards.json成功");
-                            }
+                            File.WriteAllText("./asset/db/eventCards.json", json);
+                            skEventCards = JsonConvert.DeserializeObject<List<SkEventCards>>(json);
+                            Console.WriteLine("DateBase:获取eventCards.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -230,22 +227,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(eventDeckBonusesUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(eventDeckBonusesUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/eventDeckBonuses.json", json);
-                                skEventDeckBonuses = JsonConvert.DeserializeObject<List<SkEventDeckBonuses>>(json);
-                                Console.WriteLine("DateBase:获取eventDeckBonuses.json成功");
-                            }
+                            File.WriteAllText("./asset/db/eventDeckBonuses.json", json);
+                            skEventDeckBonuses = JsonConvert.DeserializeObject<List<SkEventDeckBonuses>>(json);
+                            Console.WriteLine("DateBase:获取eventDeckBonuses.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -263,22 +257,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(gameCharacterUnitsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(gameCharacterUnitsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/gameCharacterUnits.json", json);
-                                skGameCharacterUnits = JsonConvert.DeserializeObject<List<SkGameCharacterUnits>>(json);
-                                Console.WriteLine("DateBase:获取gameCharacterUnits.json成功");
-                            }
+                            File.WriteAllText("./asset/db/gameCharacterUnits.json", json);
+                            skGameCharacterUnits = JsonConvert.DeserializeObject<List<SkGameCharacterUnits>>(json);
+                            Console.WriteLine("DateBase:获取gameCharacterUnits.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -300,22 +291,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(gachasUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(gachasUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/gachas.json", json);
-                                skGachas = JsonConvert.DeserializeObject<List<SkGachas>>(json);
-                                Console.WriteLine("DateBase:gachas.json成功");
-                            }
+                            File.WriteAllText("./asset/db/gachas.json", json);
+                            skGachas = JsonConvert.DeserializeObject<List<SkGachas>>(json);
+                            Console.WriteLine("DateBase:获取gachas.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -338,22 +326,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(gachaCeilItemsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(gachaCeilItemsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/gachaCeilItems.json", json);
-                                skGachaCeilItemscs = JsonConvert.DeserializeObject<List<SkGachaCeilItemscs>>(json);
-                                Console.WriteLine("DateBase:gachaCeilItems.json成功");
-                            }
+                            File.WriteAllText("./asset/db/gachaCeilItems.json", json);
+                            skGachaCeilItemscs = JsonConvert.DeserializeObject<List<SkGachaCeilItemscs>>(json);
+                            Console.WriteLine("DateBase:获取gachaCeilItems.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -375,22 +360,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(musicsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(musicsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/musics.json", json);
-                                skMusics = JsonConvert.DeserializeObject<List<SkMusics>>(json);
-                                Console.WriteLine("DateBase:musics.json成功");
-                            }
+                            File.WriteAllText("./asset/db/musics.json", json);
+                            skMusics = JsonConvert.DeserializeObject<List<SkMusics>>(json);
+                            Console.WriteLine("DateBase:获取musics.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -408,22 +390,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(musicVocalsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(musicVocalsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/musicVocals.json", json);
-                                skMusicVocals = JsonConvert.DeserializeObject<List<SkMusicVocals>>(json);
-                                Console.WriteLine("DateBase:musicVocals.json成功");
-                            }
+                            File.WriteAllText("./asset/db/musicVocals.json", json);
+                            skMusicVocals = JsonConvert.DeserializeObject<List<SkMusicVocals>>(json);
+                            Console.WriteLine("DateBase:获取musicVocals.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -441,22 +420,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(musicDifficultiesUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(musicDifficultiesUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/musicDifficulties.json", json);
-                                skMusicDifficulties = JsonConvert.DeserializeObject<List<SkMusicDifficulties>>(json);
-                                Console.WriteLine("DateBase:musicDifficulties.json成功");
-                            }
+                            File.WriteAllText("./asset/db/musicDifficulties.json", json);
+                            skMusicDifficulties = JsonConvert.DeserializeObject<List<SkMusicDifficulties>>(json);
+                            Console.WriteLine("DateBase:获取musicDifficulties.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -474,22 +450,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(honorGroupsUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(honorGroupsUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/honorGroups.json", json);
-                                skHonorGroups = JsonConvert.DeserializeObject<List<SkHonorGroups>>(json);
-                                Console.WriteLine("DateBase:honorGroups.json成功");
-                            }
+                            File.WriteAllText("./asset/db/honorGroups.json", json);
+                            skHonorGroups = JsonConvert.DeserializeObject<List<SkHonorGroups>>(json);
+                            Console.WriteLine("DateBase:获取honorGroups.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }
@@ -507,22 +480,19 @@ namespace MinoriBot.Utils.StaticFilesLoader
             {
                 if (mode == Mode.Update || !isExit)
                 {
-                    using (HttpClient client = new HttpClient())
+                    try
                     {
-                        try
+                        string json = await httpClient.GetStringAsync(outsideCharactersUri);
+                        if (json != null)
                         {
-                            string json = await client.GetStringAsync(outsideCharactersUri);
-                            if (json != null)
-                            {
-                                File.WriteAllText("./asset/db/outsideCharacters.json", json);
-                                skOutsideCharacters = JsonConvert.DeserializeObject<List<SkOutsideCharacters>>(json);
-                                Console.WriteLine("DateBase:获取outsideCharacters.json成功");
-                            }
+                            File.WriteAllText("./asset/db/outsideCharacters.json", json);
+                            skOutsideCharacters = JsonConvert.DeserializeObject<List<SkOutsideCharacters>>(json);
+                            Console.WriteLine("DateBase:获取outsideCharacters.json成功");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("出现异常\n" + ex);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("出现异常\n" + ex);
                     }
                 }
             }

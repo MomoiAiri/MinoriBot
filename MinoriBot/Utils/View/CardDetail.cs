@@ -80,7 +80,7 @@ namespace MinoriBot.Utils.View
             if (card.supportUnit != "none")
             {
                 SKBitmap tempLogo = SKBitmap.Decode($"./asset/normal/logo_{card.supportUnit}.png");
-                SKBitmap supportUnitLogo = ImageCreater.ReSizeImage(tempLogo,300,0);
+                SKBitmap supportUnitLogo = ImageCreater.ResizeImage(tempLogo,300,0);
                 SKBitmap supportUnit = ImageCreater.DrawTitleWithImage(new ImageCreater.ListConfig() { title = "附属团", images = new List<SKBitmap> { supportUnitLogo } });
                 SKBitmap tempimage = ImageCreater.FixTwoTitleInOneLine(cardIcons, supportUnit);
                 info.Add(tempimage);

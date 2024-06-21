@@ -10,8 +10,9 @@ namespace MinoriBot.Utils.Routers
 {
     internal class SearchGacha
     {
-        public static async Task<string> SearchSkGacha(string message)
+        public static async Task<List<MessageObj>> SearchSkGacha(string message)
         {
+            List<MessageObj> result = new List<MessageObj>();
             if (int.TryParse(message, out int gachaId))
             {
                 bool isFound = false;
@@ -20,16 +21,15 @@ namespace MinoriBot.Utils.Routers
                     if (SkDataBase.skGachas[i].id == gachaId)
                     {
                         isFound = true;
-
-                        return await ImageCreater.DrawGachaInfo(SkDataBase.skGachas[i]);
+                        result.Add(await GachaDetail.DrawGachaDetail(SkDataBase.skGachas[i]));
                     }
                 }
                 if (!isFound)
                 {
-                    return "error";
+                    result.Add(new MessageObj { type = "string", content = "未找到该卡池" });
                 }
             }
-            return "error";
+            return result;
         }
     }
 }

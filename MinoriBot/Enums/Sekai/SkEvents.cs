@@ -242,6 +242,15 @@ namespace MinoriBot.Enums.Sekai
                     cardIds.Add(SkDataBase.skEventCards[i].cardId);
                 }
             }
+            //List<SkGachas> gachaInEvent = GetGachasInEvent().Where(gacha => gacha.gachaType == "ceil").ToList();
+            //for(int i =0;i< gachaInEvent.Count; i++)
+            //{
+            //    for(int j = 0; j < gachaInEvent[i].gachaPickups.Count; j++)
+            //    {
+            //        cardIds.Add(gachaInEvent[i].gachaPickups[j].cardId);
+            //    }
+            //}
+            //cardIds.Distinct().ToList();
             cards = SkDataBase.skCards.Where(card => cardIds.Contains(card.id)).ToList();
             return cards;
         }

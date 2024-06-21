@@ -2,6 +2,7 @@
 
 using MinoriBot.Enums;
 using MinoriBot.Utils.Routers;
+using MinoriBot.Utils.StaticFilesLoader;
 using MinoriBot.Utils.View;
 using Newtonsoft.Json;
 using System.Drawing;
@@ -24,7 +25,8 @@ public class HttpServer
             $"http://*:{port}/event/",
             $"http://*:{port}/music/",
             $"http://*:{port}/chart/",
-            $"http://*:{port}/gacha/"
+            $"http://*:{port}/gacha/",
+            $"http://*:{port}/dbupdata/"
         };
         for (int i =0;i<prefixs.Length;i++)
         {
@@ -72,9 +74,14 @@ public class HttpServer
                     {
                         await SendResponse(request, response, async (input) => await SearchChart.SearchSkMusicChart(input));
                     }
+                    else if(requestPath.StartsWith("/dbupdata"))
+                    {
+                        string result = await SkDataBase.UpdateDB_Command(Mode.Update);
+                        await SendResponse(request,response, result);
+                    }
                     else if (requestPath.StartsWith("/gacha"))
                     {
-
+                        await SendResponse(request,response,async(input)=> await SearchGacha.SearchSkGacha(input));
                     }
                     else
                     {
